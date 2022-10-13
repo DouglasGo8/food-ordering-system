@@ -1,0 +1,23 @@
+= Microservices: Clean Architecture, DDD, SAGA, Outbox & Kafka
+
+== List Content
+
+. Microservices - powered by Quarkus and Apache Camel
+. Clean & Hexagonal Architecture
+. Domain Driven Design (DDD): Bounded context, Entities, Aggregates, Value Objects, Domain services, Application services, and Domain Events
+. Kafka: Event store for eds (Event driven Services), enable loosely coupled services that communicates through events
+
+
+== Hexagonal Architecture
+
+. Classified as Ports & Adapters
+. Divides the software as insides and outsides, starting inside by domain layer
+. The principle of Hexagonal is isolate the domain layer from any dependency such UI, Data layer infrastructure or any framework
+
+
+.Graphviz
+[source,bash]
+----
+brew install graphviz
+mvn com.github.ferstl:depgraph-maven-plugin:aggregate -DcreateImage=true -DreduceEdges=false -Dscope=compile "-Dincludes=com.food.ordering.system*.*"
+----
