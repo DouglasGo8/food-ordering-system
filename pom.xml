@@ -1,19 +1,21 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project
+        xmlns="http://maven.apache.org/POM/4.0.0"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 
   <modelVersion>4.0.0</modelVersion>
   <groupId>com.food.ordering.system</groupId>
   <artifactId>food-ordering-system</artifactId>
   <version>1.0-SNAPSHOT</version>
-
   <packaging>pom</packaging>
+
   <name>Food Ordering System</name>
   <description>Microservices :: Clean Architecture :: DDD :: Saga :: Outbox &amp; Kafka</description>
-
+  <!-- Props -->
   <properties>
     <!-- Quarkus -->
-    <quarkus.platform.version>2.13.2.Final</quarkus.platform.version>
+    <quarkus.platform.version>2.14.2.Final</quarkus.platform.version>
     <quarkus.platform.artifact-id>quarkus-bom</quarkus.platform.artifact-id>
     <quarkus.platform.group-id>io.quarkus.platform</quarkus.platform.group-id>
     <!-- Maven -->
@@ -24,7 +26,7 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
   </properties>
-
+  <!-- BOM -->
   <dependencyManagement>
     <!-- Quarkus -->
     <dependencies>
@@ -69,16 +71,21 @@
         <artifactId>messaging</artifactId>
         <version>${project.version}</version>
       </dependency>
+      <!-- Common Domain -->
+      <dependency>
+        <groupId>com.food.ordering.system.common.domain</groupId>
+        <artifactId>domain</artifactId>
+        <version>1.0-SNAPSHOT</version>
+      </dependency>
     </dependencies>
   </dependencyManagement>
-
+  <!-- Dependencies -->
   <dependencies>
     <!-- Misc Generic -->
     <dependency>
       <groupId>org.projectlombok</groupId>
       <artifactId>lombok</artifactId>
       <version>1.18.24</version>
-      <scope>runtime</scope>
     </dependency>
     <dependency>
       <groupId>io.quarkus</groupId>
@@ -90,7 +97,6 @@
       <scope>test</scope>
     </dependency>
   </dependencies>
-
   <!-- Build -->
   <build>
     <plugins>
@@ -149,7 +155,6 @@
       </plugin>
     </plugins>
   </build>
-
   <!-- Profiles -->
   <profiles>
     <profile>
@@ -165,10 +170,9 @@
       </properties>
     </profile>
   </profiles>
-
   <!-- Modules -->
   <modules>
+    <module>common</module>
     <module>order-service</module>
   </modules>
-
 </project>
