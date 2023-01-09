@@ -32,10 +32,10 @@
   <description>Microservices :: Clean Architecture :: DDD :: Saga :: Outbox &amp; Kafka</description>
 
   <modules>
-    <module>domain</module>
     <module>container</module>
-    <module>messaging</module>
     <module>dataaccess</module>
     <module>application</module>
+    <module>domain-core</module>
+    <module>domain-messaging</module>
   </modules>
 </project>

@@ -36,7 +36,7 @@ image::thumbs/ddd-strategic.png[]
 ... Aggregates: Group of Entities that needs a consistent state
 
 .Tactical Strategic Exercise Applied
-image::thumbs/tactical_ddd_pattern_applied.png[]
+image::thumbs/tactical-ddd-pattern-applied.png[]
 
 .Order Aggregates
 image::thumbs/order-aggragates-sample.png[]
@@ -81,8 +81,8 @@ image::thumbs/value-object.png[]
 ... Domain Events: describe things that happens and changes over the state of a domain
 
 .Domain Events
-image::thumbs/domain-events.png[]
+image::thumbs/event-source-kafka.png[]
 
 ... Domain Services: Business logic that cannot fit in the aggregate, is used when multiple aggregates required in business logic
 
-... Applications Services: allows the isolated domain to communicate with outside, such - orchestrate transactions, security, looking up proper aggregates and saving state changes of the domain to the database, doesn't contain any business logic, they are triggered by domain events
+... Applications Services: allows the isolated domain to communicate with outside, such - orchestrate transactions, security, looking up proper aggregates and saving state changes of the domain to the database, doesn't contain any business logic, they are triggered by domain events, they should not know about how to fire event

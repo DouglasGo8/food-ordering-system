@@ -33,7 +33,7 @@
     </dependency>
     <dependency>
       <groupId>com.food.ordering.system.order.messaging</groupId>
-      <artifactId>messaging</artifactId>
+      <artifactId>domain-messaging</artifactId>
     </dependency>
   </dependencies>
 

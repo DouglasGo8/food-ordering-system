@@ -45,31 +45,35 @@
         <type>pom</type>
         <scope>import</scope>
       </dependency>
-      <!-- Food Ordering Service -->
+      <!-- /order-service/application -->
       <dependency>
         <groupId>com.food.ordering.system.order.application</groupId>
         <artifactId>application</artifactId>
         <version>${project.version}</version>
       </dependency>
+      <!-- /order-service/domain-core/service -->
       <dependency>
         <groupId>com.food.ordering.system.order.domain.service</groupId>
         <artifactId>service</artifactId>
         <version>${project.version}</version>
       </dependency>
+      <!-- /order-service/domain-core/core -->
       <dependency>
         <groupId>com.food.ordering.system.order.domain.core</groupId>
         <artifactId>core</artifactId>
         <version>${project.version}</version>
       </dependency>
+      <!-- /order-service/domain-core/dataaccess -->
       <dependency>
         <groupId>com.food.ordering.system.order.dataaccess</groupId>
         <artifactId>dataaccess</artifactId>
         <version>${project.version}</version>
       </dependency>
+      <!-- /order-service/domain-core/domain-messaging -->
       <dependency>
         <groupId>com.food.ordering.system.order.messaging</groupId>
-        <artifactId>messaging</artifactId>
-        <version>${project.version}</version>
+        <artifactId>domain-messaging</artifactId>
+        <version>1.0-SNAPSHOT</version>
       </dependency>
       <!-- Common Domain -->
       <dependency>
@@ -87,6 +91,22 @@
       <artifactId>lombok</artifactId>
       <version>1.18.24</version>
     </dependency>
+    <!-- Log -->
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-api</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>ch.qos.logback</groupId>
+      <artifactId>logback-core</artifactId>
+      <version>1.4.5</version>
+    </dependency>
+    <dependency>
+      <groupId>ch.qos.logback</groupId>
+      <artifactId>logback-classic</artifactId>
+      <version>1.4.5</version>
+    </dependency>
+    <!-- Quarkus -->
     <dependency>
       <groupId>io.quarkus</groupId>
       <artifactId>quarkus-arc</artifactId>
