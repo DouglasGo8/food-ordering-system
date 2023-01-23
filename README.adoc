@@ -1,4 +1,4 @@
-= Microservices: Clean Architecture, DDD, SAGA, Outbox & Kafka
+= Microservices & Event Sourcing, Clean Architecture, DDD, SAGA, Outbox & Kafka
 
 == Links
 - https://quarkus.io/[Quarkus IO]
