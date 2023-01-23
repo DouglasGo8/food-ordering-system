@@ -1,0 +1,30 @@
+package com.food.ordering.system.order.service.domain.core.entity;
+
+import com.food.ordering.system.order.service.domain.core.valueobject.OrderItemId;
+import com.food.ordering.system.shared.domain.entity.BaseEntity;
+import com.food.ordering.system.shared.domain.valueobject.Money;
+import com.food.ordering.system.shared.domain.valueobject.OrderId;
+import lombok.Getter;
+
+@Getter
+public class OrderItem extends BaseEntity<OrderItemId> {
+
+  private OrderId orderId;
+  private OrderItemId orderItemId;
+  private final Product product;
+  private final Money price;
+  private final Money subTotal;
+  private final int quantity;
+
+  public OrderItem(OrderId orderId, OrderItemId orderItemId,
+                   Product product, Money price, Money subTotal,
+                   int quantity) {
+    super.setId(orderItemId);
+    this.price = price;
+    this.orderId = orderId;
+    this.product = product;
+    this.subTotal = subTotal;
+    this.quantity = quantity;
+  }
+
+}
