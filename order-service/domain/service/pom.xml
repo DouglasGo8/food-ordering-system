@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <artifactId>domain</artifactId>
+    <groupId>com.food.ordering.system.order.service.domain</groupId>
+    <version>1.0</version>
+  </parent>
+
+  <!-- Project Identification -->
+  <groupId>com.food.ordering.system.order.service.domain.service</groupId>
+  <artifactId>service</artifactId>
+  <version>1.0</version>
+
+  <!-- Project Name -->
+  <name>Food Ordering System :: Order Service :: Domain :: Service</name>
+  <description>Microservices :: Clean Architecture :: DDD :: Saga :: Outbox &amp; Kafka</description>
+
+
+  <dependencies>
+    <!-- Order domain Core -->
+    <dependency>
+      <groupId>com.food.ordering.system.order.service.domain.core</groupId>
+      <artifactId>core</artifactId>
+    </dependency>
+  </dependencies>
+</project>
