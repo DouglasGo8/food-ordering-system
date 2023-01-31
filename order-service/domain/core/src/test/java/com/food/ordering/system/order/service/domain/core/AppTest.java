@@ -13,9 +13,11 @@ import java.math.BigDecimal;
 import java.util.List;
 import java.util.UUID;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.*;
 
+/**
+ * @author dougdb
+ */
 @Slf4j
 public class AppTest {
 
@@ -43,7 +45,7 @@ public class AppTest {
     var price = new Money(BigDecimal.valueOf(4_299.32));
     var product = new Product(productId, "Mac Book M1 Max", price);
     //
-    var subTotal = price.multiplyMoney(new Money(BigDecimal.valueOf(quantity)));
+    var subTotal = price.multiplyMoney(2);
     //
     var orderItem = new OrderItem(orderId, orderItemId,
             product, price, subTotal, quantity);
@@ -68,7 +70,7 @@ public class AppTest {
     var streetAddress = new StreetAddress(UUID.randomUUID(),
             "NY", "Avenue 5th 566", "122002");
     //
-    var subTotal = price.multiplyMoney(new Money(BigDecimal.valueOf(quantity)));
+    var subTotal = price.multiplyMoney(2);
     //
     var orderItem = new OrderItem(orderId, orderItemId,
             product, price, subTotal, quantity);
@@ -77,9 +79,41 @@ public class AppTest {
             streetAddress, List.of(orderItem));
     //
     assertNotNull(order.getId());
+    // later we'll use reduce to validate the same approach
     assertEquals(order.getItems().get(0).getSubTotal().amount(),
             BigDecimal.valueOf(8598.64));
     assertEquals(restaurantId.getValue(), order.getRestaurantId().getValue());
+  }
+
+  @Test
+  public void initializerOrderRepresentation() {
+
+//    order.initializerOrder();
+//    assertNotNull(order.getId());
+//    assertNotNull(order.getTrackingId());
+//    assertEquals(OrderStatus.PENDING, order.getOrderStatus());
+
+  }
+
+  @Test
+  public void moneyZeroRepresentation() {
+    assertEquals(Money.ZERO.amount(), BigDecimal.ZERO);
+  }
+
+
+  private Order initializerOrderMock() {
+    return null;
+  }
+
+
+  @Test
+  public void stringFormatPatternValidation() {
+    var pattern = "This value %s is str %s";
+    var value = BigDecimal.valueOf(30);
+    var msg = UUID.randomUUID().toString();
+    var result = String.format(pattern, value, msg);
+    //
+    assertTrue(result.contains("This value 30 is str"));
   }
 
 }

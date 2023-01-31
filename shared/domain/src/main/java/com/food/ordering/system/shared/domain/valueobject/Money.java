@@ -11,6 +11,9 @@ import java.math.RoundingMode;
  */
 public record Money(BigDecimal amount) {
 
+  public static final Money ZERO = new Money(BigDecimal.ZERO);
+
+
   public Money addMoney(Money money) {
     // add is a BigDecimal Operation
     return new Money(this.setScale(this.amount.add(money.amount)));
@@ -20,8 +23,8 @@ public record Money(BigDecimal amount) {
     return new Money(this.setScale(this.amount.subtract(money.amount)));
   }
 
-  public Money multiplyMoney(Money money) {
-    return new Money(this.setScale(this.amount.multiply(money.amount)));
+  public Money multiplyMoney(int multiplier) {
+    return new Money(this.setScale(this.amount.multiply(new BigDecimal(multiplier))));
   }
 
   public BigDecimal setScale(BigDecimal input) {

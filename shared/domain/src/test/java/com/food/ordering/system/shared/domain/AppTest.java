@@ -99,7 +99,7 @@ public class AppTest {
   @Test
   public void multiplyMoney() {
     var money1 = new Money(BigDecimal.valueOf(10l)); // usd 10
-    var money2 = money1.multiplyMoney(new Money(BigDecimal.valueOf(5)));
+    var money2 = money1.multiplyMoney(2);
 
     assertEquals(money2.amount(), BigDecimal.valueOf(50l).setScale(2));
     // Ensuring @equals and @hashCode on Records
