@@ -2,13 +2,13 @@ package com.food.ordering.system.order.service.domain.core.entity;
 
 import com.food.ordering.system.order.service.domain.core.common.OrderDomainInfo;
 import com.food.ordering.system.order.service.domain.core.exception.OrderDomainException;
-import com.food.ordering.system.order.service.domain.core.valueobject.OrderItemId;
 import com.food.ordering.system.order.service.domain.core.valueobject.StreetAddress;
 import com.food.ordering.system.order.service.domain.core.valueobject.TrackingId;
 import com.food.ordering.system.shared.domain.entity.AggregateRoot;
 import com.food.ordering.system.shared.domain.exception.DomainException;
 import com.food.ordering.system.shared.domain.valueobject.*;
 import lombok.Getter;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.List;
 import java.util.UUID;
@@ -16,6 +16,7 @@ import java.util.UUID;
 /**
  * @author dougdb
  */
+@Slf4j
 @Getter
 public class Order extends AggregateRoot<OrderId> {
 
@@ -41,7 +42,7 @@ public class Order extends AggregateRoot<OrderId> {
     this.deliveryAddress = deliveryAddress;
   }
 
-  // needs use initializerOrder
+  // needs when using initializerOrder
   public Order(Money price, CustomerId customerId, RestaurantId restaurantId,
                StreetAddress deliveryAddress, List<OrderItem> items) {
     //
@@ -53,19 +54,28 @@ public class Order extends AggregateRoot<OrderId> {
   }
 
   public void initializerOrder() {
-    super.setId(new OrderId(UUID.randomUUID()));
-    this.trackingId = new TrackingId(UUID.randomUUID());
+    this.setId(new OrderId(UUID.randomUUID()));
     // initial Order Status
     this.orderStatus = OrderStatus.PENDING;
+    this.trackingId = new TrackingId(UUID.randomUUID());
     // other Methods
     this.initializerOrderItems();
-
   }
 
   public void validateOrder() {
     validateTotalPrice();
     validateItemsPrice();
     validateInitialOrder();
+  }
+
+  private void initializerOrderItems() {
+    //long itemId = 1l;
+    //
+    for (var item : items) {
+      // item.initializeOrderItem(super.getId(), itemId++);
+      //log.info(item.getId().toString());
+      item.initializeOrderItem(super.getId(), item.getId());
+    }
   }
 
   private void validateItemsPrice() {
@@ -87,8 +97,10 @@ public class Order extends AggregateRoot<OrderId> {
 
   private void validateItemPrice(OrderItem orderItem) {
     if (!orderItem.isPriceValid()) {
-      throw new OrderDomainException(OrderDomainInfo.ITEM_PRICE_INVALID_MSG);
-
+      throw new OrderDomainException(
+              String.format(OrderDomainInfo.ITEM_PRICE_INVALID_MSG,
+                      orderItem.getPrice().amount(),
+                      orderItem.getSubTotal().amount()));
     }
   }
 
@@ -99,17 +111,11 @@ public class Order extends AggregateRoot<OrderId> {
   }
 
   private void validateInitialOrder() {
-    if (null != orderStatus || null != super.getId()) {
+
+    if (null == orderStatus || null == this.getId() ) {
       throw new OrderDomainException(OrderDomainInfo.INITIAL_ORDER_INVALID_MSG);
     }
   }
 
-  private void initializerOrderItems() {
-    long itemId = 1l;
-    //
-    for (var item : items) {
-      item.initializeOrderItem(super.getId(), new OrderItemId(itemId++));
-    }
-  }
 
 }

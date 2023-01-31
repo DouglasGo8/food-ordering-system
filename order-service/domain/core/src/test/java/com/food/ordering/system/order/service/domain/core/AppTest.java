@@ -25,6 +25,7 @@ public class AppTest {
   public void streetAddressRepresentation() {
     var streetAddress = new StreetAddress(UUID.randomUUID(),
             "NY", "Avenue 5th 566", "122002");
+    //
     assertEquals(streetAddress.city(), "NY");
   }
 
@@ -87,11 +88,15 @@ public class AppTest {
 
   @Test
   public void initializerOrderRepresentation() {
-
-//    order.initializerOrder();
-//    assertNotNull(order.getId());
-//    assertNotNull(order.getTrackingId());
-//    assertEquals(OrderStatus.PENDING, order.getOrderStatus());
+    var order = initializerToValidateOrderMock();
+    order.initializerOrder();
+    //
+    assertNotNull(order.getId());
+    assertNotNull(order.getTrackingId());
+    assertEquals(OrderStatus.PENDING, order.getOrderStatus());
+    assertNotNull(order.getItems().get(0).getId());
+    //
+    order.validateOrder();
 
   }
 
@@ -99,12 +104,6 @@ public class AppTest {
   public void moneyZeroRepresentation() {
     assertEquals(Money.ZERO.amount(), BigDecimal.ZERO);
   }
-
-
-  private Order initializerOrderMock() {
-    return null;
-  }
-
 
   @Test
   public void stringFormatPatternValidation() {
@@ -115,5 +114,26 @@ public class AppTest {
     //
     assertTrue(result.contains("This value 30 is str"));
   }
+
+  private Order initializerToValidateOrderMock() {
+    //
+    var quantity = 1;
+    var orderItemId = new OrderItemId(1L);
+    var productId = new ProductId(UUID.randomUUID());
+    var price = new Money(BigDecimal.valueOf(4_299.32));
+    //var price = new Money(BigDecimal.ZERO);
+    var customerId = new CustomerId(UUID.randomUUID());
+    var restaurantId = new RestaurantId(UUID.randomUUID());
+    var product = new Product(productId, "Mac Book M1 Max", price);
+    var streetAddress = new StreetAddress(UUID.randomUUID(), "NY", "Avenue 5th 566", "122002");
+    //
+    var subTotal = price.multiplyMoney(quantity);
+    //var subTotal = price.multiplyMoney(2);
+    //
+    var orderItem = new OrderItem(orderItemId, product, price, subTotal, quantity);
+    //
+    return new Order(price, customerId, restaurantId, streetAddress, List.of(orderItem));
+  }
+
 
 }

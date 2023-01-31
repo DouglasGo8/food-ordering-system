@@ -10,18 +10,25 @@ import lombok.Getter;
 public class OrderItem extends BaseEntity<OrderItemId> {
 
   private OrderId orderId;
-  private OrderItemId orderItemId;
+  //private OrderItemId orderItemId;
   private final Product product;
   private final Money price;
   private final Money subTotal;
   private final int quantity;
 
-  public OrderItem(OrderId orderId, OrderItemId orderItemId,
-                   Product product, Money price, Money subTotal,
+  public OrderItem(OrderId orderId, OrderItemId orderItemId, Product product, Money price, Money subTotal,
                    int quantity) {
     super.setId(orderItemId);
     this.price = price;
     this.orderId = orderId;
+    this.product = product;
+    this.subTotal = subTotal;
+    this.quantity = quantity;
+  }
+
+  public OrderItem(OrderItemId orderItemId, Product product, Money price, Money subTotal, int quantity) {
+    super.setId(orderItemId);
+    this.price = price;
     this.product = product;
     this.subTotal = subTotal;
     this.quantity = quantity;
