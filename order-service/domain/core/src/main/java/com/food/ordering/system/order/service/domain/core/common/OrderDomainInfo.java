@@ -5,4 +5,10 @@ public interface OrderDomainInfo {
   String INITIAL_PRICE_INVALID_MSG = "Total Price needs a value greater than ZERO!";
   String TOTAL_PRICE_INVALID_MSG = "Total price %s is not equal to Order items total %s!";
   String ITEM_PRICE_INVALID_MSG = "Order item price: %s is not valid for product %s";
+  String ORDER_STATE_PAY_INVALID = "Order isn't in correct state for pay operation!";
+  String ORDER_STATE_APPROVE_INVALID = "Order isn't in correct state for approve operation!";
+  String ORDER_STATE_INIT_CANCEL_INVALID = "Order isn't in correct state for init cancel operation!";
+  String ORDER_STATE_CANCEL_INVALID = "Order isn't in correct state for cancel operation!";
+
+
 }

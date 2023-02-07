@@ -12,6 +12,7 @@ import lombok.extern.slf4j.Slf4j;
 
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 /**
  * @author dougdb
@@ -68,6 +69,43 @@ public class Order extends AggregateRoot<OrderId> {
     validateInitialOrder();
   }
 
+  // ---- Order States Transitions BEGIN ----
+
+  public void pay() {
+    if (orderStatus != OrderStatus.PENDING) {
+      throw new OrderDomainException(OrderDomainInfo.ORDER_STATE_PAY_INVALID);
+    }
+    orderStatus = OrderStatus.PAID;
+  }
+
+  public void approve() {
+    if (orderStatus != OrderStatus.PAID) {
+      throw new OrderDomainException(OrderDomainInfo.ORDER_STATE_APPROVE_INVALID);
+    }
+    orderStatus = OrderStatus.APPROVED;
+  }
+
+  public void initCancel(List<String> failureMessages) {
+    if (orderStatus != OrderStatus.PAID) {
+      throw new OrderDomainException(OrderDomainInfo.ORDER_STATE_INIT_CANCEL_INVALID);
+    }
+    orderStatus = OrderStatus.CANCELLING;
+    //
+    updateFailureMessages(failureMessages);
+  }
+
+  public void cancel(List<String> failureMessages) {
+    if (!(orderStatus == OrderStatus.CANCELLING ||
+            orderStatus == OrderStatus.PENDING)) {
+      throw new DomainException(OrderDomainInfo.ORDER_STATE_CANCEL_INVALID);
+    }
+    orderStatus = OrderStatus.CANCELLED;
+    //
+    updateFailureMessages(failureMessages);
+  }
+
+  // ---- Order States Transitions END ----
+
   private void initializerOrderItems() {
     //long itemId = 1l;
     //
@@ -112,8 +150,17 @@ public class Order extends AggregateRoot<OrderId> {
 
   private void validateInitialOrder() {
 
-    if (null == orderStatus || null == this.getId() ) {
+    if (null == orderStatus || null == this.getId()) {
       throw new OrderDomainException(OrderDomainInfo.INITIAL_ORDER_INVALID_MSG);
+    }
+  }
+
+  private void updateFailureMessages(List<String> failureMessages) {
+    if (this.failureMessages != null && failureMessages != null) {
+      this.failureMessages.addAll(failureMessages.stream().filter(m -> !m.isEmpty()).collect(Collectors.toList()));
+    }
+    if (null == this.failureMessages) {
+      this.failureMessages = failureMessages;
     }
   }
 

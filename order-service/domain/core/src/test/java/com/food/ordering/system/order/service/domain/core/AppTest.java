@@ -3,6 +3,7 @@ package com.food.ordering.system.order.service.domain.core;
 import com.food.ordering.system.order.service.domain.core.entity.Order;
 import com.food.ordering.system.order.service.domain.core.entity.OrderItem;
 import com.food.ordering.system.order.service.domain.core.entity.Product;
+import com.food.ordering.system.order.service.domain.core.entity.Restaurant;
 import com.food.ordering.system.order.service.domain.core.valueobject.OrderItemId;
 import com.food.ordering.system.order.service.domain.core.valueobject.StreetAddress;
 import com.food.ordering.system.shared.domain.valueobject.*;
@@ -81,8 +82,7 @@ public class AppTest {
     //
     assertNotNull(order.getId());
     // later we'll use reduce to validate the same approach
-    assertEquals(order.getItems().get(0).getSubTotal().amount(),
-            BigDecimal.valueOf(8598.64));
+    assertEquals(order.getItems().get(0).getSubTotal().amount(), BigDecimal.valueOf(8598.64));
     assertEquals(restaurantId.getValue(), order.getRestaurantId().getValue());
   }
 
@@ -98,6 +98,51 @@ public class AppTest {
     //
     order.validateOrder();
 
+  }
+
+  @Test
+  public void statePayTransitionRepresentation() {
+    var order = initializerToValidateOrderMock();
+    order.initializerOrder();
+    assertNotNull(order.getId());
+    assertNotNull(order.getTrackingId());
+    //
+    order.pay();
+    assertEquals(OrderStatus.PAID, order.getOrderStatus());
+    //
+    order.approve();
+    assertEquals(OrderStatus.APPROVED, order.getOrderStatus());
+    //
+
+  }
+
+  @Test
+  public void stateInitCancelTransitionsRepresentation() {
+    var order = initializerToValidateOrderMock();
+    order.initializerOrder();
+    assertNotNull(order.getId());
+    assertNotNull(order.getTrackingId());
+    //
+    order.pay();
+    assertEquals(OrderStatus.PAID, order.getOrderStatus());
+    //
+    var failedList = List.of("Not Approved");
+    order.initCancel(failedList);
+    assertEquals(1, order.getFailureMessages().size());
+    assertEquals(OrderStatus.CANCELLING, order.getOrderStatus());
+  }
+
+  @Test
+  public void restaurantRepresentation() {
+    var productId = new ProductId(UUID.randomUUID());
+    var restaurantId = new RestaurantId(UUID.randomUUID());
+    var price = new Money(BigDecimal.valueOf(4_299.32));
+    var product = new Product(productId, "Mac Book M1 Max", price);
+    var restaurant = new Restaurant(restaurantId, true, List.of(product));
+    //
+    assertEquals(restaurant.getId(), restaurantId);
+    assertEquals(true, restaurant.isActive());
+    assertEquals(1, restaurant.getProducts().size());
   }
 
   @Test
