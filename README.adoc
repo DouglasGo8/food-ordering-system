@@ -2,6 +2,7 @@
 
 == Links
 - https://quarkus.io/[Quarkus IO]
+- https://camel.apache.org/camel-quarkus/2.15.x/reference/extensions/jta.html[Apache Camel Quarkus JTA]
 
 .Gemfile.lock
 ----
@@ -94,6 +95,8 @@ image::thumbs/event-source-kafka.png[]
 ... Domain Services: Business logic that cannot fit in the aggregate, is used when multiple aggregates required in business logic
 
 ... Applications Services: allows the isolated domain to communicate with outside, such - orchestrate transactions, security, looking up proper aggregates and saving state changes of the domain to the database, doesn't contain any business logic, they are triggered by domain events, they should not know about how to fire event
+
+... #_Where to fire the Event? In Application Service, domain layers shouldn't know about how to fire the event_#
 
 .Application Services Rule
 image::thumbs/application_services_nav.png[]

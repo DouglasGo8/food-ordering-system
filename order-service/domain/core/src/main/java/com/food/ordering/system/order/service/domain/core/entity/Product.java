@@ -3,9 +3,11 @@ package com.food.ordering.system.order.service.domain.core.entity;
 import com.food.ordering.system.shared.domain.entity.BaseEntity;
 import com.food.ordering.system.shared.domain.valueobject.Money;
 import com.food.ordering.system.shared.domain.valueobject.ProductId;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 
 @Getter
+@EqualsAndHashCode
 public class Product extends BaseEntity<ProductId> {
   private String name;
   private Money price;
@@ -13,6 +15,11 @@ public class Product extends BaseEntity<ProductId> {
   public Product(ProductId productId, String name, Money price) {
     super.setId(productId);
     //
+    this.name = name;
+    this.price = price;
+  }
+
+  public void updateWithConfirmedNameAndPrice(String name, Money price) {
     this.name = name;
     this.price = price;
   }

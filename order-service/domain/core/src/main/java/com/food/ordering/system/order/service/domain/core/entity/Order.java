@@ -41,6 +41,21 @@ public class Order extends AggregateRoot<OrderId> {
     this.customerId = customerId;
     this.restaurantId = restaurantId;
     this.deliveryAddress = deliveryAddress;
+
+  }
+
+  public Order(OrderId orderId, Money price, CustomerId customerId, RestaurantId restaurantId,
+               StreetAddress deliveryAddress, List<OrderItem> items, OrderStatus orderStatus) {
+    //
+    super.setId(orderId);
+    //
+    this.items = items;
+    this.price = price;
+    this.customerId = customerId;
+    this.orderStatus = orderStatus;
+    this.restaurantId = restaurantId;
+    this.deliveryAddress = deliveryAddress;
+
   }
 
   // needs when using initializerOrder

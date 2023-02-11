@@ -26,5 +26,20 @@
       <groupId>com.food.ordering.system.order.service.domain.core</groupId>
       <artifactId>core</artifactId>
     </dependency>
+    <dependency>
+      <groupId>com.food.ordering.system.shared</groupId>
+      <artifactId>shared</artifactId>
+      <version>1.0</version>
+    </dependency>
+    <!-- Validator -->
+    <dependency>
+      <groupId>io.quarkus</groupId>
+      <artifactId>quarkus-hibernate-validator</artifactId>
+    </dependency>
+    <!-- Transaction -->
+    <dependency>
+      <groupId>org.apache.camel.quarkus</groupId>
+      <artifactId>camel-quarkus-jta</artifactId>
+    </dependency>
   </dependencies>
 </project>

@@ -61,34 +61,17 @@ public class AppTest {
 
   @Test
   public void orderRepresentation() {
-    var quantity = 2;
-    var orderId = new OrderId(UUID.randomUUID());
-    var orderItemId = new OrderItemId(12L);
-    var productId = new ProductId(UUID.randomUUID());
-    var customerId = new CustomerId(UUID.randomUUID());
-    var restaurantId = new RestaurantId(UUID.randomUUID());
-    var price = new Money(BigDecimal.valueOf(4_299.32));
-    var product = new Product(productId, "Mac Book M1 Max", price);
-    var streetAddress = new StreetAddress(UUID.randomUUID(),
-            "NY", "Avenue 5th 566", "122002");
-    //
-    var subTotal = price.multiplyMoney(2);
-    //
-    var orderItem = new OrderItem(orderId, orderItemId,
-            product, price, subTotal, quantity);
-    //
-    var order = new Order(orderId, price, customerId, restaurantId,
-            streetAddress, List.of(orderItem));
+    var order = this.initializerOrderMultipliedByTwoMock();
     //
     assertNotNull(order.getId());
     // later we'll use reduce to validate the same approach
     assertEquals(order.getItems().get(0).getSubTotal().amount(), BigDecimal.valueOf(8598.64));
-    assertEquals(restaurantId.getValue(), order.getRestaurantId().getValue());
+    assertEquals(order.getRestaurantId().getValue(), order.getRestaurantId().getValue());
   }
 
   @Test
   public void initializerOrderRepresentation() {
-    var order = initializerToValidateOrderMock();
+    var order = initializerToValidateOrderInitiateMock();
     order.initializerOrder();
     //
     assertNotNull(order.getId());
@@ -102,7 +85,7 @@ public class AppTest {
 
   @Test
   public void statePayTransitionRepresentation() {
-    var order = initializerToValidateOrderMock();
+    var order = initializerToValidateOrderInitiateMock();
     order.initializerOrder();
     assertNotNull(order.getId());
     assertNotNull(order.getTrackingId());
@@ -118,7 +101,7 @@ public class AppTest {
 
   @Test
   public void stateInitCancelTransitionsRepresentation() {
-    var order = initializerToValidateOrderMock();
+    var order = initializerToValidateOrderInitiateMock();
     order.initializerOrder();
     assertNotNull(order.getId());
     assertNotNull(order.getTrackingId());
@@ -146,6 +129,48 @@ public class AppTest {
   }
 
   @Test
+  public void orderDomainServiceCreatedEventRepresentation() {
+    var order = this.initializerOrderWithStatusMock(OrderStatus.PENDING);
+    //log.info("{}" ,order.getOrderStatus());
+    var productId = new ProductId(UUID.randomUUID());
+    var price = new Money(BigDecimal.valueOf(4_299.32));
+    var restaurantId = new RestaurantId(UUID.randomUUID());
+    var product = new Product(productId, "Mac Book M1 Max", price);
+    var restaurant = new Restaurant(restaurantId, true, List.of(product));
+    var orderDomainService = new OrderDomainServiceImpl();
+    // validateAndInitiateOrder
+    var orderCreatedEvent = orderDomainService.validateAndInitiateOrder(order, restaurant);
+    assertNotNull(orderCreatedEvent.getOrder().getId());
+    assertEquals(orderCreatedEvent.getOrder().getOrderStatus(), OrderStatus.PENDING);
+    //log.info(orderCreatedEvent.toString());
+  }
+
+  @Test
+  public void orderDomainServiceApproveOrderRepresentation(){
+    var order = this.initializerOrderWithStatusMock(OrderStatus.PAID);
+    var orderEventApproved = new OrderDomainServiceImpl();
+    orderEventApproved.approveOrder(order);
+    assertEquals(order.getOrderStatus(), OrderStatus.APPROVED);
+  }
+
+  @Test
+  public void orderDomainServiceCancelOrderRepresentation(){
+    var order = this.initializerOrderWithStatusMock(OrderStatus.CANCELLING);
+    var orderEventApproved = new OrderDomainServiceImpl();
+    orderEventApproved.cancelOrder(order, List.of("Order Cancelled"));
+    assertEquals(order.getOrderStatus(), OrderStatus.CANCELLED);
+  }
+
+  @Test
+  public void orderDomainServicePayOrderRepresentation(){
+    var order = this.initializerOrderWithStatusMock(OrderStatus.PENDING);
+    var orderEventApproved = new OrderDomainServiceImpl();
+    orderEventApproved.payOrder(order);
+    assertEquals(order.getOrderStatus(), OrderStatus.PAID);
+  }
+
+
+  @Test
   public void moneyZeroRepresentation() {
     assertEquals(Money.ZERO.amount(), BigDecimal.ZERO);
   }
@@ -160,7 +185,70 @@ public class AppTest {
     assertTrue(result.contains("This value 30 is str"));
   }
 
-  private Order initializerToValidateOrderMock() {
+  private Order initializerOrderMock() {
+    var quantity = 1;
+    var orderId = new OrderId(UUID.randomUUID());
+    var orderItemId = new OrderItemId(12L);
+    var productId = new ProductId(UUID.randomUUID());
+    var customerId = new CustomerId(UUID.randomUUID());
+    var restaurantId = new RestaurantId(UUID.randomUUID());
+    var price = new Money(BigDecimal.valueOf(4_299.32));
+    var product = new Product(productId, "Mac Book M1 Max", price);
+    var streetAddress = new StreetAddress(UUID.randomUUID(), "NY", "Avenue 5th 566", "122002");
+    //
+    var subTotal = price.multiplyMoney(quantity);
+    //
+    var orderItem = new OrderItem(orderId, orderItemId,
+            product, price, subTotal, quantity);
+    //
+    return new Order(orderId, price, customerId, restaurantId,
+            streetAddress, List.of(orderItem));
+    //
+  }
+
+  private Order initializerOrderWithStatusMock(OrderStatus orderStatus) {
+    var quantity = 1;
+    var orderId = new OrderId(UUID.randomUUID());
+    var orderItemId = new OrderItemId(12L);
+    var productId = new ProductId(UUID.randomUUID());
+    var customerId = new CustomerId(UUID.randomUUID());
+    var restaurantId = new RestaurantId(UUID.randomUUID());
+    var price = new Money(BigDecimal.valueOf(4_299.32));
+    var product = new Product(productId, "Mac Book M1 Max", price);
+    var streetAddress = new StreetAddress(UUID.randomUUID(), "NY", "Avenue 5th 566", "122002");
+    //
+    var subTotal = price.multiplyMoney(quantity);
+    //
+    var orderItem = new OrderItem(orderId, orderItemId,
+            product, price, subTotal, quantity);
+    //
+    return new Order(orderId, price, customerId, restaurantId,
+            streetAddress, List.of(orderItem), orderStatus);
+    //
+  }
+
+  private Order initializerOrderMultipliedByTwoMock() {
+    var quantity = 2;
+    var orderId = new OrderId(UUID.randomUUID());
+    var orderItemId = new OrderItemId(12L);
+    var productId = new ProductId(UUID.randomUUID());
+    var customerId = new CustomerId(UUID.randomUUID());
+    var restaurantId = new RestaurantId(UUID.randomUUID());
+    var price = new Money(BigDecimal.valueOf(4_299.32));
+    var product = new Product(productId, "Mac Book M1 Max", price);
+    var streetAddress = new StreetAddress(UUID.randomUUID(), "NY", "Avenue 5th 566", "122002");
+    //
+    var subTotal = price.multiplyMoney(quantity);
+    //
+    var orderItem = new OrderItem(orderId, orderItemId,
+            product, price, subTotal, quantity);
+    //
+    return new Order(orderId, price, customerId, restaurantId,
+            streetAddress, List.of(orderItem));
+    //
+  }
+
+  private Order initializerToValidateOrderInitiateMock() {
     //
     var quantity = 1;
     var orderItemId = new OrderItemId(1L);
