@@ -20,7 +20,7 @@
 
   <!-- Child Modules -->
   <modules>
-    <module>domain</module>
+    <module>shared-domain</module>
   </modules>
 
 </project>

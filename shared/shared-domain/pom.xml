@@ -3,23 +3,17 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <parent>
-    <artifactId>domain</artifactId>
-    <groupId>com.food.ordering.system.order.service.domain</groupId>
+    <artifactId>shared</artifactId>
+    <groupId>com.food.ordering.system.shared</groupId>
     <version>1.0</version>
   </parent>
   <!-- Project Identification -->
-  <groupId>com.food.ordering.system.order.service.domain.core</groupId>
-  <artifactId>core</artifactId>
+  <groupId>com.food.ordering.system.shared.domain</groupId>
+  <artifactId>shared-domain</artifactId>
   <version>1.0</version>
+
   <!-- Project Name -->
-  <name>Food Ordering System :: Order Service :: Domain :: Core</name>
+  <name>Food Ordering System :: Shared :: Domain</name>
   <description>Microservices :: Clean Architecture :: DDD :: Saga :: Outbox &amp; Kafka</description>
 
-
-  <dependencies>
-    <dependency>
-      <groupId>com.food.ordering.system.shared.domain</groupId>
-      <artifactId>shared-domain</artifactId>
-    </dependency>
-  </dependencies>
 </project>

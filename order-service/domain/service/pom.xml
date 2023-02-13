@@ -27,9 +27,8 @@
       <artifactId>core</artifactId>
     </dependency>
     <dependency>
-      <groupId>com.food.ordering.system.shared</groupId>
-      <artifactId>shared</artifactId>
-      <version>1.0</version>
+      <groupId>com.food.ordering.system.shared.domain</groupId>
+      <artifactId>shared-domain</artifactId>
     </dependency>
     <!-- Validator -->
     <dependency>

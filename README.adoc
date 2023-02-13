@@ -3,12 +3,13 @@
 == Links
 - https://quarkus.io/[Quarkus IO]
 - https://camel.apache.org/camel-quarkus/2.15.x/reference/extensions/jta.html[Apache Camel Quarkus JTA]
+- https://jdbc.postgresql.org/documentation/callproc/[Calling Stored Functions and Procedures Postgres]
 
 .Gemfile.lock
 ----
 |- food-ordering-system     (pom)
 |-|- shared                 (pom)
-|-|-|- domain               (jar)
+|-|-|- shared-domain        (jar)
 
 |- food-ordering-system     (pom)
 |-|- order-service          (pom)
@@ -22,7 +23,7 @@
 ----
 
 .Skeletal Initial Structure
-image::thumbs/skeletal-structure-all.png[]
+image::thumbs/images/skeletal-structure-all.png[]
 
 == List Content
 
@@ -38,7 +39,7 @@ image::thumbs/skeletal-structure-all.png[]
 . The principle of Hexagonal is isolate the domain layer from any dependency such UI, Data layer infrastructure or any framework
 
 .Hexagonal Principle
-image::thumbs/hexagonal_principle.png[]
+image::thumbs/images/hexagonal_principle.png[]
 
 .Graphviz
 [source,bash]
@@ -47,6 +48,11 @@ brew install graphviz
 mvn com.github.ferstl:depgraph-maven-plugin:aggregate -DcreateImage=true -DreduceEdges=false -Dscope=compile "-Dincludes=com.food.ordering.system*.*"
 ----
 
+.Install Maven Internal All Dependencies libs
+[source, bash]
+----
+mvn clean verify
+----
 == DDD Introduction
 
 . Domain Drive Design offers solutions to common problem when building enterprise
@@ -56,41 +62,41 @@ mvn com.github.ferstl:depgraph-maven-plugin:aggregate -DcreateImage=true -Dreduc
 ... Ubiquitous Language: Common Language used by domain Experts and devs to avoid technical terms
 
 .Food Ordering Application classified (Domain)
-image::thumbs/ddd-strategic.png[]
+image::thumbs/images/ddd-strategic.png[]
 
 . Tactical DDD: Focuses on the implementation details of the domain logic such as:
 .. Entities: Domain object with a Unique Identifier, embodies critical business rules
 .. Aggregates: Group of Entities that needs a consistent state
 
 .Tactical Strategic Exercise Applied p2
-image::thumbs/tactica_ddd_entities.png[]
+image::thumbs/images/tactica_ddd_entities.png[]
 
 .Tactical DDD Aggregate Root Concepts
-image::thumbs/aggregate_root_nav.png[]
+image::thumbs/images/aggregate_root_nav.png[]
 
 .Order Aggregates
-image::thumbs/order-aggragates-sample.png[]
+image::thumbs/images/order-aggragates-sample.png[]
 
 .Order Service Clean Architecture
-image::thumbs/order-service-clean-architecture.png[]
+image::thumbs/images/order-service-clean-architecture.png[]
 
 .Mapped Dependencies
-image::thumbs/mapped_dependencies.png[]
+image::thumbs/images/mapped_dependencies.png[]
 
 ... Aggregate Root (AR): Entrypoint Entity for an aggregate, all business operations should go through root, as rule an aggregate should be referenced from outside through its root only, AR must be pure, side-effect free
 
 .Aggregate Root Classification
-image::thumbs/order-aggragates-sample.png[]
+image::thumbs/images/order-aggragates-sample.png[]
 
 ... Value Objects: Immutable Objects without identity
 
 .Value Objects
-image::thumbs/value-object.png[]
+image::thumbs/images/value-object.png[]
 
 ... Domain Events: describe things that happens and changes over the state of a domain
 
 .Domain Events
-image::thumbs/event-source-kafka.png[]
+image::thumbs/images/event-source-kafka.png[]
 
 ... Domain Services: Business logic that cannot fit in the aggregate, is used when multiple aggregates required in business logic
 
@@ -99,10 +105,10 @@ image::thumbs/event-source-kafka.png[]
 ... #_Where to fire the Event? In Application Service, domain layers shouldn't know about how to fire the event_#
 
 .Application Services Rule
-image::thumbs/application_services_nav.png[]
+image::thumbs/images/application_services_nav.png[]
 
 .Order Service Domain Logic
-image::thumbs/tactical-ddd-pattern-applied.png[]
+image::thumbs/images/tactical-ddd-pattern-applied.png[]
 
 
 .draft Order Event
