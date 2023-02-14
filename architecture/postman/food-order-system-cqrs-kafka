@@ -1,0 +1,23 @@
+{
+	"info": {
+		"_postman_id": "bbdca740-a50b-4bd6-aed4-15244ee34020",
+		"name": "Food Order System CQRS and Kafka",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "195866"
+	},
+	"item": [
+		{
+			"name": "order-service",
+			"item": [
+				{
+					"name": "SayHi",
+					"request": {
+						"method": "GET",
+						"header": []
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}
