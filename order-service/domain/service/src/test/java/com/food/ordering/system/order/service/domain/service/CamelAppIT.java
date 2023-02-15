@@ -5,15 +5,15 @@ import io.quarkus.test.junit.QuarkusTest;
 import lombok.SneakyThrows;
 import org.apache.camel.CamelContext;
 import org.apache.camel.ProducerTemplate;
+import org.apache.camel.builder.AdviceWith;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.quarkus.test.CamelQuarkusTestSupport;
-import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
 import javax.inject.Inject;
 
 @QuarkusTest
-public class CamelAppTest extends CamelQuarkusTestSupport {
+public class CamelAppIT extends CamelQuarkusTestSupport {
 
   @Inject
   CamelContext context;
@@ -27,23 +27,25 @@ public class CamelAppTest extends CamelQuarkusTestSupport {
   @SneakyThrows
   public void test() {
 
-    //var mock = context.getEndpoint("mock:stream:out", MockEndpoint.class);
+    var mock = this.context.getEndpoint("mock:result", MockEndpoint.class);
     //
 
-
-    //AdviceWith.adviceWith(context, "orderCreateCommandHandler", r -> {
-    //  r.replaceFromWith("direct:orderCreateCommandHandler");
-    //  r.mockEndpoints("stream*");
-    //});
+    AdviceWith.adviceWith(this.context, "orderCreateRoute", r -> {
+      //r.replaceFromWith("direct:orderCreateCommandHandler");
+      r.weaveAddLast().to("mock:result");
+      //  r.mockEndpoints("stream*");
+    });
     //
-    //mock.expectedMessageCount(1);
+    mock.expectedMessageCount(1);
     //mock.expectedBodiesReceived("Hello World");
     //
     //
-    //producerTemplate.sendBody("direct:orderCreateCommandHandler", "Talk Talk");
+    this.producerTemplate.sendBodyAndHeader("direct:orderCreateCommandHandler",
+            "Camel Rocks", "customerId", 1);
+    //
     //var mock = context.getEndpoint("mock:result", MockEndpoint.class);
     // asserting mock is satisfied
-    //mock.assertIsSatisfied();
+    mock.assertIsSatisfied();
 
   }
 

@@ -25,11 +25,14 @@ public class OrderCreateCommandHandlerRoute extends RouteBuilder {
     // OrderDataMapper
 
     from("direct:orderCreateCommandHandler").routeId("orderCreateRoute")
-            //.transacted()
+            //.transacted() // no makes sense for read operations
             // checkCustomer.jdbc.getCustomerById
-
-            .log(LoggingLevel.INFO, "message from OrderCreateCommandHandler.class");
+            //.to("sql-stored:get_customer_byId(java.sql.Types.INTEGER ${header.srcValue})")
+            .to("sql-stored:classpath:templates/getCustomerByIdFunction.sql")
+            .log(LoggingLevel.INFO, "${body}");
+            //.log(LoggingLevel.INFO, "message from OrderCreateCommandHandler.class");
   }
+
 
 
   //@Handler

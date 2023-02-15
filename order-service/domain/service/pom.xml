@@ -40,13 +40,20 @@
       <groupId>org.apache.camel.quarkus</groupId>
       <artifactId>camel-quarkus-jta</artifactId>
     </dependency>
+    <!-- HTTP -->
     <dependency>
       <groupId>org.apache.camel.quarkus</groupId>
       <artifactId>camel-quarkus-netty-http</artifactId>
     </dependency>
+    <!-- SQL TEMPLATES -->
     <dependency>
       <groupId>org.apache.camel.quarkus</groupId>
-      <artifactId>camel-quarkus-jdbc</artifactId>
+      <artifactId>camel-quarkus-sql</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>io.quarkus</groupId>
+      <artifactId>quarkus-jdbc-postgresql</artifactId>
     </dependency>
   </dependencies>
+
 </project>

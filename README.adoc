@@ -2,11 +2,15 @@
 
 == Links
 - https://quarkus.io/[Quarkus IO]
-- https://camel.apache.org/camel-quarkus/2.15.x/reference/extensions/jta.html[Apache Camel Quarkus JTA]
 - https://camel.apache.org/manual/rest-dsl.html[Apache Camel Rest DSL]
-- https://jdbc.postgresql.org/documentation/callproc/[Calling Stored Functions and Procedures Postgres]
 - https://camel.apache.org/camel-quarkus/2.15.x/user-guide/testing.html[Camel Quarkus Testing]
+- https://camel.apache.org/camel-quarkus/2.15.x/reference/extensions/jta.html[Apache Camel Quarkus JTA]
 - https://stackoverflow.com/questions/17435060/call-a-stored-function-on-postgres-from-java[Call a Stored Function Postgres on Java]
+- https://jdbc.postgresql.org/documentation/callproc/[Calling Stored Functions and Procedures Postgres]
+- https://camel.apache.org/manual/advice-with.html[Apache Camel AdviceWith]
+- https://camel.apache.org/components/3.20.x/sql-component.html[Apache Camel SQL]
+- https://camel.apache.org/components/3.20.x/sql-stored-component.html[Apache Camel SQL Stored Procedure Component]
+
 
 .Gemfile.lock
 ----
@@ -49,6 +53,13 @@ image::architecture/thumbs/images/hexagonal_principle.png[]
 ----
 brew install graphviz
 mvn com.github.ferstl:depgraph-maven-plugin:aggregate -DcreateImage=true -DreduceEdges=false -Dscope=compile "-Dincludes=com.food.ordering.system*.*"
+----
+
+.Maven Unit & Integration Tests
+[source,bash]
+----
+mvn test
+mvn failsafe:integration-test
 ----
 
 .Install Maven Internal Dependencies libs
