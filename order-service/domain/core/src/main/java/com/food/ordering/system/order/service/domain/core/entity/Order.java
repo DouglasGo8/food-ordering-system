@@ -21,15 +21,20 @@ import java.util.stream.Collectors;
 @Getter
 public class Order extends AggregateRoot<OrderId> {
 
+  //
   private final Money price;
   private final CustomerId customerId;
   private final RestaurantId restaurantId;
   private final StreetAddress deliveryAddress;
+  //
   private final List<OrderItem> items;
+  //
 
   private TrackingId trackingId;
+
   private OrderStatus orderStatus;
   private List<String> failureMessages;
+
 
   public Order(OrderId orderId, Money price, CustomerId customerId, RestaurantId restaurantId,
                StreetAddress deliveryAddress, List<OrderItem> items) {
@@ -58,7 +63,7 @@ public class Order extends AggregateRoot<OrderId> {
 
   }
 
-  // needs when using initializerOrder
+  // to be used with initializerOrder
   public Order(Money price, CustomerId customerId, RestaurantId restaurantId,
                StreetAddress deliveryAddress, List<OrderItem> items) {
     //

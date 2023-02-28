@@ -1,23 +1,26 @@
 package com.food.ordering.system.order.service.domain.service.dto.create;
 
-import com.food.ordering.system.shared.domain.valueobject.OrderStatus;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 
+import javax.validation.constraints.Max;
 import javax.validation.constraints.NotNull;
-import java.util.UUID;
 
 @Getter
 @Builder
 @AllArgsConstructor
-public class CreateOrderResponse {
+public class OrderAddressDTO {
+  @NotNull
+  @Max(value = 50)
+  private final String street;
 
   @NotNull
-  private final String message;
+  @Max(value = 10)
+  private final String postalCode;
+
   @NotNull
-  private final UUID orderTrackingID;
-  @NotNull
-  private final OrderStatus orderStatus;
+  @Max(value = 50)
+  private final String city;
 
 }

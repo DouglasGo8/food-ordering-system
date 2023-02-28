@@ -1,6 +1,7 @@
 = Microservices & Event Sourcing, Clean Architecture, DDD, SAGA, Outbox & Kafka
 
 == Links
+
 - https://quarkus.io/[Quarkus IO]
 - https://camel.apache.org/manual/rest-dsl.html[Apache Camel Rest DSL]
 - https://camel.apache.org/camel-quarkus/2.15.x/user-guide/testing.html[Camel Quarkus Testing]
@@ -10,7 +11,7 @@
 - https://camel.apache.org/manual/advice-with.html[Apache Camel AdviceWith]
 - https://camel.apache.org/components/3.20.x/sql-component.html[Apache Camel SQL]
 - https://camel.apache.org/components/3.20.x/sql-stored-component.html[Apache Camel SQL Stored Procedure Component]
-
+- https://stackoverflow.com/questions/17117589/how-can-i-skip-tests-in-maven-install-goal-while-running-them-in-maven-test-goa/25908693#25908693[Maven Lifecycle Tests]
 
 .Gemfile.lock
 ----
@@ -58,12 +59,16 @@ mvn com.github.ferstl:depgraph-maven-plugin:aggregate -DcreateImage=true -Dreduc
 .Maven Unit & Integration Tests
 [source,bash]
 ----
+# Just Unit Tests
 mvn test
+# Just IT Tests
 mvn failsafe:integration-test
+# All Unit and IT Tests
+# mvn integration-test
 ----
 
 .Install Maven Internal Dependencies libs
-[source, bash]
+[source,bash]
 ----
 mvn clean -DskipTests compile package
 mvn install:install-file -Dfile=./target/shared-domain-1.0.jar \
@@ -78,6 +83,7 @@ mvn install:install-file -Dfile=./target/core-1.0.jar \
   -DgeneratePom=true
 
 ----
+
 == DDD Introduction
 
 . Domain Drive Design offers solutions to common problem when building enterprise
@@ -127,14 +133,14 @@ image::architecture/thumbs/images/event-source-kafka.png[]
 
 ... Applications Services: allows the isolated domain to communicate with outside, such - orchestrate transactions, security, looking up proper aggregates and saving state changes of the domain to the database, doesn't contain any business logic, they are triggered by domain events, they should not know about how to fire event
 
-... #_Where to fire the Event? In Application Service, domain layers shouldn't know about how to fire the event_#
+... #_Where to fire the Event?
+In Application Service, domain layers shouldn't know about how to fire the event_#
 
 .Application Services Rule
 image::architecture/thumbs/images/application_services_nav.png[]
 
 .Order Service Domain Logic
 image::architecture/thumbs/images/tactical-ddd-pattern-applied.png[]
-
 
 .draft Order Event
 [source,json]

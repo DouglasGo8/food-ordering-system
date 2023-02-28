@@ -1,14 +1,11 @@
 package com.food.ordering.system.order.service.domain.service;
 
-import com.food.ordering.system.order.service.domain.service.dto.create.CreateOrderCommand;
-import com.food.ordering.system.order.service.domain.service.dto.create.CreateOrderResponse;
-import com.food.ordering.system.order.service.domain.service.dto.create.OrderAddress;
-import com.food.ordering.system.order.service.domain.service.dto.create.OrderItem;
+import com.food.ordering.system.order.service.domain.service.dto.create.CreateOrderCommandDTO;
+import com.food.ordering.system.order.service.domain.service.dto.create.CreateOrderResponseDTO;
 import com.food.ordering.system.order.service.domain.service.dto.message.PaymentResponse;
 import com.food.ordering.system.order.service.domain.service.dto.message.RestaurantApprovalResponse;
 import com.food.ordering.system.order.service.domain.service.dto.track.TrackOrderQuery;
 import com.food.ordering.system.order.service.domain.service.dto.track.TrackOrderResponse;
-
 import com.food.ordering.system.shared.domain.valueobject.OrderApprovalStatus;
 import com.food.ordering.system.shared.domain.valueobject.OrderStatus;
 import com.food.ordering.system.shared.domain.valueobject.PaymentStatus;
@@ -22,15 +19,15 @@ import java.util.UUID;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-public class AppTest {
+public class AppTest implements BaseTest {
 
   @Test
   public void createOrderCommandRepresentation() {
-    var createOrderCommand = CreateOrderCommand.builder()
+    var createOrderCommand = CreateOrderCommandDTO.builder()
             .customerId(UUID.randomUUID())
             .restaurantId(UUID.randomUUID())
             .price(BigDecimal.valueOf(33_76))
-            .items(List.of(createOrderItemMock()))
+            .items(List.of(this.createOrderItemMock()))
             .address(this.createOrderAddressMock())
             .build();
 
@@ -40,7 +37,7 @@ public class AppTest {
   @Test
   public void createOrderResponseRepresentation() {
     //
-    var createOrderResponse = CreateOrderResponse.builder()
+    var createOrderResponse = CreateOrderResponseDTO.builder()
             .message("Response from Space")
             .orderTrackingID(UUID.randomUUID())
             .orderStatus(OrderStatus.APPROVED)
@@ -82,8 +79,8 @@ public class AppTest {
 
   @Test
   public void createTrackOrderQueryRepresentation() {
-    var tracked = TrackOrderQuery.builder()
-            .orderTrackingId(UUID.randomUUID()).build();
+    var tracked = TrackOrderQuery.builder().orderTrackingId(UUID.randomUUID()).build();
+    //
     assertNotNull(tracked.getOrderTrackingId());
   }
 
@@ -99,20 +96,5 @@ public class AppTest {
   }
 
 
-  private OrderItem createOrderItemMock() {
-    var price = BigDecimal.valueOf(200_21L);
-    return OrderItem.builder()
-            .productId(UUID.randomUUID())
-            .quantity(1)
-            .price(price)
-            .subTotal(price).build();
-  }
 
-  private OrderAddress createOrderAddressMock() {
-    return OrderAddress.builder()
-            .city("LA")
-            .street("Avenue, 23 Lord Corner")
-            .postalCode("21331")
-            .build();
-  }
 }

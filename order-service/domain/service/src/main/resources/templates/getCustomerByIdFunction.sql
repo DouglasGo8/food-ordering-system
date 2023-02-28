@@ -1,1 +1,1 @@
-get_customer_byId(java.sql.Types.INTEGER ${header.customerId})
+get_customer_byId(java.sql.Types.VARCHAR ${body.customerId})

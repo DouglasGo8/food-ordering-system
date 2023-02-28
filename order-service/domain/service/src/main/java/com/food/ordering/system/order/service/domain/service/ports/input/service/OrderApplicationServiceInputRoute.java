@@ -1,8 +1,6 @@
 package com.food.ordering.system.order.service.domain.service.ports.input.service;
 
-import com.food.ordering.system.order.service.domain.service.dto.create.CreateOrderCommand;
-import com.food.ordering.system.order.service.domain.service.dto.create.CreateOrderResponse;
-import com.food.ordering.system.order.service.domain.service.dto.track.TrackOrderResponse;
+import com.food.ordering.system.order.service.domain.service.dto.create.CreateOrderCommandDTO;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.camel.builder.RouteBuilder;
@@ -27,14 +25,13 @@ public class OrderApplicationServiceInputRoute extends RouteBuilder {
     // @Valid TrackOrderQuery in OrderDataMapper Bean
 
 
-    restConfiguration().component("netty-http").host("localhost")
-            .port(12080).bindingMode(RestBindingMode.auto);
+    restConfiguration().component("netty-http").host("localhost").port(12080).bindingMode(RestBindingMode.auto);
 
 
     //rest("/say").get("/hello").to("direct:hello");
 
     rest("/order/api/v1")
-            .post("/createOrder").consumes("application/json").type(CreateOrderCommand.class)
+            .post("/createOrder").consumes("application/json").type(CreateOrderCommandDTO.class)
             //.outType(CreateOrderResponse.class)
             .to("direct:orderCreateCommandHandler");
     //.get("/trackOrder").outType(TrackOrderResponse.class)

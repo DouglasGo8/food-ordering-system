@@ -34,6 +34,13 @@ public class OrderItem extends BaseEntity<OrderItemId> {
     this.quantity = quantity;
   }
 
+  public OrderItem(Product product, Money price, Money subTotal, int quantity) {
+    this.price = price;
+    this.product = product;
+    this.subTotal = subTotal;
+    this.quantity = quantity;
+  }
+
   void initializeOrderItem(OrderId orderId, OrderItemId orderItemId) {
     super.setId(orderItemId);
     //

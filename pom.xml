@@ -23,6 +23,7 @@
     <maven.compiler.release>17</maven.compiler.release>
     <compiler-plugin.version>3.10.1</compiler-plugin.version>
     <surefire-plugin.version>3.0.0-M7</surefire-plugin.version>
+    <failfalse-plugin.version>3.0.0-M7</failfalse-plugin.version>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
   </properties>
@@ -150,9 +151,10 @@
           </systemPropertyVariables>
         </configuration>
       </plugin>
+
       <plugin>
         <artifactId>maven-failsafe-plugin</artifactId>
-        <version>${surefire-plugin.version}</version>
+        <version>${failfalse-plugin.version}</version>
         <executions>
           <execution>
             <goals>

@@ -7,10 +7,14 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 
 @Getter
-@EqualsAndHashCode
+@EqualsAndHashCode(callSuper = false)
 public class Product extends BaseEntity<ProductId> {
   private String name;
   private Money price;
+
+  public Product(ProductId productId) {
+    super.setId(productId);
+  }
 
   public Product(ProductId productId, String name, Money price) {
     super.setId(productId);

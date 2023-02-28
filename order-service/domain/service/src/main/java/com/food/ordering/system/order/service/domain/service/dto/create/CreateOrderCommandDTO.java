@@ -12,7 +12,7 @@ import java.util.UUID;
 @Getter
 @Builder
 @AllArgsConstructor
-public class CreateOrderCommand {
+public class CreateOrderCommandDTO {
   @NotNull
   private final UUID customerId;
   @NotNull
@@ -20,7 +20,7 @@ public class CreateOrderCommand {
   @NotNull
   private final BigDecimal price;
   @NotNull
-  private final List<OrderItem> items;
+  private final List<OrderItemDTO> items;
   @NotNull
-  private final OrderAddress address;
+  private final OrderAddressDTO address;
 }
