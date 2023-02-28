@@ -1,21 +1,13 @@
 package com.food.ordering.system.order.service.domain.service.ports.mediation;
 
 
-import com.food.ordering.system.order.service.domain.core.common.OrderDomainInfo;
-import com.food.ordering.system.order.service.domain.core.exception.OrderDomainException;
 import com.food.ordering.system.order.service.domain.service.mapper.OrderDataMapper;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.camel.AggregationStrategy;
-import org.apache.camel.ExchangePattern;
 import org.apache.camel.LoggingLevel;
-import org.apache.camel.builder.FlexibleAggregationStrategy;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.model.dataformat.JsonLibrary;
-import org.apache.camel.processor.aggregate.GroupedExchangeAggregationStrategy;
 
 import javax.enterprise.context.ApplicationScoped;
-import java.util.ArrayList;
 
 @Slf4j
 @NoArgsConstructor
