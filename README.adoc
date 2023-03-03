@@ -101,34 +101,34 @@ image::architecture/thumbs/images/ddd-strategic.png[]
 .. Aggregates: Group of Entities that needs a consistent state
 
 .Tactical Strategic Exercise Applied p2
-image::architecture/thumbs/images/tactica_ddd_entities.png[]
+image::architecture/thumbs/images/concepts/tactica_ddd_entities.png[]
 
 .Tactical DDD Aggregate Root Concepts
-image::architecture/thumbs/images/aggregate-root.png[]
+image::architecture/thumbs/images/concepts/aggregate-root.png[]
 
 .Order Aggregates
-image::architecture/thumbs/images/order-aggragates-sample.png[]
+image::architecture/thumbs/images/concepts/order-aggragates-sample.png[]
 
 .Order Service Clean Architecture
-image::architecture/thumbs/images/order-service-clean-architecture.png[]
+image::architecture/thumbs/images/concepts/order-service-clean-architecture.png[]
 
 .Mapped Dependencies
-image::architecture/thumbs/images/mapped_dependencies.png[]
+image::architecture/thumbs/images/concepts/mapped_dependencies.png[]
 
 ... Aggregate Root (AR): Entrypoint Entity for an aggregate, all business operations should go through root, as rule an aggregate should be referenced from outside through its root only, AR must be pure, side-effect free
 
 .Aggregate Root Classification
-image::architecture/thumbs/images/order-aggragates-sample.png[]
+image::architecture/thumbs/images/concepts/order-aggragates-sample.png[]
 
 ... Value Objects: Immutable Objects without identity
 
 .Value Objects
-image::architecture/thumbs/images/value-object.png[]
+image::architecture/thumbs/images/concepts/value-object.png[]
 
 ... Domain Events: describe things that happens and changes over the state of a domain
 
 .Domain Events
-image::architecture/thumbs/images/event-source-kafka.png[]
+image::architecture/thumbs/images/concepts/event-source-kafka.png[]
 
 ... Domain Services: Business logic that cannot fit in the aggregate, is used when multiple aggregates required in business logic
 
@@ -138,10 +138,10 @@ image::architecture/thumbs/images/event-source-kafka.png[]
 In Application Service, domain layers shouldn't know about how to fire the event_#
 
 .Application Services Rule
-image::architecture/thumbs/images/application_services_nav.png[]
+image::architecture/thumbs/images/concepts/application_services_nav.png[]
 
 .Order Service Domain Logic
-image::architecture/thumbs/images/tactical-ddd-pattern-applied.png[]
+image::architecture/thumbs/images/concepts/tactical-ddd-pattern-applied.png[]
 
 .draft Order Event
 [source,json]
