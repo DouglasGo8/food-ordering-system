@@ -12,6 +12,7 @@
 - https://camel.apache.org/components/3.20.x/sql-component.html[Apache Camel SQL]
 - https://camel.apache.org/components/3.20.x/sql-stored-component.html[Apache Camel SQL Stored Procedure Component]
 - https://stackoverflow.com/questions/17117589/how-can-i-skip-tests-in-maven-install-goal-while-running-them-in-maven-test-goa/25908693#25908693[Maven Lifecycle Tests]
+- https://delawen.com/2022/07/bungee-jumping-into-quarkus/[Bungee jumping into Quarkus: blindfolded but happy]
 
 .Gemfile.lock
 ----

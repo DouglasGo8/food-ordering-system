@@ -18,6 +18,7 @@
   <!-- Project Name -->
   <name>Food Ordering System :: Order Service</name>
   <description>Microservices :: Clean Architecture :: DDD :: Saga :: Outbox &amp; Kafka</description>
+  <!-- modules -->
   <modules>
     <module>domain</module>
     <module>container</module>

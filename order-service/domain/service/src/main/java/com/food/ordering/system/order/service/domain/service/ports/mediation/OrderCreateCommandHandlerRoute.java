@@ -1,6 +1,7 @@
 package com.food.ordering.system.order.service.domain.service.ports.mediation;
 
 
+import com.food.ordering.system.order.service.domain.core.OrderDomainService;
 import com.food.ordering.system.order.service.domain.service.mapper.OrderDataMapper;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -27,14 +28,15 @@ public class OrderCreateCommandHandlerRoute extends RouteBuilder {
 
     from("direct:createOrderCommandHandler").routeId("createOrderCMDH")
             .setHeader("payload", body())
-            .setHeader("restaurant",  method(OrderDataMapper.class, "createOrderCommandToRestaurant"))
+            .setHeader("restaurant", method(OrderDataMapper.class, "createOrderCommandToRestaurant"))
             .multicast().stopOnException()
-              .to( "direct:checkCustomerCommandHandler","direct:checkRestaurantCommandHandler")
+              .to("direct:checkCustomerCommandHandler", "direct:checkRestaurantCommandHandler")
             .end() // end multicast
             .transform(header("payload"))
-            .bean(OrderDataMapper::new, "createOrderCommandToOrder") // order Object
-            .log(LoggingLevel.INFO, "${body}-${header.restaurant}")
-
+            // OrderDataMapper::new causes CDI Quarkus Error in multi-module project
+            .bean(OrderDataMapper.class, "createOrderCommandToOrder") // order Object
+            //.log(LoggingLevel.INFO, "${body}-${header.restaurant}")
+            .bean(OrderDataMapper.class, "validateAndInitializeOrder") // orderCreatedEvent Object
             .end();
 
 

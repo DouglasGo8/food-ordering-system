@@ -185,27 +185,6 @@ public class AppTest {
     assertTrue(result.contains("This value 30 is str"));
   }
 
-  private Order initializerOrderMock() {
-    var quantity = 1;
-    var orderId = new OrderId(UUID.randomUUID());
-    var orderItemId = new OrderItemId(12L);
-    var productId = new ProductId(UUID.randomUUID());
-    var customerId = new CustomerId(UUID.randomUUID());
-    var restaurantId = new RestaurantId(UUID.randomUUID());
-    var price = new Money(BigDecimal.valueOf(4_299.32));
-    var product = new Product(productId, "Mac Book M1 Max", price);
-    var streetAddress = new StreetAddress(UUID.randomUUID(), "NY", "Avenue 5th 566", "122002");
-    //
-    var subTotal = price.multiplyMoney(quantity);
-    //
-    var orderItem = new OrderItem(orderId, orderItemId,
-            product, price, subTotal, quantity);
-    //
-    return new Order(orderId, price, customerId, restaurantId,
-            streetAddress, List.of(orderItem));
-    //
-  }
-
   private Order initializerOrderWithStatusMock(OrderStatus orderStatus) {
     var quantity = 1;
     var orderId = new OrderId(UUID.randomUUID());
@@ -218,6 +197,7 @@ public class AppTest {
     var streetAddress = new StreetAddress(UUID.randomUUID(), "NY", "Avenue 5th 566", "122002");
     //
     var subTotal = price.multiplyMoney(quantity);
+
     //
     var orderItem = new OrderItem(orderId, orderItemId,
             product, price, subTotal, quantity);

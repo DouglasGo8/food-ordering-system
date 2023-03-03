@@ -23,11 +23,12 @@ public class AppTest implements BaseTest {
 
   @Test
   public void createOrderCommandRepresentation() {
+    var price = BigDecimal.valueOf(33_76L);
     var createOrderCommand = CreateOrderCommandDTO.builder()
             .customerId(UUID.randomUUID())
             .restaurantId(UUID.randomUUID())
             .price(BigDecimal.valueOf(33_76))
-            .items(List.of(this.createOrderItemMock()))
+            .items(List.of(this.createOrderItemMock(price)))
             .address(this.createOrderAddressMock())
             .build();
 

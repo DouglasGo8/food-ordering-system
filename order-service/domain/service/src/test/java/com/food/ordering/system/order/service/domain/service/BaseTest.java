@@ -8,8 +8,8 @@ import java.util.UUID;
 
 public interface BaseTest {
 
-  default OrderItemDTO createOrderItemMock() {
-    var price = BigDecimal.valueOf(200_21L);
+  default OrderItemDTO createOrderItemMock(BigDecimal price) {
+    //var price = BigDecimal.valueOf(200_21L);
     return OrderItemDTO.builder()
             .productId(UUID.randomUUID())
             .quantity(1)

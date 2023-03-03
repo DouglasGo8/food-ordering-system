@@ -22,4 +22,6 @@
       <artifactId>shared-domain</artifactId>
     </dependency>
   </dependencies>
+
+
 </project>

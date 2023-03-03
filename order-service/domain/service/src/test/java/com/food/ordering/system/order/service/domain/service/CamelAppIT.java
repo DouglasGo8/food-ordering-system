@@ -26,7 +26,6 @@ public class CamelAppIT extends CamelQuarkusTestSupport implements BaseTest {
   @Inject
   ProducerTemplate producerTemplate;
 
-
   @Test
   @Disabled
   @SneakyThrows
@@ -67,13 +66,14 @@ public class CamelAppIT extends CamelQuarkusTestSupport implements BaseTest {
   @Disabled
   public void checkRestaurant() {
 
+    var price = BigDecimal.valueOf(33.76);
     var restaurantIdValid = UUID.fromString("c8dfc68d-9269-45c2-b2d1-7e0d0aa3c57b");
 
     var body = CreateOrderCommandDTO.builder()
             //.customerId(customerIdValid)
             .restaurantId(restaurantIdValid)
             //.price(BigDecimal.valueOf(33_76))
-            .items(List.of(this.createOrderItemMock()))
+            .items(List.of(this.createOrderItemMock(price)))
             //.address(this.createOrderAddressMock())
             .build();
 
@@ -84,16 +84,19 @@ public class CamelAppIT extends CamelQuarkusTestSupport implements BaseTest {
   @Test
   public void createOrder() {
 
+    var price = BigDecimal.valueOf(33.76);
     var customerIdValid = UUID.fromString("af20558e-5e77-4a6e-bb2f-fef1f14c0ee9");
     var restaurantIdValid = UUID.fromString("c8dfc68d-9269-45c2-b2d1-7e0d0aa3c57b");
+
 
     var body = CreateOrderCommandDTO.builder()
             .customerId(customerIdValid)
             .restaurantId(restaurantIdValid)
-            .price(BigDecimal.valueOf(33_76))
-            .items(List.of(this.createOrderItemMock()))
+            .price(price)
+            .items(List.of(this.createOrderItemMock(price)))
             .address(this.createOrderAddressMock())
             .build();
+
 
     this.producerTemplate.sendBody("direct:createOrderCommandHandler", body);
 

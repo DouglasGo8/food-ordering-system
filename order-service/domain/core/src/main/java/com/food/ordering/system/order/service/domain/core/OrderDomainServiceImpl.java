@@ -10,7 +10,6 @@ import com.food.ordering.system.order.service.domain.core.exception.OrderDomainE
 import lombok.extern.slf4j.Slf4j;
 
 import javax.enterprise.context.ApplicationScoped;
-import javax.inject.Named;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.List;
@@ -20,7 +19,6 @@ import java.util.List;
  * Can use multiple Aggregates
  */
 @Slf4j
-@Named
 @ApplicationScoped
 public class OrderDomainServiceImpl implements OrderDomainService {
   @Override
