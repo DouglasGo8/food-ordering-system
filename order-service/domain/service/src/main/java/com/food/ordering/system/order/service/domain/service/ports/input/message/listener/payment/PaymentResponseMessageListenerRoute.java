@@ -11,8 +11,8 @@ public class PaymentResponseMessageListenerRoute extends RouteBuilder {
   @Override
   public void configure() {
 
-    // rest?direct?seda?paymentCompleted(PaymentResponse body)
-    // rest?direct?seda?paymentCancelled(PaymentResponse body)
+    // rest?direct?seda?kafka:paymentCompleted(PaymentResponse body)
+    // rest?direct?seda?kafka:paymentCancelled(PaymentResponse body)
 
   }
 }

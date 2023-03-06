@@ -15,7 +15,6 @@
   <name>Food Ordering System :: Order Service :: Domain :: Core</name>
   <description>Microservices :: Clean Architecture :: DDD :: Saga :: Outbox &amp; Kafka</description>
 
-
   <dependencies>
     <dependency>
       <groupId>com.food.ordering.system.shared.domain</groupId>

@@ -19,6 +19,25 @@
   <name>Food Ordering System :: Order Service :: Domain</name>
   <description>Microservices :: Clean Architecture :: DDD :: Saga :: Outbox &amp; Kafka</description>
 
+
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>io.smallrye</groupId>
+        <artifactId>jandex-maven-plugin</artifactId>
+        <version>3.0.5</version>
+        <executions>
+          <execution>
+            <id>make-index</id>
+            <goals>
+              <goal>jandex</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
+
   <modules>
     <module>core</module>
     <module>service</module>

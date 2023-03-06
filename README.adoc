@@ -143,10 +143,25 @@ image::architecture/thumbs/images/concepts/application_services_nav.png[]
 .Order Service Domain Logic
 image::architecture/thumbs/images/concepts/tactical-ddd-pattern-applied.png[]
 
-.draft Order Event
+.draft Order Request
 [source,json]
 ----
 {
-
+  "customerId": "",
+  "restaurantId": "",
+  "address": {
+    "street": "",
+    "postalCode": "",
+    "city": ""
+  },
+  "price": "",
+  "items": [
+      {
+        "productId": "",
+        "quantity": 1,
+        "price": 50.00,
+        "subTotal": 50.00
+      }
+  ]
 }
 ----

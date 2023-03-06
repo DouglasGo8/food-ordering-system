@@ -1,7 +1,14 @@
 package com.food.ordering.system.order.service.domain.service;
 
 
+import com.food.ordering.system.order.service.domain.core.entity.Product;
+import com.food.ordering.system.order.service.domain.core.entity.Restaurant;
+import com.food.ordering.system.order.service.domain.core.valueobject.TrackingId;
 import com.food.ordering.system.order.service.domain.service.dto.create.CreateOrderCommandDTO;
+import com.food.ordering.system.order.service.domain.service.dto.track.TrackOrderQuery;
+import com.food.ordering.system.shared.domain.valueobject.Money;
+import com.food.ordering.system.shared.domain.valueobject.ProductId;
+import com.food.ordering.system.shared.domain.valueobject.RestaurantId;
 import io.quarkus.test.junit.QuarkusTest;
 import lombok.SneakyThrows;
 import org.apache.camel.CamelContext;
@@ -84,22 +91,27 @@ public class CamelAppIT extends CamelQuarkusTestSupport implements BaseTest {
   @Test
   public void createOrder() {
 
-    var price = BigDecimal.valueOf(33.76);
-    var customerIdValid = UUID.fromString("af20558e-5e77-4a6e-bb2f-fef1f14c0ee9");
-    var restaurantIdValid = UUID.fromString("c8dfc68d-9269-45c2-b2d1-7e0d0aa3c57b");
+    var body = this.createOrderCommandDTOFullMock();
+    var products = List.of(new Product(
+            new ProductId(UUID.randomUUID()), "product-1", new Money(new BigDecimal("50.00"))),
+            new Product(new ProductId(UUID.randomUUID()), "product-2", new Money(new BigDecimal("50.00"))));
+    //
+    var restaurant = new Restaurant(new RestaurantId(body.getRestaurantId()), true, products);
+    //
+    this.producerTemplate.sendBodyAndHeader("direct:createOrderCommandHandler", body,
+            "restaurant", restaurant);
+    // mock.containsBody(getOrderStatus.PENDING);
+  }
 
-
-    var body = CreateOrderCommandDTO.builder()
-            .customerId(customerIdValid)
-            .restaurantId(restaurantIdValid)
-            .price(price)
-            .items(List.of(this.createOrderItemMock(price)))
-            .address(this.createOrderAddressMock())
+  @Test
+  @Disabled
+  public void trackOrderQuery() {
+    var trackingId = UUID.fromString("2330ada6-47a2-49ba-8c96-3b702e44dea9");
+    var body = TrackOrderQuery.builder()
+            .orderTrackingId(trackingId)
             .build();
-
-
-    this.producerTemplate.sendBody("direct:createOrderCommandHandler", body);
-
+    //
+    this.producerTemplate.sendBody("direct:orderTrackCommandHandler", body);
   }
 
 

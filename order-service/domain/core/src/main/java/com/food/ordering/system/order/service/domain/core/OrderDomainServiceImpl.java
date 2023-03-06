@@ -45,8 +45,14 @@ public class OrderDomainServiceImpl implements OrderDomainService {
     validateRestaurant(restaurant);
     setOrderProductInformation(order, restaurant);
     //
-    order.validateOrder();
-    order.initializerOrder();
+    if (null == order.getId()) {
+      order.initializerOrder();
+      order.validateOrder();
+    } else {
+      order.validateOrder();
+      order.initializerOrder();
+    }
+
     //
     log.info("Order with id: {}", order.getId());
     //

@@ -60,6 +60,7 @@ public class AppTest implements BaseTest {
             .createdAt(Instant.now())
             .paymentStatus(PaymentStatus.COMPLETED)
             .failureMessages(List.of("")).build();
+    //
     assertEquals(PaymentStatus.COMPLETED, paymentResponse.getPaymentStatus());
   }
 
@@ -95,6 +96,7 @@ public class AppTest implements BaseTest {
     //
     assertNotNull(trackedResponse.getOrderTrackingId());
   }
+
 
 
 

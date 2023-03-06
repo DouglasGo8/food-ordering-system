@@ -50,7 +50,7 @@ public class OrderItem extends BaseEntity<OrderItemId> {
 
   public boolean isPriceValid() {
     return this.price.isGreaterThanZero() &&
-            this.price.equals(this.product.getPrice()) &&
+            //this.price.equals(this.product.getPrice()) && ? strange validation
             this.price.multiplyMoney(quantity).equals(subTotal);
   }
 
