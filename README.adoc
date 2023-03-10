@@ -13,11 +13,14 @@
 - https://camel.apache.org/components/3.20.x/sql-stored-component.html[Apache Camel SQL Stored Procedure Component]
 - https://stackoverflow.com/questions/17117589/how-can-i-skip-tests-in-maven-install-goal-while-running-them-in-maven-test-goa/25908693#25908693[Maven Lifecycle Tests]
 - https://delawen.com/2022/07/bungee-jumping-into-quarkus/[Bungee jumping into Quarkus: blindfolded but happy]
+- https://github.com/confluentinc/cp-all-in-one/tree/7.3.2-post/cp-all-in-one[Kafka Confluent Docker Compose CP-ALL-IN-ONE]
+- https://github.com/tstuber/camel-quarkus-kafka-schema-registry[Camel Quarkus Kafka with Avro]
 
 .Gemfile.lock
 ----
 |- food-ordering-system     (pom)
 |-|- shared                 (pom)
+|-|-|- avro-model           (jar)
 |-|-|- shared-domain        (jar)
 
 |- food-ordering-system     (pom)
@@ -32,7 +35,7 @@
 ----
 
 .Skeletal Initial Structure
-image::architecture/thumbs/images/skeletal-structure-all.png[]
+image::architecture/thumbs/images/concepts/skeletal-structure-all.png[]
 
 == List Content
 
@@ -143,7 +146,7 @@ image::architecture/thumbs/images/concepts/application_services_nav.png[]
 .Order Service Domain Logic
 image::architecture/thumbs/images/concepts/tactical-ddd-pattern-applied.png[]
 
-.draft Order Request
+.Previous Order Request
 [source,json]
 ----
 {
@@ -165,3 +168,22 @@ image::architecture/thumbs/images/concepts/tactical-ddd-pattern-applied.png[]
   ]
 }
 ----
+
+== Kafka Architecture
+
+. Kafka brokers: Servers run in a cluster
+. Topics: Logical data unit that holds multiple partition
+. Partitions: Smallest storage unit that holds subset of records
+. Producers: Writers to end of a specific partition
+. Consumers: Reads from a partition using a offset
+
+.Kafka Topics
+====
+payment-request partitions 3
+
+payment-response partitions 3
+
+restaurant-approval-request partitions 3
+
+restaurant-approval-response partitions 3
+====
