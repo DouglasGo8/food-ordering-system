@@ -177,8 +177,8 @@ image::architecture/thumbs/images/concepts/tactical-ddd-pattern-applied.png[]
 . Producers: Writers to end of a specific partition
 . Consumers: Reads from a partition using a offset
 
-.Kafka Topics
-====
+.Kafka Topics Configuration
+****
 payment-request partitions 3
 
 payment-response partitions 3
@@ -186,4 +186,50 @@ payment-response partitions 3
 restaurant-approval-request partitions 3
 
 restaurant-approval-response partitions 3
-====
+****
+
+=== Apache Camel Kafka Producer/Consumer Configurations
+[source, properties]
+----
+# Common Configuration
+# camel:endpoint?brokers = localhost:9092
+# camel:endpoint?schemaRegistryURL = http://localhost:8081/schema.registry.url
+# camel:endpoint?additionalProperties.num.of.partitions = 3
+# camel:endpoint?additionalProperties.replicationFactor = 3
+# additionalProperties.schemaRegistryURLKey => already configured in schemaRegistryUrl
+
+# Producer Configuration
+# camel:endpoint?keyDeserializer = org.apache.kafka.common.serialization.StringSerializer
+# camel:endpoint?valueDeserializer = io.confluent.kafka.serializers.KafkaAvroSerializer
+# camel:endpoint?compressionCodec = snappy
+# camel:endpoint?requestRequiredAcks = all
+# camel:endpoint:default?producerBatchSize = 16234
+# camel:endpoint?lingerMs = 5
+# camel:endpoint?requestTimeoutMs = 6000
+# camel:endpoint?retries = 5
+# camel:endpoint?additionalProperties.batchSizeBoostFactor = 100
+
+# Consumer Configuration
+# camel:endpoint?keyDeserializer = org.apache.kafka.common.serialization.StringDeserializer
+# camel:endpoint?valueDeserializer = io.confluent.kafka.serializers.KafkaAvroDeserializer
+# camel:endpoint?autoOffsetReset = earliest
+# camel:endpoint?specificAvroReader = true
+# camel:endpoint?sessionTimeoutMs = 10000
+# camel:endpoint?heartbeatIntervalMs = 3000
+# camel:endpoint?maxPollIntervalMs = 300000
+# camel:endpoint?pollTimeoutMs = 150
+# camel:endpoint?maxPollRecords = 500
+# camel:endpoint?maxPartitionFetchBytes = 1048576
+
+
+# camel:endpoint?additionalProperties.autoStartup = true
+# camel:endpoint?additionalProperties.bachListener = true
+# camel:endpoint?additionalProperties:concurrencyLevel = 3
+# camel:endpoint?additionalProperties.specificAvroReaderKey = specific.avro.reader
+# camel:endpoint?additionalProperties:maxPartitionFetchBytesBoostFactor=1
+
+# customer-group-id = customer-topic-consumer
+# payment-consumer-group-id = payment-topic-consumer
+# restaurant-approval-consumer-group-id = restaurant-approval-topic-consumer
+
+----

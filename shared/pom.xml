@@ -17,10 +17,9 @@
   <!-- Project Name -->
   <name>Food Ordering System :: Shared</name>
   <description>Microservices :: Clean Architecture :: DDD :: Saga :: Outbox &amp; Kafka</description>
-
   <!-- Child Modules -->
   <modules>
+    <module>avro-model</module>
     <module>shared-domain</module>
   </modules>
-
 </project>
