@@ -13,6 +13,7 @@ import javax.enterprise.context.ApplicationScoped;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.List;
+import java.util.Objects;
 
 
 /**
@@ -44,15 +45,15 @@ public class OrderDomainServiceImpl implements OrderDomainService {
   public OrderCreatedEvent validateAndInitiateOrder(Order order, Restaurant restaurant) {
     validateRestaurant(restaurant);
     setOrderProductInformation(order, restaurant);
-    //
-    //if (null == order.getId()) {
-    //  order.initializerOrder();
-    //  order.validateOrder();
-    //} else {
-    order.validateOrder();
-    order.initializerOrder();
-    //}
-
+    // no make senses to validate an existing order
+    // and to after overwrite the values
+    if (Objects.isNull(order.getId())) {
+      order.initializerOrder();
+      order.validateOrder();
+    } else {
+      order.validateOrder();
+      // order.initializerOrder();
+    }
     //
     log.info("Order with id: {}", order.getId());
     //

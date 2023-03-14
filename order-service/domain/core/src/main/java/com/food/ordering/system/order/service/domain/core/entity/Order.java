@@ -63,7 +63,6 @@ public class Order extends AggregateRoot<OrderId> {
 
   }
 
-  // to be used with initializerOrder
   public Order(Money price, CustomerId customerId, RestaurantId restaurantId,
                StreetAddress deliveryAddress, List<OrderItem> items) {
     //

@@ -1,6 +1,5 @@
 package com.food.ordering.system.order.service.domain.service;
 
-import com.food.ordering.system.order.service.domain.core.entity.Restaurant;
 import com.food.ordering.system.order.service.domain.service.dto.create.CreateOrderCommandDTO;
 import com.food.ordering.system.order.service.domain.service.dto.create.OrderAddressDTO;
 import com.food.ordering.system.order.service.domain.service.dto.create.OrderItemDTO;

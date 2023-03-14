@@ -91,6 +91,15 @@ mvn install:install-file -Dfile=./target/avro-model-1.0.jar \
   -DgroupId=com.food.ordering.system.shared.avro.model \
   -DartifactId=avro-model -Dversion=1.0 -Dpackaging=jar \
   -DgeneratePom=true
+
+mvn clean -DskipTests compile package
+mvn install:install-file -Dfile=./target/service-1.0.jar \
+  -DgroupId=com.food.ordering.system.order.service.domain.service \
+  -DartifactId=service -Dversion=1.0 -Dpackaging=jar \
+  -DgeneratePom=true
+
+
+
 ----
 
 == DDD Introduction

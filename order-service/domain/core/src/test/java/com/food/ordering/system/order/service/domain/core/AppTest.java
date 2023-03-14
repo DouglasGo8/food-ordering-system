@@ -219,9 +219,8 @@ public class AppTest {
     var streetAddress = new StreetAddress(UUID.randomUUID(), "NY", "Avenue 5th 566", "122002");
     //
     var subTotal = price.multiplyMoney(quantity);
-    //
-    var orderItem = new OrderItem(orderId, orderItemId,
-            product, price, subTotal, quantity);
+    // the Order Object
+    var orderItem = new OrderItem(orderId, orderItemId, product, price, subTotal, quantity);
     //
     return new Order(orderId, price, customerId, restaurantId,
             streetAddress, List.of(orderItem));

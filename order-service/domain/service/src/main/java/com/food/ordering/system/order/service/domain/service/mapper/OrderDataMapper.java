@@ -12,7 +12,7 @@ import com.food.ordering.system.order.service.domain.service.dto.create.CreateOr
 import com.food.ordering.system.order.service.domain.service.dto.create.CreateOrderResponseDTO;
 import com.food.ordering.system.order.service.domain.service.dto.create.OrderAddressDTO;
 import com.food.ordering.system.order.service.domain.service.dto.create.OrderItemDTO;
-import com.food.ordering.system.order.service.domain.service.dto.track.TrackOrderResponse;
+import com.food.ordering.system.order.service.domain.service.dto.track.TrackOrderResponseDTO;
 import com.food.ordering.system.shared.domain.valueobject.CustomerId;
 import com.food.ordering.system.shared.domain.valueobject.Money;
 import com.food.ordering.system.shared.domain.valueobject.ProductId;
@@ -20,16 +20,18 @@ import com.food.ordering.system.shared.domain.valueobject.RestaurantId;
 import io.quarkus.runtime.Startup;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.camel.Body;
-import org.apache.camel.ExchangeProperty;
-import org.apache.camel.Header;
 
+import javax.annotation.PostConstruct;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
+import javax.inject.Named;
 import java.util.List;
 import java.util.UUID;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 @Slf4j
+@Named
 @Startup
 @NoArgsConstructor
 @ApplicationScoped
@@ -38,7 +40,7 @@ public class OrderDataMapper {
   @Inject
   OrderDomainService orderDomainService;
 
-  /*public Restaurant createOrderCommandToRestaurant(@Header("restaurant") Restaurant restaurant) {
+  public Restaurant createOrderCommandToRestaurant(CreateOrderCommandDTO createOrderCommand) {
     var restaurantId = new RestaurantId(createOrderCommand.getRestaurantId());
     //
     final Function<List<OrderItemDTO>, List<Product>> transform = (items) ->
@@ -46,29 +48,31 @@ public class OrderDataMapper {
     //
     return new Restaurant(restaurantId, true, transform.apply(createOrderCommand.getItems()));
     //
-  }*/
+  }
 
-  public OrderCreatedEvent validateAndInitializeOrder(@ExchangeProperty("order") Order order,
-                                                      @Header("restaurant") Restaurant restaurant) {
+  @PostConstruct
+  public void setUp() {
+    //this.orderDomainService = new OrderDomainServiceImpl();
+  }
+
+  public OrderCreatedEvent validateAndInitializeOrder(Order order, Restaurant restaurant) {
     //var orderDomainService = new OrderDomainServiceImpl();
     return orderDomainService.validateAndInitiateOrder(order, restaurant);
     //return null;
   }
 
-  public Order createOrderCommandToOrder(@Body CreateOrderCommandDTO createOrderCommand) {
+  public Order createOrderCommandToOrder(CreateOrderCommandDTO createOrderCommand) {
     var money = new Money(createOrderCommand.getPrice());
     var items = this.orderItemsToOrderItemEntities(createOrderCommand.getItems());
     var customerId = new CustomerId(createOrderCommand.getCustomerId());
     var restaurantId = new RestaurantId(createOrderCommand.getRestaurantId());
     var deliveryAddress = this.orderAddressToStreetAddress(createOrderCommand.getAddress());
     return new Order(money, customerId, restaurantId, deliveryAddress, items);
-    // only Test purpose
-    // order.setId(new OrderId(UUID.randomUUID()));
-    //return  order;
+    //order.setId(new OrderId(UUID.randomUUID()));
+    //return order;
   }
 
-  public CreateOrderResponseDTO orderToCreateOrderResponseDTO(@Body OrderCreatedEvent orderCreatedEvent,
-                                                              @ExchangeProperty("message") String message
+  public CreateOrderResponseDTO orderToCreateOrderResponseDTO(OrderCreatedEvent orderCreatedEvent, String message
   ) {
     final var order = orderCreatedEvent.getOrder();
     return CreateOrderResponseDTO.builder()
@@ -78,8 +82,8 @@ public class OrderDataMapper {
             .build();
   }
 
-  public TrackOrderResponse orderToTrackOrderResponse(@Body Order order) {
-    return TrackOrderResponse.builder()
+  public TrackOrderResponseDTO orderToTrackOrderResponse(Order order) {
+    return TrackOrderResponseDTO.builder()
             .orderTrackingId(order.getTrackingId().getValue())
             .orderStatus(order.getOrderStatus())
             .failureMessages(order.getFailureMessages())
