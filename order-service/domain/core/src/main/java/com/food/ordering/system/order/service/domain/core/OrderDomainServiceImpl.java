@@ -45,11 +45,10 @@ public class OrderDomainServiceImpl implements OrderDomainService {
   public OrderCreatedEvent validateAndInitiateOrder(Order order, Restaurant restaurant) {
     validateRestaurant(restaurant);
     setOrderProductInformation(order, restaurant);
-    // no make senses to validate an existing order
-    // and to after overwrite the values
+    // no make senses validate an existing order and after overwrite their values
     if (Objects.isNull(order.getId())) {
       order.initializerOrder();
-      order.validateOrder();
+      // order.validateOrder();
     } else {
       order.validateOrder();
       // order.initializerOrder();

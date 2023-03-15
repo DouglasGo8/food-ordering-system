@@ -16,11 +16,4 @@
   <name>Food Ordering System :: Order Service :: Data Access</name>
   <description>Microservices :: Clean Architecture :: DDD :: Saga :: Outbox &amp; Kafka</description>
 
-  <dependencies>
-    <!-- Order Domain Service -->
-    <dependency>
-      <groupId>com.food.ordering.system.order.service.domain.service</groupId>
-      <artifactId>service</artifactId>
-    </dependency>
-  </dependencies>
 </project>

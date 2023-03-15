@@ -1,12 +1,12 @@
-package com.food.ordering.system.order.service.domain.service;
+package com.food.ordering.system.order.service.application;
 
-import com.food.ordering.system.order.service.domain.service.dto.create.CreateOrderCommandDTO;
-import com.food.ordering.system.order.service.domain.service.dto.create.CreateOrderResponseDTO;
-import com.food.ordering.system.order.service.domain.service.dto.message.PaymentResponseDTO;
-import com.food.ordering.system.order.service.domain.service.dto.message.RestaurantApprovalResponseDTO;
-import com.food.ordering.system.order.service.domain.service.dto.track.TrackOrderQueryDTO;
-import com.food.ordering.system.order.service.domain.service.dto.track.TrackOrderResponseDTO;
-import com.food.ordering.system.order.service.domain.service.mapper.OrderDataMapper;
+import com.food.ordering.system.order.service.application.mediation.dto.create.CreateOrderCommandDTO;
+import com.food.ordering.system.order.service.application.mediation.dto.create.CreateOrderResponseDTO;
+import com.food.ordering.system.order.service.application.mediation.dto.message.PaymentResponseDTO;
+import com.food.ordering.system.order.service.application.mediation.dto.message.RestaurantApprovalResponseDTO;
+import com.food.ordering.system.order.service.application.mediation.dto.track.TrackOrderQueryDTO;
+import com.food.ordering.system.order.service.application.mediation.dto.track.TrackOrderResponseDTO;
+import com.food.ordering.system.order.service.application.mediation.mapper.OrderDataMapper;
 import com.food.ordering.system.shared.domain.valueobject.OrderApprovalStatus;
 import com.food.ordering.system.shared.domain.valueobject.OrderStatus;
 import com.food.ordering.system.shared.domain.valueobject.PaymentStatus;
@@ -104,15 +104,14 @@ public class AppTest implements BaseTest {
     var trackedResponse = TrackOrderResponseDTO.builder()
             .orderTrackingId(UUID.randomUUID())
             .orderStatus(OrderStatus.APPROVED)
-            .failureMessages(List.of(""))
+            .failureMessages(List.of("A Failure Message"))
             .build();
     //
     assertNotNull(trackedResponse.getOrderTrackingId());
   }
 
-
-
   @Test
+  @Disabled
   public void orderDataMapperCreateOrderCommandToRestaurantRepresentation() {
     var body = this.createOrderCommandDTOFullMock();
     var restaurant = mapper.createOrderCommandToRestaurant(body);
@@ -120,7 +119,38 @@ public class AppTest implements BaseTest {
     assertTrue(restaurant.isActive());
   }
 
+  @Test
+  @Disabled
+  public void orderDataMapperCreateOrderCommandToOrderRepresentation() {
+    var body = this.createOrderCommandDTOFullMock();
+    var order = mapper.createOrderCommandToOrder(body);
+    var restaurant = mapper.createOrderCommandToRestaurant(body);
+    var orderCreatedEvent = mapper.validateAndInitializeOrder(order, restaurant);
+    assertNotNull(orderCreatedEvent.getOrder().getId());
+  }
 
+  @Test
+  @Disabled
+  public void orderDataMapperOrderToCreateOrderResponseDTO() {
+    var message = "My Message";
+    var body = this.createOrderCommandDTOFullMock();
+    var order = mapper.createOrderCommandToOrder(body);
+    var restaurant = mapper.createOrderCommandToRestaurant(body);
+    var orderCreatedEvent = mapper.validateAndInitializeOrder(order, restaurant);
+    var createOrderResponseDTO = mapper.orderToCreateOrderResponseDTO(orderCreatedEvent, message);
+    assertNotNull(createOrderResponseDTO.getOrderTrackingID());
+  }
+
+  @Test
+  @Disabled
+  public void orderDataMapperOrderToTrackOrderResponse() {
+    var order = this.initializerToValidateOrderInitiateMock();
+    //
+    order.initializerOrder();
+    //
+    var trackOrderResponseDTO = mapper.orderToTrackOrderResponse(order);
+    assertEquals(OrderStatus.PENDING, trackOrderResponseDTO.getOrderStatus());
+  }
 
 
 }

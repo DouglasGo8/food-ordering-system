@@ -15,17 +15,17 @@ public class CustomerRepoRoute extends RouteBuilder {
     from("direct:checkCustomerCommandHandler").routeId("checkCustomerCMDH")
             //.transacted() // no makes sense for read operations
             // checkCustomer.jdbc.getCustomerById
+            //.log(LoggingLevel.INFO, "${body.customerId}")
             //.setHeader("payload", body())
             //.to("sql-stored:get_customer_byId(java.sql.Types.INTEGER ${header.srcValue})")
             .to("sql-stored:classpath:templates/getCustomerByIdFunction.sql") // done
-            //.log("${body.size}");
+            //.log(LoggingLevel.INFO, "${body['#result-set-1'].size}")
             // done CamelSqlRowCount
-            .choice().when(simple("${header.CamelSqlRowCount} == 0"))
-            .log(LoggingLevel.INFO, "CustomerId not found in here")
+            .choice().when(simple("${body['#result-set-1'].size} == 0"))
+              .log(LoggingLevel.INFO, "CustomerId not found in here")
             //.throwException(new OrderDomainException(OrderDomainInfo.CUSTOMER_ID_NOT_FOUND))
             .otherwise()
-            .log(LoggingLevel.INFO, "${body}")
-
+              .log(LoggingLevel.INFO, "${body}")
             // checkRestaurant with Body Restaurant
             //.bean(OrderDomainService.class, "validateAndInitiateOrder") // OrderCreatedEvent
             //.to("sql-stored:classpath:templates/saveOrderProcedure.sql")

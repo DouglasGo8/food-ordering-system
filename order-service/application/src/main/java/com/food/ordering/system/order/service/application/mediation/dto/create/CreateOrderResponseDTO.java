@@ -1,22 +1,25 @@
-package com.food.ordering.system.order.service.domain.service.dto.track;
+package com.food.ordering.system.order.service.application.mediation.dto.create;
 
 import com.food.ordering.system.shared.domain.valueobject.OrderStatus;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import javax.validation.constraints.NotNull;
-import java.util.List;
 import java.util.UUID;
 
 @Getter
 @Builder
+@NoArgsConstructor
 @AllArgsConstructor
-public class TrackOrderResponseDTO {
-  @NotNull
-  private final UUID orderTrackingId;
-  @NotNull
+public class CreateOrderResponseDTO {
 
-  private final OrderStatus orderStatus;
-  private final List<String> failureMessages;
+  @NotNull
+  private String message;
+  @NotNull
+  private UUID orderTrackingID;
+  @NotNull
+  private OrderStatus orderStatus;
+
 }

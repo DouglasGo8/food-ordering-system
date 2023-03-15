@@ -1,8 +1,10 @@
 package com.food.ordering.system.order.service.application.rest;
 
-import com.food.ordering.system.order.service.domain.service.dto.create.CreateOrderCommandDTO;
-import com.food.ordering.system.order.service.domain.service.dto.create.CreateOrderResponseDTO;
+import com.food.ordering.system.order.service.application.mediation.dto.create.CreateOrderCommandDTO;
+import com.food.ordering.system.order.service.application.mediation.dto.create.CreateOrderResponseDTO;
 import lombok.NoArgsConstructor;
+import org.apache.camel.Exchange;
+import org.apache.camel.ExchangeProperty;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.model.rest.RestBindingMode;
 
@@ -16,7 +18,7 @@ public class OrderController extends RouteBuilder {
   @Override
   public void configure() {
     // rest/post/createOrder(CreateOrderCommand) implicit Input Camel Binding with CreateOrderResponse returns
-    // @Valid CreateOrderCommand in OrderDataMapper Bean
+    // @Valid CreateOrderCommandDTO in OrderDataMapper Bean
     // trackOrder(TrackOrderQuery trackOrderQuery) implicit Input Camel Binding with TrackOrderResponse return
     // @Valid TrackOrderQuery in OrderDataMapper Bean
     restConfiguration().component("netty-http").contextPath("/orders")
@@ -27,12 +29,20 @@ public class OrderController extends RouteBuilder {
 
     //from("direct:hello").transform(constant("hi"));
 
-    rest("/api/v1/")
+    rest().path("/api/v1/")
             .post("/createOrder")
             .consumes("application/json")
             .type(CreateOrderCommandDTO.class)
             .outType(CreateOrderResponseDTO.class)
-            .to("direct:createOrderCommandHandler");
+            .to("direct:createOrderRouteInline");
+
+
+    from("direct:createOrderRouteInline").routeId("createOrderRouteInline")
+            .to("direct:createOrderCommandHandler")
+            .setHeader(Exchange.HTTP_RESPONSE_CODE, constant("201"))
+            .setHeader(Exchange.CONTENT_TYPE, constant("application/json"));
+
+
     //.get("/trackOrder").outType(TrackOrderResponse.class)
     //.to("direct:orderTrackCommandHandler");
     // composition

@@ -16,4 +16,6 @@ public interface OrderDomainInfo {
 
   String RESTAURANT_STATE_INVALID = "Restaurant with id %s is current not active";
 
+  String CREATE_ORDER_SUCCESS = "Order Successfully created";
+
 }

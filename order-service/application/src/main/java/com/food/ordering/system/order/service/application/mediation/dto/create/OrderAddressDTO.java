@@ -1,26 +1,28 @@
-package com.food.ordering.system.order.service.domain.service.dto.create;
+package com.food.ordering.system.order.service.application.mediation.dto.create;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import javax.validation.constraints.Max;
 import javax.validation.constraints.NotNull;
 
 @Getter
 @Builder
+@NoArgsConstructor
 @AllArgsConstructor
 public class OrderAddressDTO {
   @NotNull
   @Max(value = 50)
-  private final String street;
+  private String street;
 
   @NotNull
   @Max(value = 10)
-  private final String postalCode;
+  private String postalCode;
 
   @NotNull
   @Max(value = 50)
-  private final String city;
+  private String city;
 
 }

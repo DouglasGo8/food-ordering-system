@@ -1,37 +1,39 @@
-package com.food.ordering.system.order.service.domain.service.mapper;
+package com.food.ordering.system.order.service.application.mediation.mapper;
 
 
+import com.food.ordering.system.order.service.application.mediation.dto.create.CreateOrderCommandDTO;
+import com.food.ordering.system.order.service.application.mediation.dto.create.CreateOrderResponseDTO;
+import com.food.ordering.system.order.service.application.mediation.dto.create.OrderAddressDTO;
+import com.food.ordering.system.order.service.application.mediation.dto.create.OrderItemDTO;
+import com.food.ordering.system.order.service.application.mediation.dto.track.TrackOrderResponseDTO;
 import com.food.ordering.system.order.service.domain.core.OrderDomainService;
+import com.food.ordering.system.order.service.domain.core.common.OrderDomainInfo;
 import com.food.ordering.system.order.service.domain.core.entity.Order;
 import com.food.ordering.system.order.service.domain.core.entity.OrderItem;
 import com.food.ordering.system.order.service.domain.core.entity.Product;
 import com.food.ordering.system.order.service.domain.core.entity.Restaurant;
 import com.food.ordering.system.order.service.domain.core.event.OrderCreatedEvent;
 import com.food.ordering.system.order.service.domain.core.valueobject.StreetAddress;
-import com.food.ordering.system.order.service.domain.service.dto.create.CreateOrderCommandDTO;
-import com.food.ordering.system.order.service.domain.service.dto.create.CreateOrderResponseDTO;
-import com.food.ordering.system.order.service.domain.service.dto.create.OrderAddressDTO;
-import com.food.ordering.system.order.service.domain.service.dto.create.OrderItemDTO;
-import com.food.ordering.system.order.service.domain.service.dto.track.TrackOrderResponseDTO;
 import com.food.ordering.system.shared.domain.valueobject.CustomerId;
 import com.food.ordering.system.shared.domain.valueobject.Money;
 import com.food.ordering.system.shared.domain.valueobject.ProductId;
 import com.food.ordering.system.shared.domain.valueobject.RestaurantId;
 import io.quarkus.runtime.Startup;
 import lombok.NoArgsConstructor;
+import lombok.Value;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.camel.Body;
+import org.apache.camel.ExchangeProperty;
 
-import javax.annotation.PostConstruct;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
-import javax.inject.Named;
+import javax.validation.Valid;
 import java.util.List;
 import java.util.UUID;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @Slf4j
-@Named
 @Startup
 @NoArgsConstructor
 @ApplicationScoped
@@ -40,7 +42,7 @@ public class OrderDataMapper {
   @Inject
   OrderDomainService orderDomainService;
 
-  public Restaurant createOrderCommandToRestaurant(CreateOrderCommandDTO createOrderCommand) {
+  public Restaurant createOrderCommandToRestaurant(@Valid @Body CreateOrderCommandDTO createOrderCommand) {
     var restaurantId = new RestaurantId(createOrderCommand.getRestaurantId());
     //
     final Function<List<OrderItemDTO>, List<Product>> transform = (items) ->
@@ -50,18 +52,18 @@ public class OrderDataMapper {
     //
   }
 
-  @PostConstruct
-  public void setUp() {
-    //this.orderDomainService = new OrderDomainServiceImpl();
-  }
+  //@PostConstruct
+  //public void setUp() {
+  //this.orderDomainService = new OrderDomainServiceImpl();
+  //}
 
-  public OrderCreatedEvent validateAndInitializeOrder(Order order, Restaurant restaurant) {
+  public OrderCreatedEvent validateAndInitializeOrder(@Body Order order, @ExchangeProperty("restaurant") Restaurant restaurant) {
     //var orderDomainService = new OrderDomainServiceImpl();
     return orderDomainService.validateAndInitiateOrder(order, restaurant);
     //return null;
   }
 
-  public Order createOrderCommandToOrder(CreateOrderCommandDTO createOrderCommand) {
+  public Order createOrderCommandToOrder(@ExchangeProperty("payload") @Valid CreateOrderCommandDTO createOrderCommand) {
     var money = new Money(createOrderCommand.getPrice());
     var items = this.orderItemsToOrderItemEntities(createOrderCommand.getItems());
     var customerId = new CustomerId(createOrderCommand.getCustomerId());
@@ -72,13 +74,12 @@ public class OrderDataMapper {
     //return order;
   }
 
-  public CreateOrderResponseDTO orderToCreateOrderResponseDTO(OrderCreatedEvent orderCreatedEvent, String message
-  ) {
+  public CreateOrderResponseDTO orderToCreateOrderResponseDTO(@Body OrderCreatedEvent orderCreatedEvent) {
     final var order = orderCreatedEvent.getOrder();
     return CreateOrderResponseDTO.builder()
             .orderTrackingID(order.getTrackingId().getValue())
             .orderStatus(order.getOrderStatus())
-            .message(message)
+            .message(OrderDomainInfo.CREATE_ORDER_SUCCESS)
             .build();
   }
 

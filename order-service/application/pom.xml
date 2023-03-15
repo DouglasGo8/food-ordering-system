@@ -15,7 +15,6 @@
   <name>Food Ordering System :: Order Service :: Application</name>
   <description>Microservices :: Clean Architecture :: DDD :: Saga :: Outbox &amp; Kafka</description>
 
-
   <dependencies>
     <!-- Validator -->
     <dependency>
@@ -57,14 +56,17 @@
       <artifactId>camel-quarkus-avro</artifactId>
     </dependency>
     -->
-    <!-- domain Service -->
-    <dependency>
-      <groupId>com.food.ordering.system.order.service.domain.service</groupId>
-      <artifactId>service</artifactId>
-    </dependency>
     <dependency>
       <groupId>com.food.ordering.system.shared.domain</groupId>
       <artifactId>shared-domain</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.food.ordering.system.shared.avro.model</groupId>
+      <artifactId>avro-model</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.food.ordering.system.order.service.domain.core</groupId>
+      <artifactId>core</artifactId>
     </dependency>
   </dependencies>
 

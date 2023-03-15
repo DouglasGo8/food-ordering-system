@@ -53,11 +53,6 @@
         <version>${project.version}</version>
       </dependency>
       <dependency>
-        <groupId>com.food.ordering.system.order.service.domain.service</groupId>
-        <artifactId>service</artifactId>
-        <version>${project.version}</version>
-      </dependency>
-      <dependency>
         <groupId>com.food.ordering.system.order.service.application</groupId>
         <artifactId>application</artifactId>
         <version>${project.version}</version>
@@ -78,6 +73,11 @@
         <artifactId>shared-domain</artifactId>
         <version>1.0</version>
       </dependency>
+      <dependency>
+        <groupId>com.food.ordering.system.shared.avro.model</groupId>
+        <artifactId>avro-model</artifactId>
+        <version>1.0</version>
+      </dependency>
     </dependencies>
   </dependencyManagement>
   <!-- Common Dependencies -->
@@ -85,7 +85,7 @@
     <dependency>
       <groupId>org.projectlombok</groupId>
       <artifactId>lombok</artifactId>
-      <version>1.18.24</version>
+      <version>1.18.26</version>
     </dependency>
     <dependency>
       <groupId>io.quarkus</groupId>

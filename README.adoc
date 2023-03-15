@@ -1,4 +1,8 @@
-= Microservices & Event Sourcing, Clean Architecture, DDD, SAGA, Outbox & Kafka
+= Microservices & Event Sourcing, Clean Architecture, DDD, SAGA, Outbox & Kafka & Apache Camel
+
+== Why Camel?
+
+. To remove a lot of code bloat and unnecessary sub-modules with verbose code implementation
 
 == Links
 
@@ -30,7 +34,6 @@
 |-|-|- dataaccess           (jar)
 |-|-|- domain               (pom)
 |-|-|-|- core               (jar)
-|-|-|-|- service            (jar)
 |-|-|-|- messaging          (jar)
 ----
 
@@ -91,14 +94,6 @@ mvn install:install-file -Dfile=./target/avro-model-1.0.jar \
   -DgroupId=com.food.ordering.system.shared.avro.model \
   -DartifactId=avro-model -Dversion=1.0 -Dpackaging=jar \
   -DgeneratePom=true
-
-mvn clean -DskipTests compile package
-mvn install:install-file -Dfile=./target/service-1.0.jar \
-  -DgroupId=com.food.ordering.system.order.service.domain.service \
-  -DartifactId=service -Dversion=1.0 -Dpackaging=jar \
-  -DgeneratePom=true
-
-
 
 ----
 
