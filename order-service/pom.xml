@@ -23,7 +23,6 @@
   <modules>
     <module>domain</module>
     <module>container</module>
-    <module>dataaccess</module>
     <module>application</module>
   </modules>
 

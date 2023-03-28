@@ -2,6 +2,7 @@ package com.food.ordering.system.order.service.application.rest;
 
 import com.food.ordering.system.order.service.application.mediation.dto.create.CreateOrderCommandDTO;
 import com.food.ordering.system.order.service.application.mediation.dto.create.CreateOrderResponseDTO;
+import com.food.ordering.system.order.service.application.mediation.dto.track.TrackOrderResponseDTO;
 import lombok.NoArgsConstructor;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangeProperty;
@@ -21,7 +22,10 @@ public class OrderController extends RouteBuilder {
     // @Valid CreateOrderCommandDTO in OrderDataMapper Bean
     // trackOrder(TrackOrderQuery trackOrderQuery) implicit Input Camel Binding with TrackOrderResponse return
     // @Valid TrackOrderQuery in OrderDataMapper Bean
-    restConfiguration().component("netty-http").contextPath("/orders")
+    restConfiguration().component("netty-http")
+            // ---------- CONTEXT PATH BEGIN ---------------------
+            .contextPath("/orders")
+            // ---------- CONTEXT PATH END -----------------------
             .dataFormatProperty("prettyPrint", "true")
             .host("localhost").port(12080).bindingMode(RestBindingMode.auto);
 
@@ -31,17 +35,26 @@ public class OrderController extends RouteBuilder {
 
     rest().path("/api/v1/")
             .post("/createOrder")
-            .consumes("application/json")
-            .type(CreateOrderCommandDTO.class)
-            .outType(CreateOrderResponseDTO.class)
-            .to("direct:createOrderRouteInline");
+              .consumes("application/json")
+              .type(CreateOrderCommandDTO.class)
+              .outType(CreateOrderResponseDTO.class)
+              .to("direct:createOrderRouteInline")
+            .get("/trackingId/{uuid}")
+              .outType(TrackOrderResponseDTO.class)
+              .to("direct:trackingIdRouteInline");
 
 
     from("direct:createOrderRouteInline").routeId("createOrderRouteInline")
             .to("direct:createOrderCommandHandler")
             .setHeader(Exchange.HTTP_RESPONSE_CODE, constant("201"))
-            .setHeader(Exchange.CONTENT_TYPE, constant("application/json"));
+            .setHeader(Exchange.CONTENT_TYPE, constant("application/json"))
+            .end();
 
+    from("direct:trackingIdRouteInline").routeId("trackingIdRouteInline")
+            .to("direct:orderTrackCommandHandler")
+            .setHeader(Exchange.HTTP_RESPONSE_CODE, constant("200"))
+            .setHeader(Exchange.CONTENT_TYPE, constant("application/json"))
+            .end();
 
     //.get("/trackOrder").outType(TrackOrderResponse.class)
     //.to("direct:orderTrackCommandHandler");

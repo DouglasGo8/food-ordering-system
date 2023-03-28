@@ -137,7 +137,7 @@ public class AppTest implements BaseTest {
     var order = mapper.createOrderCommandToOrder(body);
     var restaurant = mapper.createOrderCommandToRestaurant(body);
     var orderCreatedEvent = mapper.validateAndInitializeOrder(order, restaurant);
-    var createOrderResponseDTO = mapper.orderToCreateOrderResponseDTO(orderCreatedEvent, message);
+    var createOrderResponseDTO = mapper.orderToCreateOrderResponseDTO(orderCreatedEvent);
     assertNotNull(createOrderResponseDTO.getOrderTrackingID());
   }
 

@@ -54,7 +54,7 @@ image::architecture/thumbs/images/concepts/skeletal-structure-all.png[]
 . The principle of Hexagonal is isolate the domain layer from any dependency such UI, Data layer infrastructure or any framework
 
 .Hexagonal Principle
-image::architecture/thumbs/images/hexagonal_principle.png[]
+image::architecture/thumbs/images/concepts/hexagonal_principle.png[]
 
 .Graphviz
 [source,bash]

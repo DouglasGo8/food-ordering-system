@@ -48,10 +48,8 @@ public class OrderDomainServiceImpl implements OrderDomainService {
     // no make senses validate an existing order and after overwrite their values
     if (Objects.isNull(order.getId())) {
       order.initializerOrder();
-      // order.validateOrder();
     } else {
       order.validateOrder();
-      // order.initializerOrder();
     }
     //
     log.info("Order with id: {}", order.getId());

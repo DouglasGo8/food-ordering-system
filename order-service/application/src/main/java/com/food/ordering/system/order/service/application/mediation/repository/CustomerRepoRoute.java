@@ -13,25 +13,14 @@ public class CustomerRepoRoute extends RouteBuilder {
   @Override
   public void configure() {
     from("direct:checkCustomerCommandHandler").routeId("checkCustomerCMDH")
-            //.transacted() // no makes sense for read operations
-            // checkCustomer.jdbc.getCustomerById
-            //.log(LoggingLevel.INFO, "${body.customerId}")
-            //.setHeader("payload", body())
-            //.to("sql-stored:get_customer_byId(java.sql.Types.INTEGER ${header.srcValue})")
-            .to("sql-stored:classpath:templates/getCustomerByIdFunction.sql") // done
+            .to("sql-stored:classpath:templates/getCustomerByIdFunction.sql?function=true") // done
             //.log(LoggingLevel.INFO, "${body['#result-set-1'].size}")
             // done CamelSqlRowCount
             .choice().when(simple("${body['#result-set-1'].size} == 0"))
               .log(LoggingLevel.INFO, "CustomerId not found in here")
             //.throwException(new OrderDomainException(OrderDomainInfo.CUSTOMER_ID_NOT_FOUND))
             .otherwise()
-              .log(LoggingLevel.INFO, "${body}")
-            // checkRestaurant with Body Restaurant
-            //.bean(OrderDomainService.class, "validateAndInitiateOrder") // OrderCreatedEvent
-            //.to("sql-stored:classpath:templates/saveOrderProcedure.sql")
-            //.choice().when(simple("body proc returned is not null"))
-            //.otherwise().log("new Order Id saved in DB")
-            //.bean(OrderDataMapper::new, "orderToCreateOrderResponseDTO")
+              .log(LoggingLevel.INFO, "-")
             .end();
   }
 }

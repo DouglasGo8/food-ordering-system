@@ -58,9 +58,10 @@ public class OrderDataMapper {
   //}
 
   public OrderCreatedEvent validateAndInitializeOrder(@Body Order order, @ExchangeProperty("restaurant") Restaurant restaurant) {
-    //var orderDomainService = new OrderDomainServiceImpl();
+
     return orderDomainService.validateAndInitiateOrder(order, restaurant);
-    //return null;
+
+    // o.getOrder().getId().getValue()
   }
 
   public Order createOrderCommandToOrder(@ExchangeProperty("payload") @Valid CreateOrderCommandDTO createOrderCommand) {
@@ -70,8 +71,6 @@ public class OrderDataMapper {
     var restaurantId = new RestaurantId(createOrderCommand.getRestaurantId());
     var deliveryAddress = this.orderAddressToStreetAddress(createOrderCommand.getAddress());
     return new Order(money, customerId, restaurantId, deliveryAddress, items);
-    //order.setId(new OrderId(UUID.randomUUID()));
-    //return order;
   }
 
   public CreateOrderResponseDTO orderToCreateOrderResponseDTO(@Body OrderCreatedEvent orderCreatedEvent) {

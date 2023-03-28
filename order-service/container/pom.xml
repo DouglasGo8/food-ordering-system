@@ -14,7 +14,7 @@
   <!-- Project Name -->
   <name>Food Ordering System :: Order Service :: Container</name>
   <description>Microservices :: Clean Architecture :: DDD :: Saga :: Outbox &amp; Kafka</description>
-  
+
   <dependencies>
     <dependency>
       <groupId>com.food.ordering.system.order.service.domain.core</groupId>
@@ -23,10 +23,6 @@
     <dependency>
       <groupId>com.food.ordering.system.order.service.application</groupId>
       <artifactId>application</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>com.food.ordering.system.order.service.dataaccess</groupId>
-      <artifactId>dataaccess</artifactId>
     </dependency>
     <dependency>
       <groupId>com.food.ordering.system.order.service.domain.messaging</groupId>

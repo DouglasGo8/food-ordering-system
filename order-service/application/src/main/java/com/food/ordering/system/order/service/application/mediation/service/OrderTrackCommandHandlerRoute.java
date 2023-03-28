@@ -14,8 +14,12 @@ public class OrderTrackCommandHandlerRoute extends RouteBuilder {
   @Override
   public void configure() {
 
+    // ExceptionHandler Concept
+    //onException();
+
     from("direct:orderTrackCommandHandler").routeId("orderTrackRoute")
             .log("Message from ${body}")
+            .transform(simple("trackingId - ${header.uuid}"))
             //.to("sql-stored:classpath:templates/getTrackingByIdFunction.sql") // returns Order
             // CamelSqlRow == 0 throws exception new OrderDomainNotFound("")
             //.bean(OrderDataMapper.class,"orderToTrackOrderResponse")
