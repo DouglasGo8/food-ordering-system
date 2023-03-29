@@ -21,7 +21,7 @@ public class CamelAppIT extends CamelQuarkusTestSupport implements BaseTest {
 
 
   @Test
-  public void testCreateOrderByControllerRepresentation() {
+  public void createOrderCommandDTOByOrderControllerRepresentation() {
     var body = this.createOrderCommandDTOFullMock();
     this.producerTemplate.sendBody("direct:createOrderCommandHandler", body);
     //log.info("{}", body.getCustomerId());

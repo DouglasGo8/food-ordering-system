@@ -10,6 +10,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -60,7 +61,7 @@ public class AppTest {
 
   @Test
   public void moneyIsGreaterThanZero() {
-    var money1 = new Money(BigDecimal.valueOf(10l)); // usd 10
+    var money1 = new Money(BigDecimal.valueOf(10L)); // usd 10
     var money2 = new Money(BigDecimal.ZERO);
     //
     assertTrue(money1.isGreaterThanZero());
@@ -81,7 +82,7 @@ public class AppTest {
     var money1 = new Money(BigDecimal.valueOf(10l)); // usd 10
     var money2 = money1.addMoney(money1);
 
-    assertEquals(money2.amount(), BigDecimal.valueOf(20l).setScale(2));
+    assertEquals(money2.getAmount(), BigDecimal.valueOf(20l).setScale(2));
     // Ensuring @equals and @hashCode on Records
     assertNotEquals(money1, money2);
   }
@@ -91,7 +92,7 @@ public class AppTest {
     var money1 = new Money(BigDecimal.valueOf(10l)); // usd 10
     var money2 = money1.subtractMoney(new Money(BigDecimal.valueOf(2)));
 
-    assertEquals(money2.amount(), BigDecimal.valueOf(8l).setScale(2));
+    assertEquals(money2.getAmount(), BigDecimal.valueOf(8l).setScale(2));
     // Ensuring @equals and @hashCode on Records
     assertNotEquals(money1, money2);
   }
@@ -101,14 +102,15 @@ public class AppTest {
     var money1 = new Money(BigDecimal.valueOf(10l)); // usd 10
     var money2 = money1.multiplyMoney(2);
 
-    assertEquals(money2.amount(), BigDecimal.valueOf(20l).setScale(2));
+    assertEquals(money2.getAmount(), BigDecimal.valueOf(20l).setScale(2));
     // Ensuring @equals and @hashCode on Records
     assertNotEquals(money1, money2);
   }
 
   @Test
   public void setScale() {
-    var money1 = new Money(BigDecimal.valueOf(10l)); // usd 10
-    assertEquals(money1.setScale(money1.amount()), BigDecimal.valueOf(10).setScale(2));
+    var money1 = new Money(BigDecimal.valueOf(10L)); // usd 10
+    assertEquals(money1.setScale(money1.getAmount()), BigDecimal.valueOf(10)
+            .setScale(2, RoundingMode.HALF_EVEN));
   }
 }

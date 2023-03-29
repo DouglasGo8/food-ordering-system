@@ -1,15 +1,22 @@
 package com.food.ordering.system.shared.domain.valueobject;
 
+import lombok.AllArgsConstructor;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 
-/**
- * records come with a default implementation
- * for hashCode(), equals() and toString() for all attributes inside the record
- *
- * @param amount
- */
-public record Money(BigDecimal amount) {
+
+@Getter
+@EqualsAndHashCode
+@NoArgsConstructor
+@AllArgsConstructor
+public class Money {
+
+
+  private BigDecimal amount;
 
   public static final Money ZERO = new Money(BigDecimal.ZERO);
 

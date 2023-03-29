@@ -29,6 +29,15 @@ public interface BaseTest {
             .build();
   }
 
+  default OrderItemDTO createWrongOrderItemMock(BigDecimal price) {
+    return OrderItemDTO.builder()
+            .productId(UUID.randomUUID())
+            .quantity(1) // wrong
+            .price(price)
+            .subTotal(price)
+            .build();
+  }
+
   default OrderAddressDTO createOrderAddressMock() {
     return OrderAddressDTO.builder()
             .city("LA")
@@ -41,13 +50,16 @@ public interface BaseTest {
     var price = BigDecimal.valueOf(33.76);
     var customerIdValid = UUID.fromString("af20558e-5e77-4a6e-bb2f-fef1f14c0ee9");
     var restaurantIdValid = UUID.fromString("c8dfc68d-9269-45c2-b2d1-7e0d0aa3c57b");
-
-
+    //
     return CreateOrderCommandDTO.builder()
             .customerId(customerIdValid)
             .restaurantId(restaurantIdValid)
             .price(price)
-            .items(List.of(this.createOrderItemMock(price)))
+            .items(List.of(
+                    this.createOrderItemMock(price)/*,
+                    this.createOrderItemMock(price2),
+                    this.createWrongOrderItemMock(price)*/
+            ))
             .address(this.createOrderAddressMock())
             .build();
 

@@ -31,15 +31,18 @@ public class OrderCreateCommandHandlerRoute extends RouteBuilder {
   @Override
   public void configure() {
 
-    // ExceptionHandler Concept
+    // ExceptionHandler Advice Concept
 
     onException(OrderDomainException.class)
+            .log("Exception occurs")
+            .setHeader("codeAndReason", constant(500))
+            .transform(exceptionMessage())
             .bean(ExceptionMapper.class); // ErrorDTO.class
 
     onException(OrderDomainNotFound.class)
             .bean(ExceptionMapper.class); // ErrorDTO.class
 
-    //onException(InternalServerErrorException.class) ? usage
+    //onException(InternalServerErrorException.class) ? validate usage
 
     // will compose the Apache Camel Pipeline
     // OrderDomainService
@@ -54,23 +57,25 @@ public class OrderCreateCommandHandlerRoute extends RouteBuilder {
             .multicast().stopOnException()
               .to("direct:checkCustomerCommandHandler", "direct:checkRestaurantCommandHandler")
             .end() // end multicast
-            .bean(OrderDataMapper.class, "createOrderCommandToOrder") // order Object
-            //.transform(body())
-            .bean(OrderDataMapper.class, "validateAndInitializeOrder") // orderCreatedEvent Object
-            .setProperty("orderCreatedEvent", body())
+            .bean(OrderDataMapper.class, "createOrderCommandToOrder") // returns Order Object
+            .bean(OrderDataMapper.class, "validateAndInitializeOrder") // returns OrderCreatedEvent Object
+            /*.setProperty("orderCreatedEvent", body())
             .transform(exchangeProperty("payload"))
             .to("sql-stored:classpath:templates/insertOrders.sql")
-            .log("${body}")
-            //.log(LoggingLevel.INFO, "${body.order.id.value}-${exchangeProperty.restaurant.id.value}")
-            // ----------------------------------------------------------------------
-            //sql-stored:saveOrder // must return new Order from DB
-            // ----------------------------------------------------------------------
-            // log("Order is created with id: ${body.customerId}")
-            // exception from DB could not save order
+            .setProperty("orderIdOut", simple("${body['result']}")) // result SpEL From PROCEDURE
+            .log("Order created with id: ${exchangeProperty.orderIdOut}")
+            .transform(exchangeProperty("payload"))
+            // Removes code boilerplate from orderItemsToOrderItemEntities method
+            .split(simple("${body.items}")).streaming(true).parallelProcessing()
+            //  .log("${exchangeProperty.orderIdOut}")
+              .to("sql-stored:classpath:templates/insertOrderItems.sql")
+            .end() // close Split
+            .transform(exchangeProperty("orderCreatedEvent"))
             //.wireTap("seda:publishOrderCreatedPayment?blockWhenFull=true&concurrentConsumers=5")
-            //.bean(OrderDataMapper.class, "orderToCreateOrderResponseDTO") // orderCreateResponseDTO
-            //.log("${body}")
-            .end();
+            .bean(OrderDataMapper.class, "orderToCreateOrderResponseDTO") // orderCreateResponseDTO*/
+            .log("${body}")
+    .end();
+
 
 
   }

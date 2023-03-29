@@ -96,12 +96,8 @@ public class OrderDataMapper {
   }
 
   private List<OrderItem> orderItemsToOrderItemEntities(List<OrderItemDTO> items) {
-
-    return items.stream().map(i -> new OrderItem
-                    (  // Product
-                            new Product(new ProductId(i.getProductId())),
-                            new Money(i.getPrice()),
-                            new Money(i.getPrice()), 1))
-            .toList();
+    return items.stream().map(i -> new OrderItem(
+            new Product(new ProductId(i.getProductId())),
+            new Money(i.getPrice()), new Money(i.getPrice()), i.getQuantity())).toList();
   }
 }

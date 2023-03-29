@@ -10,6 +10,7 @@ import com.food.ordering.system.shared.domain.valueobject.*;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -146,8 +147,9 @@ public class Order extends AggregateRoot<OrderId> {
             .reduce(Money.ZERO, Money::addMoney);
     //
     if (!price.equals(orderItemTotal)) {
-      throw new OrderDomainException(String.format(OrderDomainInfo.TOTAL_PRICE_INVALID_MSG,
-              price.amount(), orderItemTotal.amount())
+      throw new OrderDomainException(String.format(
+              "Validation Price Error %s %s",
+              price.getAmount(), orderItemTotal.getAmount())
       );
     }
   }
@@ -155,9 +157,10 @@ public class Order extends AggregateRoot<OrderId> {
   private void validateItemPrice(OrderItem orderItem) {
     if (!orderItem.isPriceValid()) {
       throw new OrderDomainException(
-              String.format(OrderDomainInfo.ITEM_PRICE_INVALID_MSG,
-                      orderItem.getPrice().amount(),
-                      orderItem.getSubTotal().amount()));
+              String.format(OrderDomainInfo.TOTAL_PRICE_INVALID_MSG,
+                      orderItem.getQuantity(),
+                      orderItem.getPrice().getAmount(),
+                      orderItem.getSubTotal().getAmount()));
     }
   }
 
@@ -176,7 +179,7 @@ public class Order extends AggregateRoot<OrderId> {
 
   private void updateFailureMessages(List<String> failureMessages) {
     if (this.failureMessages != null && failureMessages != null) {
-      this.failureMessages.addAll(failureMessages.stream().filter(m -> !m.isEmpty()).collect(Collectors.toList()));
+      this.failureMessages.addAll(failureMessages.stream().filter(m -> !m.isEmpty()).toList());
     }
     if (null == this.failureMessages) {
       this.failureMessages = failureMessages;

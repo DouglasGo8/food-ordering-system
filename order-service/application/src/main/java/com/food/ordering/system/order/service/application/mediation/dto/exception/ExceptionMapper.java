@@ -13,11 +13,11 @@ import javax.enterprise.context.ApplicationScoped;
 public class ExceptionMapper {
 
   @Handler
-  public ErrorDTO handlerException(@Body OrderDomainException orderDomainException,
+  public ErrorDTO handlerException(@Body String orderDomainExceptionMessage,
                                    @Header("codeAndReason") String codeAndReason) {
     return ErrorDTO.builder()
             .code(codeAndReason)
-            .message(orderDomainException.getMessage())
+            .message(orderDomainExceptionMessage)
             .build();
   }
 

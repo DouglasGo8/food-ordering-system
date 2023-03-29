@@ -24,8 +24,7 @@ public class AppTest {
 
   @Test
   public void streetAddressRepresentation() {
-    var streetAddress = new StreetAddress(UUID.randomUUID(),
-            "NY", "Avenue 5th 566", "122002");
+    var streetAddress = new StreetAddress(UUID.randomUUID(), "NY", "Avenue 5th 566", "122002");
     //
     assertEquals(streetAddress.city(), "NY");
   }
@@ -55,19 +54,32 @@ public class AppTest {
     //log.info("{}", orderItem.getSubTotal());
     assertNotNull(orderItem.getId());
     assertEquals(orderItem.getOrderId().getValue(), orderId.getValue());
-    assertEquals(orderItem.getSubTotal().amount(), BigDecimal.valueOf(8598.64));
+    assertEquals(orderItem.getSubTotal().getAmount(), BigDecimal.valueOf(8598.64));
 
   }
 
   @Test
-  public void orderRepresentation() {
+  public void orderWithCorrectSubTotalRepresentation() {
     var order = this.initializerOrderMultipliedByTwoMock();
     //
     assertNotNull(order.getId());
     // later we'll use reduce to validate the same approach
-    assertEquals(order.getItems().get(0).getSubTotal().amount(), BigDecimal.valueOf(8598.64));
+    assertEquals(order.getItems().get(0).getSubTotal().getAmount(), BigDecimal.valueOf(8598.64));
     assertEquals(order.getRestaurantId().getValue(), order.getRestaurantId().getValue());
   }
+
+  @Test
+  public void orderWithWrongSubTotalRepresentation() {
+    var order = this.initializerOrderMultipliedByTwoWithWrongSubTotalMock();
+    order.initializerOrder();
+    order.validateOrder();
+    //
+    assertNotNull(order.getId());
+    // later we'll use reduce to validate the same approach
+    //assertThrowsExactly(order.getItems().get(0).getSubTotal().amount(), BigDecimal.valueOf(8598.64));
+
+  }
+
 
   @Test
   public void initializerOrderRepresentation() {
@@ -172,7 +184,7 @@ public class AppTest {
 
   @Test
   public void moneyZeroRepresentation() {
-    assertEquals(Money.ZERO.amount(), BigDecimal.ZERO);
+    assertEquals(Money.ZERO.getAmount(), BigDecimal.ZERO);
   }
 
   @Test
@@ -219,6 +231,26 @@ public class AppTest {
     var streetAddress = new StreetAddress(UUID.randomUUID(), "NY", "Avenue 5th 566", "122002");
     //
     var subTotal = price.multiplyMoney(quantity);
+    // the Order Object
+    var orderItem = new OrderItem(orderId, orderItemId, product, price, subTotal, quantity);
+    //
+    return new Order(orderId, price, customerId, restaurantId,
+            streetAddress, List.of(orderItem));
+    //
+  }
+
+  private Order initializerOrderMultipliedByTwoWithWrongSubTotalMock() {
+    var quantity = 2;
+    var orderId = new OrderId(UUID.randomUUID());
+    var orderItemId = new OrderItemId(12L);
+    var productId = new ProductId(UUID.randomUUID());
+    var customerId = new CustomerId(UUID.randomUUID());
+    var restaurantId = new RestaurantId(UUID.randomUUID());
+    var price = new Money(BigDecimal.valueOf(4_299.32));
+    var product = new Product(productId, "Mac Book M1 Max", price);
+    var streetAddress = new StreetAddress(UUID.randomUUID(), "NY", "Avenue 5th 566", "122002");
+    //
+    var subTotal = price; // redundant only test effect
     // the Order Object
     var orderItem = new OrderItem(orderId, orderItemId, product, price, subTotal, quantity);
     //
