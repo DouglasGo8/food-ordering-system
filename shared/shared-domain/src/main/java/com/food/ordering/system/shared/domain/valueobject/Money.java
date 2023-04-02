@@ -8,18 +8,14 @@ import lombok.NoArgsConstructor;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 
-
 @Getter
 @EqualsAndHashCode
 @NoArgsConstructor
 @AllArgsConstructor
 public class Money {
 
-
   private BigDecimal amount;
-
   public static final Money ZERO = new Money(BigDecimal.ZERO);
-
 
   public Money addMoney(Money money) {
     // add is a BigDecimal Operation

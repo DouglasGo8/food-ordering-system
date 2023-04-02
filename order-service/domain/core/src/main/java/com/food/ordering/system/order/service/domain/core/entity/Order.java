@@ -2,6 +2,7 @@ package com.food.ordering.system.order.service.domain.core.entity;
 
 import com.food.ordering.system.order.service.domain.core.common.OrderDomainInfo;
 import com.food.ordering.system.order.service.domain.core.exception.OrderDomainException;
+import com.food.ordering.system.order.service.domain.core.valueobject.OrderItemId;
 import com.food.ordering.system.order.service.domain.core.valueobject.StreetAddress;
 import com.food.ordering.system.order.service.domain.core.valueobject.TrackingId;
 import com.food.ordering.system.shared.domain.entity.AggregateRoot;
@@ -32,13 +33,12 @@ public class Order extends AggregateRoot<OrderId> {
   //
 
   private TrackingId trackingId;
-
   private OrderStatus orderStatus;
   private List<String> failureMessages;
 
-
-  public Order(OrderId orderId, Money price, CustomerId customerId, RestaurantId restaurantId,
-               StreetAddress deliveryAddress, List<OrderItem> items) {
+  //
+  public Order(OrderId orderId, Money price, CustomerId customerId,
+               RestaurantId restaurantId, StreetAddress deliveryAddress, List<OrderItem> items) {
     //
     super.setId(orderId);
     //
@@ -127,12 +127,12 @@ public class Order extends AggregateRoot<OrderId> {
   // ---- Order States Transitions END ----
 
   private void initializerOrderItems() {
-    //long itemId = 1l;
+    long itemId = 1;
     //
     for (var item : items) {
       // item.initializeOrderItem(super.getId(), itemId++);
       //log.info(item.getId().toString());
-      item.initializeOrderItem(super.getId(), item.getId());
+      item.initializeOrderItem(super.getId(), new OrderItemId(itemId++));
     }
   }
 
@@ -147,20 +147,16 @@ public class Order extends AggregateRoot<OrderId> {
             .reduce(Money.ZERO, Money::addMoney);
     //
     if (!price.equals(orderItemTotal)) {
-      throw new OrderDomainException(String.format(
-              "Validation Price Error %s %s",
-              price.getAmount(), orderItemTotal.getAmount())
-      );
+      throw new OrderDomainException(String.format(OrderDomainInfo.TOTAL_PRICE_INVALID_MSG, price.getAmount(),
+              orderItemTotal.getAmount()));
     }
   }
 
   private void validateItemPrice(OrderItem orderItem) {
     if (!orderItem.isPriceValid()) {
-      throw new OrderDomainException(
-              String.format(OrderDomainInfo.TOTAL_PRICE_INVALID_MSG,
-                      orderItem.getQuantity(),
-                      orderItem.getPrice().getAmount(),
-                      orderItem.getSubTotal().getAmount()));
+      throw new OrderDomainException(String.format(OrderDomainInfo.ORDER_ITEM_INVALID_PRICE,
+              orderItem.getPrice().getAmount(),
+              orderItem.getProduct().getId().getValue()));
     }
   }
 
@@ -172,7 +168,7 @@ public class Order extends AggregateRoot<OrderId> {
 
   private void validateInitialOrder() {
 
-    if (null == orderStatus || null == this.getId()) {
+    if (orderStatus != null || this.getId() != null) {
       throw new OrderDomainException(OrderDomainInfo.INITIAL_ORDER_INVALID_MSG);
     }
   }
