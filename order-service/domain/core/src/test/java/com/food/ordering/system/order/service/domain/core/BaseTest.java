@@ -4,9 +4,11 @@ import com.food.ordering.system.order.service.domain.core.entity.Order;
 import com.food.ordering.system.order.service.domain.core.entity.OrderItem;
 import com.food.ordering.system.order.service.domain.core.entity.Product;
 import com.food.ordering.system.order.service.domain.core.entity.Restaurant;
-import com.food.ordering.system.order.service.domain.core.valueobject.OrderItemId;
 import com.food.ordering.system.order.service.domain.core.valueobject.StreetAddress;
-import com.food.ordering.system.shared.domain.valueobject.*;
+import com.food.ordering.system.shared.domain.valueobject.CustomerId;
+import com.food.ordering.system.shared.domain.valueobject.Money;
+import com.food.ordering.system.shared.domain.valueobject.ProductId;
+import com.food.ordering.system.shared.domain.valueobject.RestaurantId;
 
 import java.math.BigDecimal;
 import java.util.List;

@@ -1,6 +1,5 @@
 package com.food.ordering.system.order.service.application.mediation.dto.exception;
 
-import com.food.ordering.system.order.service.domain.core.exception.OrderDomainException;
 import lombok.NoArgsConstructor;
 import org.apache.camel.Body;
 import org.apache.camel.Handler;

@@ -5,7 +5,6 @@ import com.food.ordering.system.order.service.application.mediation.dto.create.C
 import com.food.ordering.system.order.service.application.mediation.dto.track.TrackOrderResponseDTO;
 import lombok.NoArgsConstructor;
 import org.apache.camel.Exchange;
-import org.apache.camel.ExchangeProperty;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.model.rest.RestBindingMode;
 

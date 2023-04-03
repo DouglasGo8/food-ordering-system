@@ -2,6 +2,7 @@ package com.food.ordering.system.order.service.application;
 
 import com.food.ordering.system.order.service.application.mediation.dto.create.CreateOrderCommandDTO;
 import com.food.ordering.system.order.service.application.mediation.dto.create.CreateOrderResponseDTO;
+import com.food.ordering.system.order.service.application.mediation.dto.create.OrderItemDTO;
 import com.food.ordering.system.order.service.application.mediation.dto.message.PaymentResponseDTO;
 import com.food.ordering.system.order.service.application.mediation.dto.message.RestaurantApprovalResponseDTO;
 import com.food.ordering.system.order.service.application.mediation.dto.track.TrackOrderQueryDTO;
@@ -30,17 +31,40 @@ public class AppTest implements BaseTest {
 
   @Test
   @Disabled
-  public void createOrderCommandRepresentation() {
+  public void createOrderWithSingleItemCommandRepresentation() {
     var price = BigDecimal.valueOf(33_76L);
     var createOrderCommand = CreateOrderCommandDTO.builder()
             .customerId(UUID.randomUUID())
             .restaurantId(UUID.randomUUID())
-            .price(BigDecimal.valueOf(33_76))
-            .items(List.of(this.createOrderItemMock(price)))
+            .price(BigDecimal.valueOf(33_76)) // Sum of Order Items Price
+            .items(List.of(this.createSingleOrderItemMock(price)))
             .address(this.createOrderAddressMock())
             .build();
 
     assertNotNull(createOrderCommand.getCustomerId());
+    assertNotNull(createOrderCommand.getRestaurantId());
+    // Single Item
+    assertEquals(createOrderCommand.getPrice(), createOrderCommand.getItems().get(0).getPrice());
+  }
+
+  @Test
+  @Disabled
+  public void createOrderWithMultipleItemCommandRepresentation() {
+
+    var items = this.createMultipleOrderItemsMock();
+    var orderPrice = items.stream().map(OrderItemDTO::getSubTotal).reduce(BigDecimal.ZERO, BigDecimal::add);
+
+    var createOrderCommand = CreateOrderCommandDTO.builder()
+            .customerId(UUID.randomUUID())
+            .restaurantId(UUID.randomUUID())
+            .price(orderPrice) // Sum of Order Items Price
+            .items(items)
+            .address(this.createOrderAddressMock())
+            .build();
+
+    assertNotNull(createOrderCommand.getCustomerId());
+    assertNotNull(createOrderCommand.getRestaurantId());
+    assertEquals(createOrderCommand.getPrice(), orderPrice);
   }
 
   @Test
@@ -61,16 +85,17 @@ public class AppTest implements BaseTest {
   public void createPaymentResponseRepresentation() {
     var paymentResponse = PaymentResponseDTO
             .builder()
-            .id("id-xxx")
-            .sagaId("saga-id-xxx")
-            .orderId("order-id-xxx")
-            .paymentId("payment-id-xxx")
-            .customerId("customer-id-xxx")
+            .id("01938e95-9e40-4d18-b550-c00ebfd41238")
+            .sagaId("30593229-6fa0-4cab-a731-00503455cc3a")
+            .orderId("fc13c77c-5aeb-4102-8678-8244064ea6e5")
+            .paymentId("b3206282-bfc7-4d09-bf94-7ed1691672d5")
+            .customerId("4df6e8f8-09a9-48b9-a0f7-6dc7fdb84985")
             .price(BigDecimal.valueOf(10_22L))
             .createdAt(Instant.now())
             .paymentStatus(PaymentStatus.COMPLETED)
             .failureMessages(List.of("")).build();
     //
+    assertNotNull(paymentResponse.getId());
     assertEquals(PaymentStatus.COMPLETED, paymentResponse.getPaymentStatus());
   }
 
@@ -78,15 +103,15 @@ public class AppTest implements BaseTest {
   @Disabled
   public void createRestaurantApprovalResponse() {
     var restaurantApprovalResponse = RestaurantApprovalResponseDTO.builder()
-            .id("id-xxx")
-            .sagaId("saga-id-xxx")
-            .orderId("order-id-xxx")
-            .restaurantId("restaurant-id-xxx")
+            .id("a9b7ba11-0aea-422a-b648-660b82342569")
+            .sagaId("3d9df5dc-3263-45d8-89b2-bf545cf6205f")
+            .orderId("57e0e4ce-9eab-44e5-98b1-575fa8763cd7")
+            .restaurantId("50109882-bf00-46f6-a88b-133dbcf1f371")
             .createdAt(Instant.now())
             .failureMessages(List.of(""))
             .orderApprovalStatus(OrderApprovalStatus.APPROVED)
             .build();
-    assertEquals("id-xxx", restaurantApprovalResponse.getId());
+    assertNotNull(restaurantApprovalResponse.getId());
     assertEquals(OrderApprovalStatus.APPROVED, restaurantApprovalResponse.getOrderApprovalStatus());
   }
 
@@ -132,7 +157,6 @@ public class AppTest implements BaseTest {
   @Test
   @Disabled
   public void orderDataMapperOrderToCreateOrderResponseDTO() {
-    var message = "My Message";
     var body = this.createOrderCommandDTOFullMock();
     var order = mapper.createOrderCommandToOrder(body);
     var restaurant = mapper.createOrderCommandToRestaurant(body);
@@ -145,7 +169,7 @@ public class AppTest implements BaseTest {
   @Disabled
   public void orderDataMapperOrderToTrackOrderResponse() {
     var order = this.initializerToValidateOrderInitiateMock();
-    //
+    order.validateOrder();
     order.initializerOrder();
     //
     var trackOrderResponseDTO = mapper.orderToTrackOrderResponse(order);

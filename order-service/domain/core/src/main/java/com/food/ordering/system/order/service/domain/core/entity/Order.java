@@ -11,10 +11,9 @@ import com.food.ordering.system.shared.domain.valueobject.*;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
-import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 /**
  * @author dougdb
@@ -175,7 +174,7 @@ public class Order extends AggregateRoot<OrderId> {
 
   private void updateFailureMessages(List<String> failureMessages) {
     if (this.failureMessages != null && failureMessages != null) {
-      this.failureMessages.addAll(failureMessages.stream().filter(m -> !m.isEmpty()).toList());
+      this.failureMessages = new ArrayList<>(failureMessages.stream().filter(m -> !m.isEmpty()).toList());
     }
     if (null == this.failureMessages) {
       this.failureMessages = failureMessages;

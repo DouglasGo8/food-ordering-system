@@ -20,7 +20,7 @@ public class CustomerRepoRoute extends RouteBuilder {
               .log(LoggingLevel.INFO, "CustomerId not found in here")
             //.throwException(new OrderDomainException(OrderDomainInfo.CUSTOMER_ID_NOT_FOUND))
             .otherwise()
-              .log(LoggingLevel.INFO, "-")
+              .log(LoggingLevel.INFO, "Found CustomerId")
             .end();
   }
 }

@@ -215,35 +215,38 @@ public class AppTest extends BaseTest {
     assertEquals(orderCreatedEvent.getOrder().getOrderStatus(), OrderStatus.PENDING);
   }
 
-  /*
-  Fix the all testes bellow
+
   @Test
-  @Disabled
   public void orderDomainServiceApproveOrderRepresentation() {
-    var order = this.initializerOrderWithStatusMock(OrderStatus.PAID);
-    var orderEventApproved = new OrderDomainServiceImpl();
-    orderEventApproved.approveOrder(order);
+    var order = this.initializerOrderWithSingleOrderItemInitiateMock();
+    order.validateOrder();
+    order.initializerOrder();
+    order.pay();
+    //
+    this.orderDomainService.approveOrder(order);
     assertEquals(order.getOrderStatus(), OrderStatus.APPROVED);
   }
 
   @Test
-  @Disabled
   public void orderDomainServiceCancelOrderRepresentation() {
-    var order = this.initializerOrderWithStatusMock(OrderStatus.CANCELLING);
-    var orderEventApproved = new OrderDomainServiceImpl();
-    orderEventApproved.cancelOrder(order, List.of("Order Cancelled"));
+    var order = this.initializerOrderWithSingleOrderItemInitiateMock();
+    order.validateOrder();
+    order.initializerOrder();
+    order.pay();
+    var reasons = List.of("Order Cancelled for any Reason");
+    order.initCancel(reasons);
+    this.orderDomainService.cancelOrder(order, reasons);
     assertEquals(order.getOrderStatus(), OrderStatus.CANCELLED);
   }
-
+  
   @Test
-  @Disabled
   public void orderDomainServicePayOrderRepresentation() {
-    var order = this.initializerOrderWithStatusMock(OrderStatus.PENDING);
-    var orderEventApproved = new OrderDomainServiceImpl();
-    orderEventApproved.payOrder(order);
+    var order = this.initializerOrderWithSingleOrderItemInitiateMock();
+    order.validateOrder();
+    order.initializerOrder();
+    //
+    this.orderDomainService.payOrder(order);
     assertEquals(order.getOrderStatus(), OrderStatus.PAID);
   }
-*/
-
 
 }

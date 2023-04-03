@@ -6,8 +6,6 @@ import com.food.ordering.system.shared.domain.valueobject.Money;
 import com.food.ordering.system.shared.domain.valueobject.OrderId;
 import lombok.Getter;
 
-import java.math.RoundingMode;
-
 @Getter
 public class OrderItem extends BaseEntity<OrderItemId> {
 
@@ -53,7 +51,7 @@ public class OrderItem extends BaseEntity<OrderItemId> {
   public boolean isPriceValid() {
     return this.price.isGreaterThanZero() &&
             this.price.equals(this.product.getPrice()) &&
-            this.price.multiplyMoney(quantity).equals(subTotal); // new Money(subTotal.setScale(subTotal.getAmount())));
+            this.price.multiplyMoney(quantity).equals(subTotal);
   }
 
 }

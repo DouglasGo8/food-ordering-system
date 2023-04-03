@@ -19,7 +19,7 @@ public class RestaurantRepoRoute extends RouteBuilder {
               .log(LoggingLevel.INFO, "RestaurantId not found in here")
             //.throwException(new OrderDomainException(OrderDomainInfo.RESTAURANT_ID_NOT_FOUND))
             .otherwise()
-              .log(LoggingLevel.INFO, "-")
+              .log(LoggingLevel.INFO, "Found RestaurantId")
             .end();
 
   }

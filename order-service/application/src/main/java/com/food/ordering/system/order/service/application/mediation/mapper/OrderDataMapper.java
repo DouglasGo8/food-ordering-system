@@ -20,7 +20,6 @@ import com.food.ordering.system.shared.domain.valueobject.ProductId;
 import com.food.ordering.system.shared.domain.valueobject.RestaurantId;
 import io.quarkus.runtime.Startup;
 import lombok.NoArgsConstructor;
-import lombok.Value;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.camel.Body;
 import org.apache.camel.ExchangeProperty;
@@ -52,25 +51,17 @@ public class OrderDataMapper {
     //
   }
 
-  //@PostConstruct
-  //public void setUp() {
-  //this.orderDomainService = new OrderDomainServiceImpl();
-  //}
-
   public OrderCreatedEvent validateAndInitializeOrder(@Body Order order, @ExchangeProperty("restaurant") Restaurant restaurant) {
-
     return orderDomainService.validateAndInitiateOrder(order, restaurant);
-
-    // o.getOrder().getId().getValue()
   }
 
   public Order createOrderCommandToOrder(@ExchangeProperty("payload") @Valid CreateOrderCommandDTO createOrderCommand) {
-    var money = new Money(createOrderCommand.getPrice());
+    var orderPrice = new Money(createOrderCommand.getPrice());
     var items = this.orderItemsToOrderItemEntities(createOrderCommand.getItems());
     var customerId = new CustomerId(createOrderCommand.getCustomerId());
     var restaurantId = new RestaurantId(createOrderCommand.getRestaurantId());
     var deliveryAddress = this.orderAddressToStreetAddress(createOrderCommand.getAddress());
-    return new Order(money, customerId, restaurantId, deliveryAddress, items);
+    return new Order(orderPrice, customerId, restaurantId, deliveryAddress, items);
   }
 
   public CreateOrderResponseDTO orderToCreateOrderResponseDTO(@Body OrderCreatedEvent orderCreatedEvent) {
@@ -96,8 +87,10 @@ public class OrderDataMapper {
   }
 
   private List<OrderItem> orderItemsToOrderItemEntities(List<OrderItemDTO> items) {
-    return items.stream().map(i -> new OrderItem(
-            new Product(new ProductId(i.getProductId())),
-            new Money(i.getPrice()), new Money(i.getPrice()), i.getQuantity())).toList();
+    return items.stream().map(item -> new OrderItem(
+            new Product(new ProductId(item.getProductId()), new Money(item.getPrice())),
+            new Money(item.getPrice()),
+            new Money(item.getSubTotal()),
+            item.getQuantity())).toList();
   }
 }
