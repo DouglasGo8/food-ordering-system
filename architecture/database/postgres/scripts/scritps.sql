@@ -175,6 +175,22 @@ where r.restaurantid = 'c8dfc68d-9269-45c2-b2d1-7e0d0aa3c57b';
 --'199bef80-e67a-420b-b036-48e422d4ac99';
 
 --
+CREATE OR REPLACE FUNCTION  get_tracking_byId(id TEXT)
+    RETURNS TABLE
+    (
+      ORDER_ID 			TEXT,
+      CUSTOMER_ID 		TEXT,
+      RESTAURANT_ID 	TEXT,
+      TRACKING_ID 		TEXT,
+      PRICE 			NUMERIC(5,2),
+      ORDER_STATUS 		TEXT
+    )
+AS
+$$
+BEGIN
+END;
+$$ LANGUAGE plpgsql;
+--
 
 CREATE OR REPLACE FUNCTION get_customer_byId(id TEXT)
     RETURNS TABLE
@@ -210,3 +226,6 @@ BEGIN
         WHERE r.restaurantId = get_restaurant_byId.id;
 END;
 $$ LANGUAGE plpgsql;
+
+--
+-- FUNCTION findRestaurantInformation(idRestaurant)??

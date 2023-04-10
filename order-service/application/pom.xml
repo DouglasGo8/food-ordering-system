@@ -46,6 +46,7 @@
       <artifactId>quarkus-jdbc-postgresql</artifactId>
     </dependency>
     <!-- Kafka -->
+
     <!--
     <dependency>
       <groupId>org.apache.camel.quarkus</groupId>
@@ -56,6 +57,8 @@
       <artifactId>camel-quarkus-avro</artifactId>
     </dependency>
     -->
+
+    <!-- System -->
     <dependency>
       <groupId>com.food.ordering.system.shared.domain</groupId>
       <artifactId>shared-domain</artifactId>
