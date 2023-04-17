@@ -55,7 +55,7 @@ public class CamelAppIT extends CamelQuarkusTestSupport implements BaseTest {
     //
     var mock = getMockEndpoint("mock:result");
     mock.expectedMessageCount(1);
-    this.producerTemplate.sendBody("direct:orderMessagingProducerHandler", body);
+    this.producerTemplate.sendBody("seda:publishOrderCreatedPayment", body);
     assertMockEndpointsSatisfied();
     // PaymentStatus
     assertTrue(mock.getReceivedExchanges().get(0).getIn().getBody().toString().contains("PENDING"));

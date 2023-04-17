@@ -1,4 +1,4 @@
-package com.food.ordering.system.order.service.application.mediation.service;
+package com.food.ordering.system.order.service.application.mediation.service.commands;
 
 
 import com.food.ordering.system.order.service.application.mediation.dto.exception.ExceptionMapper;

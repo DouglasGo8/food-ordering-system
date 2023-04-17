@@ -1,231 +1,291 @@
-CREATE EXTENSION "pgcrypto";
+--CREATE EXTENSION "pgcrypto";
 --
-CREATE TABLE ORDERS
+DROP TABLE if EXISTS tbl_orders CASCADE;
+--
+CREATE TABLE tbl_orders
 (
-    ORDER_ID 			TEXT NOT NULL PRIMARY KEY,
-    CUSTOMER_ID 		TEXT NOT NULL,
-    RESTAURANT_ID 		TEXT NOT NULL,
-    TRACKING_ID 		TEXT NOT NULL,
-    PRICE 				NUMERIC(5,2) NOT NULL,
-    ORDER_STATUS 		TEXT NOT NULL
-);
-
-CREATE TABLE ORDER_ADDRESS
-(
-    ADDRESS_ID 	TEXT PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
-    ORDER_ID	TEXT NOT NULL,
-    STREET		TEXT NOT NULL,
-    CITY		TEXT NOT NULL,
-    POSTAL_CODE	TEXT NOT NULL,
-    CONSTRAINT fk_Orders_Address FOREIGN KEY (ORDER_ID) REFERENCES ORDERS(ORDER_ID)
-);
-
-CREATE TABLE ORDER_ITEMS
-(
-    ORDER_ITEM_ID 	TEXT DEFAULT gen_random_uuid() NOT NULL,
-    ORDER_ID 		TEXT NOT NULL,
-    PRODUCT_ID 		TEXT NOT NULL,
-    PRICE			NUMERIC(5, 2) NOT NULL,
-    SUB_TOTAL		NUMERIC(5, 2) NOT NULL,
-    PRIMARY KEY(ORDER_ITEM_ID, ORDER_ID),
-    CONSTRAINT fk_Order_Items FOREIGN KEY (ORDER_ID) REFERENCES ORDERS(ORDER_ID)
+    id               TEXT           NOT NULL,
+    customer_id      TEXT           NOT NULL,
+    tracking_id      TEXT           NOT NULL,
+    price            NUMERIC(10, 2) NOT NULL,
+    order_status     TEXT           NOT NULL,
+    failure_messages TEXT           NULL,
+    CONSTRAINT tbl_orders_pkey PRIMARY KEY (id)
 );
 --
-CREATE OR REPLACE PROCEDURE insert_orders(
-    -- ORDERS TABLE
-    p_ORDER_ID          TEXT,
-    p_CUSTOMER_ID       TEXT,
-    p_RESTAURANT_ID     TEXT,
-    p_TRACKING_ID       TEXT,
-    p_PRICE             NUMERIC(5, 2),
-    p_ORDER_STATUS      TEXT,
-    -- ORDER ADDRESS TABLE
-    p_STREET			TEXT,
-    p_CITY				TEXT,
-    p_POSTAL_CODE		TEXT,
+DROP TABLE if EXISTS tbl_order_items CASCADE;
+--
+CREATE TABLE tbl_order_items
+(
+    id         TEXT           NOT NULL,
+    order_id   TEXT           NOT NULL,
+    product_id TEXT           NOT NULL,
+    price      NUMERIC(10, 2) NOT NULL,
+    quantity   INTEGER        NOT NULL,
+    sub_total  NUMERIC(10, 2) NOT NULL,
+    CONSTRAINT tbl_order_items_pkey PRIMARY KEY (id, order_id),
+    CONSTRAINT fk_order_id FOREIGN KEY (order_id)
+        REFERENCES tbl_orders (id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE RESTRICT
+);
+--
+DROP TABLE if EXISTS tbl_order_address CASCADE;
+--
+CREATE TABLE tbl_order_address
+(
+    id          TEXT NOT NULL,
+    order_id    TEXT NOT NULL,
+    street      TEXT NOT NULL,
+    postal_code TEXT NOT NULL,
+    city        TEXT NOT NULL,
+    CONSTRAINT tbl_order_address_pkey PRIMARY KEY (id, order_id),
+    CONSTRAINT fk_order_id FOREIGN KEY (order_id)
+        REFERENCES tbl_orders (id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE RESTRICT
+);
+--
+DROP TABLE if EXISTS tbl_customer CASCADE;
+--
+CREATE TABLE tbl_customer
+(
+    id   TEXT NOT NULL,
+    name TEXT NOT NULL,
+    CONSTRAINT tbl_customer_pkey PRIMARY KEY (id)
+);
+--
+DROP TABLE if EXISTS tbl_restaurants CASCADE;
+--
+CREATE TABLE tbl_restaurants
+(
+    id     TEXT    NOT NULL,
+    name   TEXT    NOT NULL,
+    active BOOLEAN NOT NULL,
+    CONSTRAINT tbl_restaurants_pkey PRIMARY KEY (id)
+);
+--
+DROP TABLE if EXISTS tbl_order_approval CASCADE;
+--
+CREATE TABLE tbl_order_approval
+(
+    id            TEXT NOT NULL,
+    restaurant_id TEXT NOT NULL,
+    order_id      TEXT NOT NULL,
+    status        TEXT NOT NULL,
+    CONSTRAINT order_approval_pkey PRIMARY KEY (id)
+);
+--
+DROP TABLE if EXISTS tbl_products CASCADE;
+--
+CREATE TABLE tbl_products
+(
+    id        TEXT           NOT NULL,
+    name      TEXT           NOT NULL,
+    price     NUMERIC(10, 2) NOT NULL,
+    available BOOLEAN        NOT NULL,
+    CONSTRAINT products_pkey PRIMARY KEY (id)
+);
+--
+DROP TABLE if EXISTS tbl_restaurant_products CASCADE;
+--
+CREATE TABLE tbl_restaurant_products
+(
+    id            TEXT NOT NULL,
+    restaurant_id TEXT NOT NULL,
+    product_id    TEXT NOT NULL,
+    CONSTRAINT restaurant_products_pkey PRIMARY KEY (id),
+    CONSTRAINT fk_restaurant_id FOREIGN KEY (restaurant_id)
+        REFERENCES tbl_restaurants (id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE RESTRICT,
+    CONSTRAINT fk_product_id FOREIGN KEY (product_id)
+        REFERENCES tbl_products (id)
+        ON UPDATE NO ACTION
+        ON DELETE RESTRICT
+);
+--
+CREATE MATERIALIZED VIEW order_restaurant_mview tablespace pg_default
+AS
+SELECT r.id        AS restaurant_id,
+       r.name      AS restaurant_name,
+       r.active    AS restaurant_active,
+       p.id        AS product_id,
+       p.name      AS product_name,
+       p.price     AS product_price,
+       p.available AS product_available
+FROM tbl_restaurants r,
+     tbl_products p,
+     tbl_restaurant_products rp
+WHERE r.id = rp.restaurant_id
+  AND p.id = rp.product_id
+WITH DATA;
+--
+REFRESH MATERIALIZED VIEW order_restaurant_mview;
+--
+DROP function IF EXISTS refresh_order_restaurant_mview;
+--
+CREATE OR replace function refresh_order_restaurant_mview()
+    returns trigger
+AS
+'
+    BEGIN
+        refresh materialized VIEW order_restaurant_mview;
+        return null;
+    END;
+' LANGUAGE plpgsql;
+--
+DROP trigger IF EXISTS refresh_order_restaurant_mview ON tbl_restaurant_products;
+--
+CREATE trigger refresh_order_restaurant_mview
+    after INSERT OR UPDATE OR DELETE OR truncate
+    ON tbl_restaurant_products
+    FOR each statement
+EXECUTE PROCEDURE refresh_order_restaurant_mview();
+--
+insert into tbl_customer (id, name)
+values ('af20558e-5e77-4a6e-bb2f-fef1f14c0ee9', 'Joe');
+insert into tbl_customer (id, name)
+values ('7b68d44f-0882-4309-b4db-06c5341156f1', 'Mary');
+--
+INSERT INTO tbl_restaurants(id, name, active)
+VALUES ('d215b5f8-0249-4dc5-89a3-51fd148cfb45', 'restaurant_1', TRUE);
+INSERT INTO tbl_restaurants(id, name, active)
+VALUES ('d215b5f8-0249-4dc5-89a3-51fd148cfb46', 'restaurant_2', FALSE);
+--
+INSERT INTO tbl_products(id, name, price, available)
+VALUES ('d215b5f8-0249-4dc5-89a3-51fd148cfb47', 'product_1', 25.00, FALSE);
+INSERT INTO tbl_products(id, name, price, available)
+VALUES ('d215b5f8-0249-4dc5-89a3-51fd148cfb48', 'product_2', 50.00, TRUE);
+INSERT INTO tbl_products(id, name, price, available)
+VALUES ('d215b5f8-0249-4dc5-89a3-51fd148cfb49', 'product_3', 20.00, FALSE);
+INSERT INTO tbl_products(id, name, price, available)
+VALUES ('d215b5f8-0249-4dc5-89a3-51fd148cfb50', 'product_4', 40.00, TRUE);
+--
+INSERT INTO tbl_restaurant_products(id, restaurant_id, product_id)
+VALUES ('d215b5f8-0249-4dc5-89a3-51fd148cfb51', 'd215b5f8-0249-4dc5-89a3-51fd148cfb45',
+        'd215b5f8-0249-4dc5-89a3-51fd148cfb47');
+INSERT INTO tbl_restaurant_products(id, restaurant_id, product_id)
+VALUES ('d215b5f8-0249-4dc5-89a3-51fd148cfb52', 'd215b5f8-0249-4dc5-89a3-51fd148cfb45',
+        'd215b5f8-0249-4dc5-89a3-51fd148cfb48');
+INSERT INTO tbl_restaurant_products(id, restaurant_id, product_id)
+VALUES ('d215b5f8-0249-4dc5-89a3-51fd148cfb53', 'd215b5f8-0249-4dc5-89a3-51fd148cfb46',
+        'd215b5f8-0249-4dc5-89a3-51fd148cfb49');
+INSERT INTO tbl_restaurant_products(id, restaurant_id, product_id)
+VALUES ('d215b5f8-0249-4dc5-89a3-51fd148cfb54', 'd215b5f8-0249-4dc5-89a3-51fd148cfb46',
+        'd215b5f8-0249-4dc5-89a3-51fd148cfb50');
+--
+DROP PROCEDURE if EXISTS insert_tbl_orders;
+--
+CREATE OR REPLACE PROCEDURE insert_tbl_orders(
+    -- tbl_orders
+    p_order_id TEXT,
+    p_customer_id TEXT,
+    p_tracking_id TEXT,
+    p_price NUMERIC(10, 2),
+    p_order_status TEXT,
+    p_failure_messages TEXT,
+    -- tbl_order_address
+    p_address_id TEXT,
+    p_street TEXT,
+    p_city TEXT,
+    p_postal_code TEXT,
     -- RETURN
-    r_ORDER_ID out      TEXT
+    pout_order_id OUT TEXT
 )
     LANGUAGE plpgsql
 AS
 $$
 BEGIN
-    INSERT INTO ORDERS
-        (ORDER_ID, CUSTOMER_ID, RESTAURANT_ID, TRACKING_ID, PRICE, ORDER_STATUS)
-    VALUES
-        (p_ORDER_ID, p_CUSTOMER_ID, p_RESTAURANT_ID, p_TRACKING_ID, p_PRICE, p_ORDER_STATUS);
+    INSERT INTO tbl_orders (id, customer_id, tracking_id, price, order_status, failure_messages)
+    VALUES (p_order_id, p_customer_id, p_tracking_id, p_price, p_order_status, p_failure_messages);
     --
-    INSERT INTO ORDER_ADDRESS
-        (ORDER_ID, STREET, CITY, POSTAL_CODE)
-    VALUES
-        (p_ORDER_ID, p_STREET, p_CITY, p_POSTAL_CODE);
-    ---
+    INSERT INTO tbl_order_address (id, order_id, street, city, postal_code)
+    VALUES (p_address_id, p_order_id, p_street, p_city, p_postal_code);
 
-    -- RETURNING p_ORDER_ID INTO r_ORDER_ID
+    -- RETURNING p_order_id INTO pout_order_id
 
-    r_ORDER_ID:= p_ORDER_ID;
-
-    COMMIT;
+    pout_order_id := p_order_id;
+    --COMMIT;
     --
 END;
 $$;
 --
-call insert_orders(
+call insert_tbl_orders(
         'ec78b161-3899-4866-8753-886b84a8fbce',
         'a5da1c79-9bd5-46af-9a07-8c6be207e1d0',
         '6329409b-5987-4188-8cae-4499fee16f72',
-        '26a14700-5caa-404c-8234-e7412626cc1a',
         44.3,
         'PENDING',
-        'Robert Robertson, 1234 NW Bobcat Lane, St. Robert',
-        'NEW YORK',
-        'MO 65584-5678',
+        '',
+        '13a9a038-a92b-424a-8c18-e7f82b018d68',
+        '4 N. Talbot Lane New York',
+        'New York',
+        '10040',
         null
     );
 --
-CREATE OR REPLACE PROCEDURE insert_order_items(
-    p_ORDER_ID   TEXT,
-    p_PRODUCT_ID TEXT,
-    p_PRICE      NUMERIC(5, 2),
-    p_SUB_TOTAL  NUMERIC(5,2)
+CREATE OR REPLACE PROCEDURE insert_tbl_order_items(
+    p_order_item_id TEXT,
+    p_order_id TEXT,
+    p_product_id TEXT,
+    p_price NUMERIC(10, 2),
+    p_quantity INTEGER,
+    p_sub_total NUMERIC(10, 2)
 )
     LANGUAGE plpgsql
 AS
 $$
 BEGIN
-    INSERT INTO ORDER_ITEMS
-        (ORDER_ID, PRODUCT_ID, PRICE, SUB_TOTAL)
-    VALUES
-        (p_ORDER_ID, p_PRODUCT_ID, p_PRICE, p_SUB_TOTAL);
+    INSERT INTO tbl_order_items (id, order_id, product_id, quantity, price, sub_total)
+    VALUES (p_order_item_id, p_order_id, p_product_id, p_price, p_quantity, p_sub_total);
     --
 END;
 $$;
 --
-call insert_order_items(
-    'ec78b161-3899-4866-8753-886b84a8fbce',
-    '20a44234-db9c-4672-9455-dea9be80377b',
-    22.3,
-    22.3);
+call insert_tbl_order_items(
+        'c16f7447-cc5e-4ec5-9ea3-d07c426ef044',
+        'ec78b161-3899-4866-8753-886b84a8fbce',
+        '20a44234-db9c-4672-9455-dea9be80377b',
+        22.3,
+        1,
+        22.3);
 --
-CREATE TABLE CUSTOMER
-(
-    customerId   TEXT NOT NULL PRIMARY KEY,
-    customerName TEXT NOT NULL
-);
-
-CREATE TABLE RESTAURANT
-(
-    restaurantId   TEXT NOT NULL PRIMARY KEY,
-    restaurantName TEXT NOT NULL,
-    isActive       BOOLEAN NOT NULL
-);
-
-CREATE TABLE PRODUCT
-(
-    productId   TEXT NOT NULL PRIMARY KEY,
-    productName TEXT NOT NULL
-);
-
-CREATE TABLE REST_PROD_COMPOSED
-(
-    productId    TEXT NOT NULL,
-    restaurantId TEXT NOT NULL,
-    CONSTRAINT fk_product FOREIGN KEY (productId) REFERENCES PRODUCT (productId),
-    CONSTRAINT fk_restaurant FOREIGN KEY (restaurantId) REFERENCES RESTAURANT (restaurantId)
-);
+DROP function if EXISTS get_tbl_restaurant_byId;
 --
-insert into CUSTOMER (customerId, customerName)
-values ('af20558e-5e77-4a6e-bb2f-fef1f14c0ee9', 'Joe');
-insert into CUSTOMER (customerId, customerName)
-values ('7b68d44f-0882-4309-b4db-06c5341156f1', 'Mary');
---
-insert into RESTAURANT(restaurantId, restaurantName, isActive)
-values ('199bef80-e67a-420b-b036-48e422d4ac99', 'DOM', TRUE);
-insert into RESTAURANT(restaurantId, restaurantName, isActive)
-values ('c8dfc68d-9269-45c2-b2d1-7e0d0aa3c57b', 'Osaka SP', TRUE);
---
-insert into PRODUCT (productId, productName)
-values ('2abe9212-506e-4794-afe2-75522a76a4b5', 'Coke Sugar');
-insert into PRODUCT (productId, productName)
-values ('3987d947-ab7a-4a46-af7f-8594d591f83f', 'Salmon Gold Black');
-insert into PRODUCT (productId, productName)
-values ('abd3dd67-433d-408f-85a0-631b80de3596', 'Rice Portion');
-
--- Osaka SP
-insert into REST_PROD_COMPOSED (productId, restaurantId)
-values ('3987d947-ab7a-4a46-af7f-8594d591f83f', 'c8dfc68d-9269-45c2-b2d1-7e0d0aa3c57b');
-insert into REST_PROD_COMPOSED (productId, restaurantId)
-values ('2abe9212-506e-4794-afe2-75522a76a4b5', 'c8dfc68d-9269-45c2-b2d1-7e0d0aa3c57b');
-insert into REST_PROD_COMPOSED (productId, restaurantId)
-values ('abd3dd67-433d-408f-85a0-631b80de3596', 'c8dfc68d-9269-45c2-b2d1-7e0d0aa3c57b');
--- DOM
-insert into REST_PROD_COMPOSED (productId, restaurantId)
-values ('2abe9212-506e-4794-afe2-75522a76a4b5', '199bef80-e67a-420b-b036-48e422d4ac99');
-insert into REST_PROD_COMPOSED (productId, restaurantId)
-values ('abd3dd67-433d-408f-85a0-631b80de3596', '199bef80-e67a-420b-b036-48e422d4ac99');
---
--- ONLY TEST Effect
-select /*r.restaurantname,*/ p.productname
-from product p
-         join rest_prod_composed rp
-              on p.productid = rp.productid
-         join restaurant r
-              on r.restaurantid = rp.restaurantid
-where r.restaurantid = 'c8dfc68d-9269-45c2-b2d1-7e0d0aa3c57b';
---'199bef80-e67a-420b-b036-48e422d4ac99';
-
---
-CREATE OR REPLACE FUNCTION  get_tracking_byId(id TEXT)
-    RETURNS TABLE
-    (
-      ORDER_ID 			TEXT,
-      CUSTOMER_ID 		TEXT,
-      RESTAURANT_ID 	TEXT,
-      TRACKING_ID 		TEXT,
-      PRICE 			NUMERIC(5,2),
-      ORDER_STATUS 		TEXT
-    )
-AS
-$$
-BEGIN
-END;
-$$ LANGUAGE plpgsql;
---
-
-CREATE OR REPLACE FUNCTION get_customer_byId(id TEXT)
+CREATE OR REPLACE FUNCTION get_tbl_restaurant_byId(p_id TEXT)
     RETURNS TABLE
             (
-                customerId   TEXT,
-                customerName TEXT
+                id     TEXT,
+                name   TEXT,
+                active BOOLEAN
             )
 AS
 $$
 BEGIN
     RETURN QUERY
-        SELECT c.customerid, c.customername
-        FROM CUSTOMER c
-        WHERE c.customerid = get_customer_byId.id;
+        SELECT id, name, active
+        FROM tbl_restaurants
+        WHERE id = get_tbl_restaurant_byId.p_id;
 END;
 $$ LANGUAGE plpgsql;
-
 --
-
-CREATE OR REPLACE FUNCTION get_restaurant_byId(id TEXT)
+DROP function if EXISTS get_tbl_customer_byId;
+--
+CREATE OR REPLACE FUNCTION get_tbl_customer_byId(p_id TEXT)
     RETURNS TABLE
             (
-                restaurantId   TEXT,
-                restaurantName TEXT,
-                isActive BOOLEAN
+                id   TEXT,
+                name TEXT
             )
 AS
 $$
 BEGIN
     RETURN QUERY
-        SELECT r.restaurantId, r.restaurantName, r.isActive
-        FROM RESTAURANT r
-        WHERE r.restaurantId = get_restaurant_byId.id;
+        SELECT id, name
+        FROM tbl_customer
+        WHERE id = get_tbl_customer_byId.p_id;
 END;
 $$ LANGUAGE plpgsql;
-
 --
 -- FUNCTION findRestaurantInformation(idRestaurant)??

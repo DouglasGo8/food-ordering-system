@@ -1,4 +1,4 @@
-package com.food.ordering.system.order.service.application.mediation.messaging;
+package com.food.ordering.system.order.service.application.mediation.mapper;
 
 import com.food.ordering.system.order.service.domain.core.event.OrderCreatedEvent;
 import com.food.ordering.system.order.service.domain.core.event.OrderEvent;

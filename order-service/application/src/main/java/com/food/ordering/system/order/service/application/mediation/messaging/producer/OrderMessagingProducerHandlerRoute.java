@@ -1,5 +1,6 @@
-package com.food.ordering.system.order.service.application.mediation.messaging;
+package com.food.ordering.system.order.service.application.mediation.messaging.producer;
 
+import com.food.ordering.system.order.service.application.mediation.mapper.OrderMessagingDataMapper;
 import lombok.NoArgsConstructor;
 import org.apache.camel.builder.RouteBuilder;
 
@@ -12,7 +13,7 @@ public class OrderMessagingProducerHandlerRoute extends RouteBuilder {
   @Override
   public void configure() {
 
-    from("direct:orderMessagingProducerHandler").routeId("OrderMessagingProducerHandler")
+    from("seda:publishOrderCreatedPayment").routeId("PublishOrderCreatedPayment")
             .setProperty("topic-key", simple("${body.order.id.value}"))
             .bean(OrderMessagingDataMapper.class)
             .choice().when(simple("${body.paymentOrderStatus} == 'PENDING'"))

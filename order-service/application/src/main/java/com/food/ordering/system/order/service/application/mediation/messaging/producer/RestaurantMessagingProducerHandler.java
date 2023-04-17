@@ -1,5 +1,6 @@
-package com.food.ordering.system.order.service.application.mediation.messaging;
+package com.food.ordering.system.order.service.application.mediation.messaging.producer;
 
+import com.food.ordering.system.order.service.application.mediation.mapper.RestaurantMessagingDataMapper;
 import lombok.NoArgsConstructor;
 import org.apache.camel.builder.RouteBuilder;
 
@@ -12,7 +13,7 @@ public class RestaurantMessagingProducerHandler extends RouteBuilder {
   public void configure() {
 
     from("direct:restaurantMessagingProducerHandler").routeId("RestaurantMessagingProducerHandler")
-            .bean(RestaurantMessagingDataMapper.class)
+            .bean(RestaurantMessagingDataMapper.class, "orderPaidEventToRestaurantApprovalRequestAvroModel")
             .log("${body}");
 
   }

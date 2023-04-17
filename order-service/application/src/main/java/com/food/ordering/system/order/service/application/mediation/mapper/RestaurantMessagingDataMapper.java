@@ -1,10 +1,13 @@
-package com.food.ordering.system.order.service.application.mediation.messaging;
+package com.food.ordering.system.order.service.application.mediation.mapper;
 
+import com.food.ordering.system.order.service.application.mediation.dto.message.RestaurantApprovalResponseDTO;
 import com.food.ordering.system.order.service.domain.core.entity.OrderItem;
 import com.food.ordering.system.order.service.domain.core.event.OrderEvent;
 import com.food.ordering.system.shared.avro.model.Product;
 import com.food.ordering.system.shared.avro.model.RestaurantApprovalRequestAvroModel;
+import com.food.ordering.system.shared.avro.model.RestaurantApprovalResponseAvroModel;
 import com.food.ordering.system.shared.avro.model.RestaurantOrderStatus;
+import com.food.ordering.system.shared.domain.valueobject.OrderApprovalStatus;
 import lombok.NoArgsConstructor;
 import org.apache.camel.Body;
 import org.apache.camel.Handler;
@@ -19,12 +22,10 @@ import java.util.stream.Collectors;
 @ApplicationScoped
 public class RestaurantMessagingDataMapper {
 
-  @Handler
   public RestaurantApprovalRequestAvroModel orderPaidEventToRestaurantApprovalRequestAvroModel(@Body OrderEvent orderEvent) {
     var order = orderEvent.getOrder();
     Function<List<OrderItem>, List<Product>> mapped = items ->
-            items.stream()
-                    .map(item-> new Product(item.getProduct().getId().getValue().toString(),
+            items.stream().map(item -> new Product(item.getProduct().getId().getValue().toString(),
                             item.getQuantity())).collect(Collectors.toList());
     //
     return RestaurantApprovalRequestAvroModel.newBuilder()
@@ -39,4 +40,18 @@ public class RestaurantMessagingDataMapper {
             .setRestaurantOrderStatus(RestaurantOrderStatus.PAID)
             .build();
   }
+
+  public RestaurantApprovalResponseDTO approvalResponseAvroModelToApprovalResponse(@Body RestaurantApprovalResponseAvroModel restaurantApprovalResponseAvroModel) {
+    return RestaurantApprovalResponseDTO.builder()
+            .id(restaurantApprovalResponseAvroModel.getId())
+            .sagaId(restaurantApprovalResponseAvroModel.getSagaId())
+            .restaurantId(restaurantApprovalResponseAvroModel.getRestaurantId())
+            .orderId(restaurantApprovalResponseAvroModel.getOrderId())
+            .createdAt(restaurantApprovalResponseAvroModel.getCreatedAt())
+            .orderApprovalStatus(OrderApprovalStatus.valueOf(restaurantApprovalResponseAvroModel.getOrderApprovalStatus().name()))
+            .failureMessages(restaurantApprovalResponseAvroModel.getFailureMessages())
+            .build();
+  }
+
+
 }
