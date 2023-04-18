@@ -1,4 +1,4 @@
-package com.food.ordering.system.order.service.application.mediation.service.commands;
+package com.food.ordering.system.order.service.application.mediation.service;
 
 
 import com.food.ordering.system.order.service.application.mediation.dto.exception.ExceptionMapper;
@@ -39,7 +39,7 @@ public class OrderCreateCommandHandlerRoute extends RouteBuilder {
     // OrderDataMapper
 
     // OrderCreateHelper pipe
-    from("direct:createOrderCommandHandler").routeId("createOrderCMDH")
+    from("direct:createOrderCommandHandler").routeId("CreateOrderCMDH")
             .setProperty("payload", body()) // CreateOrderCommandDTO
             .setProperty("restaurant", method(OrderDataMapper.class, "createOrderCommandToRestaurant"))
             //.multicast(new FlexibleAggregationStrategy<>().accumulateInCollection(ArrayList.class).pick(body()))
@@ -49,9 +49,12 @@ public class OrderCreateCommandHandlerRoute extends RouteBuilder {
             .end() // end multicast
             .bean(OrderDataMapper.class, "createOrderCommandToOrder") // returns Order Object
             .bean(OrderDataMapper.class, "validateAndInitializeOrder") // returns OrderCreatedEvent Object
+            //.log("${body}")
             .setProperty("orderCreatedEvent", body())
             // ---------------------------------------------
             .transform(exchangeProperty("payload"))
+            .setProperty("fail_msg", constant(""))
+            .setProperty("address_id", constant("a8f8c751-e3b0-49bf-bbef-4588db030959")) // needs be fix
             // -------------------------------------------------
             .to("sql-stored:classpath:templates/insertOrders.sql")
             .setProperty("orderIdOut", simple("${body['result']}")) // result SpEL From PROCEDURE
@@ -62,6 +65,7 @@ public class OrderCreateCommandHandlerRoute extends RouteBuilder {
             // Removes code boilerplate from orderItemsToOrderItemEntities method
             .split(simple("${body.items}")).streaming(true).parallelProcessing()
             //.log("${exchangeProperty.orderIdOut}")
+              .setProperty("orderItemId", simple("${uuid}"))
               .to("sql-stored:classpath:templates/insertOrderItems.sql")
             .end() // close Split
             // -----------------------------------------------------

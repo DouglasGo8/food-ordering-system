@@ -1,1 +1,1 @@
-get_restaurant_byId(java.sql.Types.VARCHAR ${body.restaurantId})
+get_tbl_restaurant_byId(java.sql.Types.VARCHAR ${body.restaurantId})

@@ -1,4 +1,4 @@
-package com.food.ordering.system.order.service.application.mediation.service.commands;
+package com.food.ordering.system.order.service.application.mediation.service;
 
 
 import lombok.NoArgsConstructor;

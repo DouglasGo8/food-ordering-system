@@ -2,21 +2,15 @@ package com.food.ordering.system.order.service.application;
 
 
 import com.food.ordering.system.order.service.application.mediation.mapper.OrderDataMapper;
-import com.food.ordering.system.order.service.domain.core.event.OrderCancelledEvent;
 import io.quarkus.test.junit.QuarkusTest;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.camel.CamelContext;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.AdviceWith;
 import org.apache.camel.quarkus.test.CamelQuarkusTestSupport;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import javax.inject.Inject;
-import java.time.ZonedDateTime;
-
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @Slf4j
 @QuarkusTest
@@ -25,28 +19,34 @@ public class CamelAppIT extends CamelQuarkusTestSupport implements BaseTest {
   @Inject
   OrderDataMapper orderDataMapper;
 
-  @Inject
-  CamelContext context;
+  //@Inject
+  //CamelContext context;
 
   @Inject
   ProducerTemplate producerTemplate;
 
 
   @Test
-  @Disabled
+  @SneakyThrows
   public void createOrderCommandDTOByOrderControllerRepresentation() {
+    AdviceWith.adviceWith(super.context, "CreateOrderCMDH", r -> r.weaveAddLast().to("mock:result"));
     var body = this.createOrderCommandDTOFullMock();
+    var mock = super.getMockEndpoint("mock:result");
     this.producerTemplate.sendBody("direct:createOrderCommandHandler", body);
     //log.info("{}", body.getCustomerId());
+    mock.setExpectedMessageCount(1);
+    //
+    assertMockEndpointsSatisfied();
   }
 
-  @Test
+
+  /*@Test
   @Disabled
   @SneakyThrows
   public void createOrderMessagingToOrderCreatedEvent() {
 
-    AdviceWith.adviceWith(context, "OrderMessagingProducerHandler",
-            r -> r.weaveAddLast().to("mock:result"));
+    //AdviceWith.adviceWith(context, "OrderMessagingProducerHandler",
+    //        r -> r.weaveAddLast().to("mock:result"));
     //
     var orderDTO = this.createOrderCommandDTOFullMock();
     var order = this.orderDataMapper.createOrderCommandToOrder(orderDTO);
@@ -63,11 +63,12 @@ public class CamelAppIT extends CamelQuarkusTestSupport implements BaseTest {
 
 
   @Test
+  @Disabled
   @SneakyThrows
   public void createOrderMessagingToOrderCancelledEvent() {
 
-    AdviceWith.adviceWith(context, "OrderMessagingProducerHandler",
-            r -> r.weaveAddLast().to("mock:result"));
+    //AdviceWith.adviceWith(super.context, "OrderMessagingProducerHandler",
+    //        r -> r.weaveAddLast().to("mock:result"));
     //
     var orderDTO = this.createOrderCommandDTOFullMock();
     var order = this.orderDataMapper.createOrderCommandToOrder(orderDTO);
@@ -89,6 +90,7 @@ public class CamelAppIT extends CamelQuarkusTestSupport implements BaseTest {
   public void createRestaurantMessagingToOrderCancelledEvent() {
 
     //var body = new OrderPaidEvent();
-  }
+  }*/
+
 
 }

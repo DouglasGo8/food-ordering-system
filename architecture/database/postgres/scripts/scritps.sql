@@ -175,7 +175,7 @@ INSERT INTO tbl_restaurant_products(id, restaurant_id, product_id)
 VALUES ('d215b5f8-0249-4dc5-89a3-51fd148cfb54', 'd215b5f8-0249-4dc5-89a3-51fd148cfb46',
         'd215b5f8-0249-4dc5-89a3-51fd148cfb50');
 --
-DROP PROCEDURE if EXISTS insert_tbl_orders;
+DROP procedure if EXISTS insert_tbl_orders;
 --
 CREATE OR REPLACE PROCEDURE insert_tbl_orders(
     -- tbl_orders
@@ -225,6 +225,8 @@ call insert_tbl_orders(
         null
     );
 --
+DROP procedure if EXISTS insert_tbl_order_items;
+--
 CREATE OR REPLACE PROCEDURE insert_tbl_order_items(
     p_order_item_id TEXT,
     p_order_id TEXT,
@@ -238,7 +240,7 @@ AS
 $$
 BEGIN
     INSERT INTO tbl_order_items (id, order_id, product_id, quantity, price, sub_total)
-    VALUES (p_order_item_id, p_order_id, p_product_id, p_price, p_quantity, p_sub_total);
+    VALUES (p_order_item_id, p_order_id, p_product_id, p_quantity, p_price, p_sub_total);
     --
 END;
 $$;
@@ -264,9 +266,9 @@ AS
 $$
 BEGIN
     RETURN QUERY
-        SELECT id, name, active
-        FROM tbl_restaurants
-        WHERE id = get_tbl_restaurant_byId.p_id;
+        SELECT t.id, t.name, t.active
+        FROM tbl_restaurants t
+        WHERE t.id = get_tbl_restaurant_byId.p_id;
 END;
 $$ LANGUAGE plpgsql;
 --
@@ -282,9 +284,9 @@ AS
 $$
 BEGIN
     RETURN QUERY
-        SELECT id, name
-        FROM tbl_customer
-        WHERE id = get_tbl_customer_byId.p_id;
+        SELECT t.id, t.name
+        FROM tbl_customer t
+        WHERE t.id = get_tbl_customer_byId.p_id;
 END;
 $$ LANGUAGE plpgsql;
 --
