@@ -215,8 +215,8 @@ restaurant-approval-response partitions 3
 # additionalProperties.schemaRegistryURLKey => already configured in schemaRegistryUrl
 
 # Producer Configuration
-# camel:endpoint?keyDeserializer = org.apache.kafka.common.serialization.StringSerializer
-# camel:endpoint?valueDeserializer = io.confluent.kafka.serializers.KafkaAvroSerializer
+# camel:endpoint?keySerializer = org.apache.kafka.common.serialization.StringSerializer
+# camel:endpoint?valueSerializer = io.confluent.kafka.serializers.KafkaAvroSerializer
 # camel:endpoint?compressionCodec = snappy
 # camel:endpoint?requestRequiredAcks = all
 # camel:endpoint:default?producerBatchSize = 16234

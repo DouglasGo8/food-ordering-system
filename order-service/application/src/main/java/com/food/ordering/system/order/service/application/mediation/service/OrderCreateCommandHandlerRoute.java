@@ -70,8 +70,9 @@ public class OrderCreateCommandHandlerRoute extends RouteBuilder {
             .end() // close Split
             // -----------------------------------------------------
             .transform(exchangeProperty("orderCreatedEvent"))
-            // ---------------------------------------------------------
-            //.wireTap("seda:publishOrderCreatedPayment?blockWhenFull=true&concurrentConsumers=5")
+            // ------------------------------------------------------------------------
+            .wireTap("seda:publishOrderCreatedPayment?blockWhenFull=true")
+            // -------------------------------------------------------------------------------
             .bean(OrderDataMapper.class, "orderToCreateOrderResponseDTO") // orderCreateResponseDTO
     .end();
 

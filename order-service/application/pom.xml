@@ -15,6 +15,13 @@
   <name>Food Ordering System :: Order Service :: Application</name>
   <description>Microservices :: Clean Architecture :: DDD :: Saga :: Outbox &amp; Kafka</description>
 
+  <repositories>
+    <repository>
+      <id>confluent</id>
+      <url>https://packages.confluent.io/maven/</url>
+    </repository>
+  </repositories>
+
   <dependencies>
     <!-- Validator -->
     <dependency>
@@ -26,6 +33,13 @@
       <groupId>org.apache.camel.quarkus</groupId>
       <artifactId>camel-quarkus-netty-http</artifactId>
     </dependency>
+
+    <dependency>
+      <groupId>org.apache.camel.quarkus</groupId>
+      <artifactId>camel-quarkus-timer</artifactId>
+    </dependency>
+
+
     <!-- Transaction -->
     <dependency>
       <groupId>org.apache.camel.quarkus</groupId>
@@ -46,18 +60,30 @@
       <artifactId>quarkus-jdbc-postgresql</artifactId>
     </dependency>
     <!-- Kafka -->
-
-    <!--
     <dependency>
       <groupId>org.apache.camel.quarkus</groupId>
       <artifactId>camel-quarkus-kafka</artifactId>
     </dependency>
+
     <dependency>
       <groupId>org.apache.camel.quarkus</groupId>
       <artifactId>camel-quarkus-avro</artifactId>
     </dependency>
-    -->
+    <dependency>
+      <groupId>io.quarkus</groupId>
+      <artifactId>quarkus-confluent-registry-avro</artifactId>
+    </dependency>
 
+    <!-- Avro -->
+    <dependency>
+      <groupId>io.confluent</groupId>
+      <artifactId>kafka-avro-serializer</artifactId>
+      <version>7.3.2</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.avro</groupId>
+      <artifactId>avro</artifactId>
+    </dependency>
     <!-- System -->
     <dependency>
       <groupId>com.food.ordering.system.shared.domain</groupId>

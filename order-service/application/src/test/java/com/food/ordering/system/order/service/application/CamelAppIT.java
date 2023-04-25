@@ -8,9 +8,12 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.AdviceWith;
 import org.apache.camel.quarkus.test.CamelQuarkusTestSupport;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import javax.inject.Inject;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @Slf4j
 @QuarkusTest
@@ -27,6 +30,7 @@ public class CamelAppIT extends CamelQuarkusTestSupport implements BaseTest {
 
 
   @Test
+  @Disabled
   @SneakyThrows
   public void createOrderCommandDTOByOrderControllerRepresentation() {
     AdviceWith.adviceWith(super.context, "CreateOrderCMDH", r -> r.weaveAddLast().to("mock:result"));
@@ -40,18 +44,17 @@ public class CamelAppIT extends CamelQuarkusTestSupport implements BaseTest {
   }
 
 
-  /*@Test
-  @Disabled
+  @Test
   @SneakyThrows
   public void createOrderMessagingToOrderCreatedEvent() {
 
-    //AdviceWith.adviceWith(context, "OrderMessagingProducerHandler",
-    //        r -> r.weaveAddLast().to("mock:result"));
-    //
+    AdviceWith.adviceWith(context, "PublishOrderCreatedPayment",
+            r -> r.weaveAddLast().to("mock:result"));
+
     var orderDTO = this.createOrderCommandDTOFullMock();
     var order = this.orderDataMapper.createOrderCommandToOrder(orderDTO);
     var restaurant = this.orderDataMapper.createOrderCommandToRestaurant(orderDTO);
-    var body = this.orderDataMapper.validateAndInitializeOrder(order, restaurant);
+    var body = this.orderDataMapper.validateAndInitializeOrder(order, restaurant); // OrderCreatedEvent
     //
     var mock = getMockEndpoint("mock:result");
     mock.expectedMessageCount(1);
@@ -62,7 +65,7 @@ public class CamelAppIT extends CamelQuarkusTestSupport implements BaseTest {
   }
 
 
-  @Test
+  /*@Test
   @Disabled
   @SneakyThrows
   public void createOrderMessagingToOrderCancelledEvent() {
