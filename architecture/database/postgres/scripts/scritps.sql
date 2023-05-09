@@ -50,8 +50,10 @@ DROP TABLE if EXISTS tbl_customer CASCADE;
 --
 CREATE TABLE tbl_customer
 (
-    id   TEXT NOT NULL,
-    name TEXT NOT NULL,
+    id         TEXT NOT NULL,
+    user_name  TEXT NOT NULL,
+    first_name TEXT NOT NULL,
+    last_name  TEXT NOT NULL,
     CONSTRAINT tbl_customer_pkey PRIMARY KEY (id)
 );
 --
@@ -105,6 +107,8 @@ CREATE TABLE tbl_restaurant_products
         ON DELETE RESTRICT
 );
 --
+DROP MATERIALIZED VIEW if EXISTS order_restaurant_mview;
+--
 CREATE MATERIALIZED VIEW order_restaurant_mview tablespace pg_default
 AS
 SELECT r.id        AS restaurant_id,
@@ -122,6 +126,16 @@ WHERE r.id = rp.restaurant_id
 WITH DATA;
 --
 REFRESH MATERIALIZED VIEW order_restaurant_mview;
+--
+DROP MATERIALIZED VIEW if EXISTS order_customer_mview;
+--
+CREATE MATERIALIZED VIEW order_customer_mview
+AS
+SELECT id, user_name, first_name, last_name
+FROM tbl_customer
+WITH DATA;
+--
+REFRESH MATERIALIZED VIEW order_customer_mview;
 --
 DROP function IF EXISTS refresh_order_restaurant_mview;
 --
@@ -143,10 +157,10 @@ CREATE trigger refresh_order_restaurant_mview
     FOR each statement
 EXECUTE PROCEDURE refresh_order_restaurant_mview();
 --
-insert into tbl_customer (id, name)
-values ('af20558e-5e77-4a6e-bb2f-fef1f14c0ee9', 'Joe');
-insert into tbl_customer (id, name)
-values ('7b68d44f-0882-4309-b4db-06c5341156f1', 'Mary');
+insert into tbl_customer (id, user_name, first_name, last_name)
+values ('af20558e-5e77-4a6e-bb2f-fef1f14c0ee9', 'Joe', 'Joe', 'Doe');
+insert into tbl_customer (id, user_name, first_name, last_name)
+values ('7b68d44f-0882-4309-b4db-06c5341156f1', 'Mary', 'Mary', 'Page');
 --
 INSERT INTO tbl_restaurants(id, name, active)
 VALUES ('d215b5f8-0249-4dc5-89a3-51fd148cfb45', 'restaurant_1', TRUE);
@@ -253,9 +267,9 @@ call insert_tbl_order_items(
         1,
         22.3);
 --
-DROP function if EXISTS get_tbl_restaurant_byId;
+DROP function if EXISTS find_restaurant_byId;
 --
-CREATE OR REPLACE FUNCTION get_tbl_restaurant_byId(p_id TEXT)
+CREATE OR REPLACE FUNCTION find_restaurant_byId(p_id TEXT)
     RETURNS TABLE
             (
                 id     TEXT,
@@ -268,13 +282,13 @@ BEGIN
     RETURN QUERY
         SELECT t.id, t.name, t.active
         FROM tbl_restaurants t
-        WHERE t.id = get_tbl_restaurant_byId.p_id;
+        WHERE t.id = find_restaurant_byId.p_id;
 END;
 $$ LANGUAGE plpgsql;
 --
-DROP function if EXISTS get_tbl_customer_byId;
+DROP function if EXISTS find_customer_byId;
 --
-CREATE OR REPLACE FUNCTION get_tbl_customer_byId(p_id TEXT)
+CREATE OR REPLACE FUNCTION find_customer_byId(p_id TEXT)
     RETURNS TABLE
             (
                 id   TEXT,
@@ -286,8 +300,48 @@ BEGIN
     RETURN QUERY
         SELECT t.id, t.name
         FROM tbl_customer t
-        WHERE t.id = get_tbl_customer_byId.p_id;
+        WHERE t.id = find_customer_byId.p_id;
 END;
 $$ LANGUAGE plpgsql;
 --
+DROP function if EXISTS refresh_order_customer_mview;
+--
+CREATE OR replace function refresh_order_customer_mview()
+    returns trigger
+AS
+'
+    BEGIN
+        refresh materialized VIEW order_customer_mview;
+        return null;
+    END;
+' LANGUAGE plpgsql;
+--
+CREATE TRIGGER refresh_order_customer_mview
+    AFTER INSERT OR UPDATE OR DELETE OR truncate
+    ON tbl_customer
+    FOR each statement
+EXECUTE PROCEDURE refresh_order_customer_mview();
+--
 -- FUNCTION findRestaurantInformation(idRestaurant)??
+--
+-- FUNCTION findByTrackingId(trackingId)??
+-- DROP function if EXISTS find_tracking_byId;
+--
+/*CREATE OR REPLACE FUNCTION find_tracking_byId(p_id TEXT)
+    RETURNS TABLE
+            (
+                customer_id      TEXT,
+                tracking_id      TEXT,
+                price            NUMERIC(10, 2),
+                order_status     TEXT,
+                failure_messages TEXT
+            )
+AS
+$$
+BEGIN
+    RETURN QUERY
+        SELECT o.price
+        FROM tbl_orders o
+        WHERE o.tracking_id = find_tracking_byId.p_id;
+END;
+$$ LANGUAGE plpgsql;*/

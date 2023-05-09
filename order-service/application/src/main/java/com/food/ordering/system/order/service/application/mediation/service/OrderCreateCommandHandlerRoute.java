@@ -30,11 +30,18 @@ public class OrderCreateCommandHandlerRoute extends RouteBuilder {
 
     onException(OrderDomainNotFound.class)
             .bean(ExceptionMapper.class); // ErrorDTO.class
+    //
+    // ==============================================================================
+    // OrderDataAccessMapper.class
+    // orderToOrderEntity method will be replaced by <-> Order To Procedure in DSL Camel
+    // orderEntityToOrder?? new Order(); marshall??
+    // CustomerDataAccessMapper.class
+    // customerEntityToCustomer method will be replaced by <-> Customer To Procedure in DSL Camel
+    // call function find_customer_byId
+    //
+    // ===================================================================================
 
     //onException(InternalServerErrorException.class) ? validate usage
-
-    // Apache Camel is a Hexagonal Architecture Killer ??
-    // will compose the Apache Camel Pipeline
     // OrderDomainService
     // OrderDataMapper
 
@@ -54,7 +61,7 @@ public class OrderCreateCommandHandlerRoute extends RouteBuilder {
             // ---------------------------------------------
             .transform(exchangeProperty("payload"))
             .setProperty("fail_msg", constant(""))
-            .setProperty("address_id", constant("a8f8c751-e3b0-49bf-bbef-4588db030959")) // needs be fix
+            .setProperty("address_id", constant("a8f8c751-e3b0-49bf-bbef-4588db030959")) // cannon be hard-coded
             // -------------------------------------------------
             .to("sql-stored:classpath:templates/insertOrders.sql")
             .setProperty("orderIdOut", simple("${body['result']}")) // result SpEL From PROCEDURE

@@ -185,5 +185,6 @@
   <modules>
     <module>shared</module>
     <module>order-service</module>
+    <module>customer-service</module>
   </modules>
 </project>
