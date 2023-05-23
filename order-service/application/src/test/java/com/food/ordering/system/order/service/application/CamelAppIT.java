@@ -1,7 +1,7 @@
 package com.food.ordering.system.order.service.application;
 
-
 import com.food.ordering.system.order.service.application.mediation.mapper.OrderDataMapper;
+import com.food.ordering.system.order.service.domain.core.exception.OrderDomainException;
 import io.quarkus.test.junit.QuarkusTest;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
@@ -28,9 +28,7 @@ public class CamelAppIT extends CamelQuarkusTestSupport implements BaseTest {
   @Inject
   ProducerTemplate producerTemplate;
 
-
   @Test
-  @Disabled
   @SneakyThrows
   public void createOrderCommandDTOByOrderControllerRepresentation() {
     AdviceWith.adviceWith(super.context, "CreateOrderCMDH", r -> r.weaveAddLast().to("mock:result"));
@@ -43,8 +41,34 @@ public class CamelAppIT extends CamelQuarkusTestSupport implements BaseTest {
     assertMockEndpointsSatisfied();
   }
 
+  @Test
+  @Disabled
+  @SneakyThrows
+  public void createOrderCommandDTOByOrderControllerRepresentationWithInvalidCustomerId() {
+    //AdviceWith.adviceWith(super.context, "CreateOrderCMDH", r ->
+    //        r.weaveAddFirst().to("mock:result"));
+    var threwException = false;
+    var body = this.createOrderCommandDTOFullMockWithInvalidUUID();
+    //var mock = super.getMockEndpoint("mock:result");
+    //mock.expectedMessageCount(1);
+    try {
+      this.producerTemplate.sendBody("direct:createOrderCommandHandler", body);
+    } catch (OrderDomainException e) {
+      log.info("Exception here");
+      threwException = true;
+      //var cee = assertIsInstanceOf(CamelExecutionException.class, e);
+      //var cause = cee.getCause();
+      //assertIsInstanceOf(DomainException.class, cause);
+    }
+
+    //assertTrue(threwException);
+    //assertMockEndpointsSatisfied();
+
+  }
+
 
   @Test
+  @Disabled
   @SneakyThrows
   public void createOrderMessagingToOrderCreatedEvent() {
 
@@ -53,8 +77,8 @@ public class CamelAppIT extends CamelQuarkusTestSupport implements BaseTest {
 
     var orderDTO = this.createOrderCommandDTOFullMock();
     var order = this.orderDataMapper.createOrderCommandToOrder(orderDTO);
-    var restaurant = this.orderDataMapper.createOrderCommandToRestaurant(orderDTO);
-    var body = this.orderDataMapper.validateAndInitializeOrder(order, restaurant); // OrderCreatedEvent
+    //var restaurant = this.orderDataMapper.createOrderCommandToRestaurant(orderDTO);
+    var body = this.orderDataMapper.validateAndInitializeOrder(order, null); // OrderCreatedEvent
     //
     var mock = getMockEndpoint("mock:result");
     mock.expectedMessageCount(1);

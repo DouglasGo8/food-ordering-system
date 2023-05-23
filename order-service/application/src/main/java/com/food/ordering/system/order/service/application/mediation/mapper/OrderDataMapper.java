@@ -47,11 +47,12 @@ public class OrderDataMapper {
     final Function<List<OrderItemDTO>, List<Product>> transform = (items) ->
             items.stream().map(item -> new Product(new ProductId(item.getProductId()))).collect(Collectors.toList());
     //
-    return new Restaurant(restaurantId, true, transform.apply(createOrderCommand.getItems()));
+    return new Restaurant(restaurantId, transform.apply(createOrderCommand.getItems()));
     //
   }
 
-  public OrderCreatedEvent validateAndInitializeOrder(@Body Order order, @ExchangeProperty("restaurant") Restaurant restaurant) {
+  public OrderCreatedEvent validateAndInitializeOrder(@Body Order order,
+                                                      @ExchangeProperty("restaurantInfo") Restaurant restaurant) {
     return orderDomainService.validateAndInitiateOrder(order, restaurant);
   }
 
@@ -64,7 +65,8 @@ public class OrderDataMapper {
     return new Order(orderPrice, customerId, restaurantId, deliveryAddress, items);
   }
 
-  public CreateOrderResponseDTO orderToCreateOrderResponseDTO(@Body OrderCreatedEvent orderCreatedEvent) {
+  public CreateOrderResponseDTO orderToCreateOrderResponseDTO(@ExchangeProperty("orderCreatedEvent")
+                                                              OrderCreatedEvent orderCreatedEvent) {
     final var order = orderCreatedEvent.getOrder();
     return CreateOrderResponseDTO.builder()
             .orderTrackingID(order.getTrackingId().getValue())

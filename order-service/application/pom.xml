@@ -60,6 +60,7 @@
       <artifactId>quarkus-jdbc-postgresql</artifactId>
     </dependency>
     <!-- Kafka -->
+    <!--
     <dependency>
       <groupId>org.apache.camel.quarkus</groupId>
       <artifactId>camel-quarkus-kafka</artifactId>
@@ -73,7 +74,7 @@
       <groupId>io.quarkus</groupId>
       <artifactId>quarkus-confluent-registry-avro</artifactId>
     </dependency>
-
+-->
     <!-- Avro -->
     <dependency>
       <groupId>io.confluent</groupId>

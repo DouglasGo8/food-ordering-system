@@ -260,7 +260,7 @@ END;
 $$;
 --
 call insert_tbl_order_items(
-        'c16f7447-cc5e-4ec5-9ea3-d07c426ef044',
+        '1',
         'ec78b161-3899-4866-8753-886b84a8fbce',
         '20a44234-db9c-4672-9455-dea9be80377b',
         22.3,
@@ -291,14 +291,13 @@ DROP function if EXISTS find_customer_byId;
 CREATE OR REPLACE FUNCTION find_customer_byId(p_id TEXT)
     RETURNS TABLE
             (
-                id   TEXT,
-                name TEXT
+                id   TEXT
             )
 AS
 $$
 BEGIN
     RETURN QUERY
-        SELECT t.id, t.name
+        SELECT t.id
         FROM tbl_customer t
         WHERE t.id = find_customer_byId.p_id;
 END;

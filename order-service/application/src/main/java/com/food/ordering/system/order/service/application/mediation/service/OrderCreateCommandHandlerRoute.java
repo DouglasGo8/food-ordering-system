@@ -3,6 +3,7 @@ package com.food.ordering.system.order.service.application.mediation.service;
 
 import com.food.ordering.system.order.service.application.mediation.dto.exception.ExceptionMapper;
 import com.food.ordering.system.order.service.application.mediation.mapper.OrderDataMapper;
+import com.food.ordering.system.order.service.application.mediation.mapper.RestaurantProductsInMapper;
 import com.food.ordering.system.order.service.domain.core.exception.OrderDomainException;
 import com.food.ordering.system.order.service.domain.core.exception.OrderDomainNotFound;
 import lombok.NoArgsConstructor;
@@ -54,34 +55,45 @@ public class OrderCreateCommandHandlerRoute extends RouteBuilder {
             .multicast().stopOnException()
               .to("direct:checkCustomerCommandHandler", "direct:checkRestaurantCommandHandler")
             .end() // end multicast
+            .bean(RestaurantProductsInMapper.class, "restaurantAndProductsInfoInClause")
+            .to("direct:findRestaurantInformation")
+            // ------------------------- SPLIT STARTS---------------------------------------------------------------
+            //.split(body()).streaming()
+            //.aggregationStrategy(new FlexibleAggregationStrategy<RestaurantProductsInfoDTO>().storeInBody())
+            //.to("log:row")
+            //.end()
+            //.to("log:stream")
+            //.split(body()).streaming()
+            // .to("log:row")
+            // ------------------------- SPLIT END --------------------------------------------------------------
+            .bean(RestaurantProductsInMapper.class, "resultSetIteratorToRestaurant")
+            .setProperty("restaurantInfo", body())
+            .transform(exchangeProperty("payload"))
             .bean(OrderDataMapper.class, "createOrderCommandToOrder") // returns Order Object
             .bean(OrderDataMapper.class, "validateAndInitializeOrder") // returns OrderCreatedEvent Object
             //.log("${body}")
-            .setProperty("orderCreatedEvent", body())
             // ---------------------------------------------
-            .transform(exchangeProperty("payload"))
-            .setProperty("fail_msg", constant(""))
-            .setProperty("address_id", constant("a8f8c751-e3b0-49bf-bbef-4588db030959")) // cannon be hard-coded
+            .setProperty("orderCreatedEvent", body())
+            .transform(exchangeProperty("payload")) // CreateOrderCommandDTO
+            .setProperty("fail_msg", constant("")) // success saveOrder scenario
             // -------------------------------------------------
-            .to("sql-stored:classpath:templates/insertOrders.sql")
+            .to("sql-stored:classpath:templates/insertOrders.sql") // saveOrder
             .setProperty("orderIdOut", simple("${body['result']}")) // result SpEL From PROCEDURE
             .log("Order created with id: ${exchangeProperty.orderIdOut}")
             // ---------------------------------------------
             .transform(exchangeProperty("payload"))
             // ------------------------------------------------
             // Removes code boilerplate from orderItemsToOrderItemEntities method
-            .split(simple("${body.items}")).streaming(true).parallelProcessing()
-            //.log("${exchangeProperty.orderIdOut}")
-              .setProperty("orderItemId", simple("${uuid}"))
+            .split(simple("${body.items}")).streaming(true)
+              //.parallelProcessing()
               .to("sql-stored:classpath:templates/insertOrderItems.sql")
             .end() // close Split
-            // -----------------------------------------------------
-            .transform(exchangeProperty("orderCreatedEvent"))
             // ------------------------------------------------------------------------
-            .wireTap("seda:publishOrderCreatedPayment?blockWhenFull=true")
+            //.wireTap("seda:publishOrderCreatedPayment?blockWhenFull=true")
             // -------------------------------------------------------------------------------
             .bean(OrderDataMapper.class, "orderToCreateOrderResponseDTO") // orderCreateResponseDTO
-    .end();
+            .to("log:stream")
+            .end();
 
   }
 

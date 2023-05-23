@@ -2,7 +2,7 @@
 
 == Why Camel?
 
-. To remove a lot of code bloat and unnecessary sub-modules with verbose code implementation
+. To remove a lot of code bloat and unnecessary tons of layers imposed by Hexagonal Concept
 
 == Links
 
@@ -31,8 +31,6 @@
 |- food-ordering-system     (pom)
 |-|- order-service          (pom)
 |-|-|- application          (jar)
-|-|-|- container            (jar)
-|-|-|- dataaccess           (jar)
 |-|-|- domain               (pom)
 |-|-|-|- core               (jar)
 |-|-|-|- messaging          (jar)
@@ -185,6 +183,28 @@ image::architecture/thumbs/images/concepts/tactical-ddd-pattern-applied.png[]
 }
 ----
 
+.JpaRepository (RestaurantRepository) Log Sample query with Materialized View
+[source,sql]
+----
+--Hibernate:
+    select
+        r1_0.product_id,
+        r1_0.restaurant_id,
+        r1_0.product_available,
+        r1_0.product_name,
+        r1_0.product_price,
+        r1_0.restaurant_active,
+        r1_0.restaurant_name
+    from
+        order_restaurant_mview r1_0
+    where
+        r1_0.restaurant_id=?
+        and r1_0.product_id in(?,?)
+----
+
+.Postgresql PROCEDURE insert result TBL_ORDER_ITEMS and Camel Split
+image::architecture/thumbs/images/postgres_table_query_tbl_order_items.png[]
+
 == Kafka Architecture
 
 . Kafka brokers: Servers run in a cluster
@@ -205,7 +225,8 @@ restaurant-approval-response partitions 3
 ****
 
 === Apache Camel Kafka Producer/Consumer Configurations
-[source, properties]
+
+[source,properties]
 ----
 # Common Configuration
 # camel:endpoint?brokers = localhost:9092

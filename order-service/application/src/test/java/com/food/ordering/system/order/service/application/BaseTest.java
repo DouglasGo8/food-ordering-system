@@ -37,14 +37,14 @@ public interface BaseTest {
     var quantity_TWO = 2;
     //
     var orderItem_ONE = OrderItemDTO.builder()
-            .productId(UUID.randomUUID())
+            .productId(UUID.fromString("d215b5f8-0249-4dc5-89a3-51fd148cfb47"))
             .quantity(quantity_ONE)
             .price(price_ONE)
             .subTotal(price_ONE.multiply(BigDecimal.valueOf(quantity_ONE)))
             .build();
 
     var orderItem_TWO = OrderItemDTO.builder()
-            .productId(UUID.randomUUID())
+            .productId(UUID.fromString("d215b5f8-0249-4dc5-89a3-51fd148cfb48"))
             .quantity(quantity_TWO)
             .price(price_TWO)
             .subTotal(price_TWO.multiply(BigDecimal.valueOf(quantity_TWO)))
@@ -89,7 +89,25 @@ public interface BaseTest {
 
     var items = this.createMultipleOrderItemsMock();
     var customerIdValid = UUID.fromString("af20558e-5e77-4a6e-bb2f-fef1f14c0ee9");
-    var restaurantIdValid = UUID.fromString("c8dfc68d-9269-45c2-b2d1-7e0d0aa3c57b");
+    var restaurantIdValid = UUID.fromString("d215b5f8-0249-4dc5-89a3-51fd148cfb45");
+    //
+    var orderPrice = items.stream().map(OrderItemDTO::getSubTotal).reduce(BigDecimal.ZERO, BigDecimal::add);
+    //
+    return CreateOrderCommandDTO.builder()
+            .customerId(customerIdValid)
+            .restaurantId(restaurantIdValid)
+            .price(orderPrice)
+            .items(items)
+            .address(this.createOrderAddressMock())
+            .build();
+
+  }
+
+  default CreateOrderCommandDTO createOrderCommandDTOFullMockWithInvalidUUID() {
+
+    var items = this.createMultipleOrderItemsMock();
+    var customerIdValid = UUID.fromString("40a52a1d-bdd9-46ee-b002-14458de52721");
+    var restaurantIdValid = UUID.fromString("66c869d2-79a9-402f-8617-f7796f648725");
     //
     var orderPrice = items.stream().map(OrderItemDTO::getSubTotal).reduce(BigDecimal.ZERO, BigDecimal::add);
     //

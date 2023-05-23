@@ -4,7 +4,7 @@ import com.food.ordering.system.order.service.application.mediation.mapper.Order
 import lombok.NoArgsConstructor;
 import org.apache.camel.LoggingLevel;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.kafka.KafkaConstants;
+//import org.apache.camel.component.kafka.KafkaConstants;
 
 import javax.enterprise.context.ApplicationScoped;
 
@@ -29,8 +29,8 @@ public class OrderMessagingProducerHandlerRoute extends RouteBuilder {
               .log(LoggingLevel.INFO,"Received OrderCancelledEvent for order id ${body.id}")
             .end() // endChoice
             // ----------------------------------------------------------------------------------------------
-            .setHeader(KafkaConstants.KEY, exchangeProperty("topic-key"))
-            .to("kafka:{{payment-request-topic}}")
+            //.setHeader(KafkaConstants.KEY, exchangeProperty("topic-key"))
+            //.to("kafka:{{payment-request-topic}}")
             .log(LoggingLevel.INFO, "PaymentRequestAvroModel sent to kafka for order id: ${body.id}")
             .end();
 
