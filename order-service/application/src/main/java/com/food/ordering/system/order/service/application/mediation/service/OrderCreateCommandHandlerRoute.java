@@ -57,15 +57,6 @@ public class OrderCreateCommandHandlerRoute extends RouteBuilder {
             .end() // end multicast
             .bean(RestaurantProductsInMapper.class, "restaurantAndProductsInfoInClause")
             .to("direct:findRestaurantInformation")
-            // ------------------------- SPLIT STARTS---------------------------------------------------------------
-            //.split(body()).streaming()
-            //.aggregationStrategy(new FlexibleAggregationStrategy<RestaurantProductsInfoDTO>().storeInBody())
-            //.to("log:row")
-            //.end()
-            //.to("log:stream")
-            //.split(body()).streaming()
-            // .to("log:row")
-            // ------------------------- SPLIT END --------------------------------------------------------------
             .bean(RestaurantProductsInMapper.class, "resultSetIteratorToRestaurant")
             .setProperty("restaurantInfo", body())
             .transform(exchangeProperty("payload"))

@@ -202,6 +202,15 @@ image::architecture/thumbs/images/concepts/tactical-ddd-pattern-applied.png[]
         and r1_0.product_id in(?,?)
 ----
 
+.Sample Split Apache Camel with Aggregation Strategy
+[source,java]
+----
+.split(body()).streaming()
+  .aggregationStrategy(new FlexibleAggregationStrategy<RestaurantProductsInfoDTO>().storeInBody())
+  .to("log:row")
+.end()
+----
+
 .Postgresql PROCEDURE insert result TBL_ORDER_ITEMS and Camel Split
 image::architecture/thumbs/images/postgres_table_query_tbl_order_items.png[]
 
