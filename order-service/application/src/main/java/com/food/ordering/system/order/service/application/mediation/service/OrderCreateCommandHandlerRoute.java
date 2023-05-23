@@ -56,29 +56,23 @@ public class OrderCreateCommandHandlerRoute extends RouteBuilder {
               .to("direct:checkCustomerCommandHandler", "direct:checkRestaurantCommandHandler")
             .end() // end multicast
             .bean(RestaurantProductsInMapper.class, "restaurantAndProductsInfoInClause")
+            // ---------------------------------------------
             .to("direct:findRestaurantInformation")
+            // ---------------------------------------------------
             .bean(RestaurantProductsInMapper.class, "resultSetIteratorToRestaurant")
             .setProperty("restaurantInfo", body())
-            .transform(exchangeProperty("payload"))
             .bean(OrderDataMapper.class, "createOrderCommandToOrder") // returns Order Object
             .bean(OrderDataMapper.class, "validateAndInitializeOrder") // returns OrderCreatedEvent Object
-            //.log("${body}")
-            // ---------------------------------------------
             .setProperty("orderCreatedEvent", body())
             .transform(exchangeProperty("payload")) // CreateOrderCommandDTO
-            .setProperty("fail_msg", constant("")) // success saveOrder scenario
-            // -------------------------------------------------
-            .to("sql-stored:classpath:templates/insertOrders.sql") // saveOrder
+            // ---------------------------------------------
+            .to("direct:saveOrder")
+            // -------------------------------------------------------
             .setProperty("orderIdOut", simple("${body['result']}")) // result SpEL From PROCEDURE
             .log("Order created with id: ${exchangeProperty.orderIdOut}")
             // ---------------------------------------------
             .transform(exchangeProperty("payload"))
-            // ------------------------------------------------
-            // Removes code boilerplate from orderItemsToOrderItemEntities method
-            .split(simple("${body.items}")).streaming(true)
-              //.parallelProcessing()
-              .to("sql-stored:classpath:templates/insertOrderItems.sql")
-            .end() // close Split
+            .to("direct:saveOrderItems")
             // ------------------------------------------------------------------------
             //.wireTap("seda:publishOrderCreatedPayment?blockWhenFull=true")
             // -------------------------------------------------------------------------------
