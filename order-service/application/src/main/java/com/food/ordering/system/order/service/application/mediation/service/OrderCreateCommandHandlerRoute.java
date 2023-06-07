@@ -73,8 +73,9 @@ public class OrderCreateCommandHandlerRoute extends RouteBuilder {
             // ---------------------------------------------
             .transform(exchangeProperty("payload"))
             .to("direct:saveOrderItems")
+            .transform(exchangeProperty("orderCreatedEvent"))
             // ------------------------------------------------------------------------
-            //.wireTap("seda:publishOrderCreatedPayment?blockWhenFull=true")
+            .wireTap("seda:publishOrderCreatedPayment?blockWhenFull=true")
             // -------------------------------------------------------------------------------
             .bean(OrderDataMapper.class, "orderToCreateOrderResponseDTO") // orderCreateResponseDTO
             .to("log:stream")

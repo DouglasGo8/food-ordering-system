@@ -18,7 +18,7 @@ public class CustomerController extends RouteBuilder {
             .contextPath("/customer")
             // ---------- CONTEXT PATH END -----------------------
             .dataFormatProperty("prettyPrint", "true")
-            .host("localhost").port(12081).bindingMode(RestBindingMode.auto);
+            .host("0.0.0.0").port(12081).bindingMode(RestBindingMode.auto);
 
 
 

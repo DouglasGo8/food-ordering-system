@@ -16,9 +16,10 @@ import java.util.UUID;
 public class OrderMessagingDataMapper {
 
   @Handler
-  public PaymentRequestAvroModel orderCreatedOrCancelledEventToPaymentRequestAvroModel(@Body OrderEvent orderEvent) {
+  public PaymentRequestAvroModel orderEventToPaymentRequestAvroModel(@Body OrderEvent orderEvent) {
 
     var order = orderEvent.getOrder();
+    //
     var status = (orderEvent instanceof OrderCreatedEvent) ? PaymentOrderStatus.PENDING
             : PaymentOrderStatus.CANCELLED;
     //

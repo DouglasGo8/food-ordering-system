@@ -60,12 +60,11 @@
       <artifactId>quarkus-jdbc-postgresql</artifactId>
     </dependency>
     <!-- Kafka -->
-    <!--
+
     <dependency>
       <groupId>org.apache.camel.quarkus</groupId>
       <artifactId>camel-quarkus-kafka</artifactId>
     </dependency>
-
     <dependency>
       <groupId>org.apache.camel.quarkus</groupId>
       <artifactId>camel-quarkus-avro</artifactId>
@@ -74,7 +73,7 @@
       <groupId>io.quarkus</groupId>
       <artifactId>quarkus-confluent-registry-avro</artifactId>
     </dependency>
--->
+
     <!-- Avro -->
     <dependency>
       <groupId>io.confluent</groupId>
@@ -85,6 +84,7 @@
       <groupId>org.apache.avro</groupId>
       <artifactId>avro</artifactId>
     </dependency>
+
     <!-- System -->
     <dependency>
       <groupId>com.food.ordering.system.shared.domain</groupId>

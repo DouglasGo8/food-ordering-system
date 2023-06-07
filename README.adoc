@@ -33,7 +33,6 @@
 |-|-|- application          (jar)
 |-|-|- domain               (pom)
 |-|-|-|- core               (jar)
-|-|-|-|- messaging          (jar)
 ----
 
 .Skeletal Initial Structure

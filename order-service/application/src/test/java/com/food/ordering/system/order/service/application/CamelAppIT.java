@@ -1,6 +1,8 @@
 package com.food.ordering.system.order.service.application;
 
 import com.food.ordering.system.order.service.application.mediation.mapper.OrderDataMapper;
+import com.food.ordering.system.order.service.domain.core.common.OrderDomainInfo;
+import com.food.ordering.system.order.service.domain.core.event.OrderCreatedEvent;
 import com.food.ordering.system.order.service.domain.core.exception.OrderDomainException;
 import io.quarkus.test.junit.QuarkusTest;
 import lombok.SneakyThrows;
@@ -12,6 +14,8 @@ import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import javax.inject.Inject;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -29,6 +33,7 @@ public class CamelAppIT extends CamelQuarkusTestSupport implements BaseTest {
   ProducerTemplate producerTemplate;
 
   @Test
+
   @SneakyThrows
   public void createOrderCommandDTOByOrderControllerRepresentation() {
     AdviceWith.adviceWith(super.context, "CreateOrderCMDH", r -> r.weaveAddLast().to("mock:result"));
@@ -74,11 +79,9 @@ public class CamelAppIT extends CamelQuarkusTestSupport implements BaseTest {
 
     AdviceWith.adviceWith(context, "PublishOrderCreatedPayment",
             r -> r.weaveAddLast().to("mock:result"));
-
-    var orderDTO = this.createOrderCommandDTOFullMock();
-    var order = this.orderDataMapper.createOrderCommandToOrder(orderDTO);
-    //var restaurant = this.orderDataMapper.createOrderCommandToRestaurant(orderDTO);
-    var body = this.orderDataMapper.validateAndInitializeOrder(order, null); // OrderCreatedEvent
+    //
+    var order = this.initializerToValidateOrderInitiateMock();
+    var body = new OrderCreatedEvent(order, ZonedDateTime.now(ZoneId.of(OrderDomainInfo.ZONED_OF_ID)));
     //
     var mock = getMockEndpoint("mock:result");
     mock.expectedMessageCount(1);

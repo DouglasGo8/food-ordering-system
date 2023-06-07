@@ -109,6 +109,7 @@ CREATE TABLE tbl_restaurant_products
 --
 DROP MATERIALIZED VIEW if EXISTS order_restaurant_mview;
 --
+-- Materialized view Useless
 CREATE MATERIALIZED VIEW order_restaurant_mview tablespace pg_default
 AS
 SELECT r.id        AS restaurant_id,
@@ -135,6 +136,7 @@ SELECT id, user_name, first_name, last_name
 FROM tbl_customer
 WITH DATA;
 --
+-- Materialized view Useless
 REFRESH MATERIALIZED VIEW order_customer_mview;
 --
 DROP function IF EXISTS refresh_order_restaurant_mview;
@@ -291,7 +293,7 @@ DROP function if EXISTS find_customer_byId;
 CREATE OR REPLACE FUNCTION find_customer_byId(p_id TEXT)
     RETURNS TABLE
             (
-                id   TEXT
+                id TEXT
             )
 AS
 $$

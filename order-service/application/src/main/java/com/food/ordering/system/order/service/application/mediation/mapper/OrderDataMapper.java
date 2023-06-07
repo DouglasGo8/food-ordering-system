@@ -65,8 +65,7 @@ public class OrderDataMapper {
     return new Order(orderPrice, customerId, restaurantId, deliveryAddress, items);
   }
 
-  public CreateOrderResponseDTO orderToCreateOrderResponseDTO(@ExchangeProperty("orderCreatedEvent")
-                                                              OrderCreatedEvent orderCreatedEvent) {
+  public CreateOrderResponseDTO orderToCreateOrderResponseDTO(@Body OrderCreatedEvent orderCreatedEvent) {
     final var order = orderCreatedEvent.getOrder();
     return CreateOrderResponseDTO.builder()
             .orderTrackingID(order.getTrackingId().getValue())
