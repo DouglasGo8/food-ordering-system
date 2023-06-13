@@ -21,19 +21,38 @@
 - https://github.com/tstuber/camel-quarkus-kafka-schema-registry[Camel Quarkus Kafka with Avro]
 - https://howtodoinjava.com/junit5/expected-exception-example/[Throws Junit]
 
+'''
+
+* The main structure removes the submodules idea, why?
+To get rid of hell submodules management, here I try to keep the hexagonal concepts, but over the EIP and Camel perspectives; that means, the verbosity of frameworks will be reduced the main idea behind of Apache Camel is to eliminate tons of layers
+
 .Gemfile.lock
 ----
-|- food-ordering-system     (pom)
-|-|- shared                 (pom)
-|-|-|- avro-model           (jar)
-|-|-|- shared-domain        (jar)
+|- order-service    (jar) => need be entire reorganaized
 
-|- food-ordering-system     (pom)
-|-|- order-service          (pom)
-|-|-|- application          (jar)
-|-|-|- domain               (pom)
-|-|-|-|- core               (jar)
+|- payment-service  (jar)
+|-|- dataaccess     RouteBuilders (REPO)(JOOQL future)
+|-|- messaging      RouteBuilders (Brokers)
+|-|- domain
+|-|-|- application
+|-|-|-|- config
+|-|-|-|- dto
+|-|-|-|- exception
+|-|-|-|- mapper     Beans
+|-|-|-|- ports      RouterBuilders (REST)
+|-|-|- core
+|-|-|-|- entity
+|-|-|-|- event
+|-|-|-|- exception
+|-|-|-|- valueobject
+
+|- shared
+|-|- domain
+|-|- avro
+|-|-|- model
 ----
+
+== Deprecated Structure
 
 .Skeletal Initial Structure
 image::architecture/thumbs/images/concepts/skeletal-structure-all.png[]

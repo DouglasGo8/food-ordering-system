@@ -41,10 +41,12 @@
 
 
     <!-- Transaction -->
+    <!--
     <dependency>
       <groupId>org.apache.camel.quarkus</groupId>
       <artifactId>camel-quarkus-jta</artifactId>
     </dependency>
+    -->
     <!-- SQL TEMPLATES -->
     <dependency>
       <groupId>org.apache.camel.quarkus</groupId>
