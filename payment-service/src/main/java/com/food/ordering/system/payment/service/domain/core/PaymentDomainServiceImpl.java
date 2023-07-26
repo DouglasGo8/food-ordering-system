@@ -83,7 +83,11 @@ public class PaymentDomainServiceImpl implements PaymentDomainService {
     var amount = payment.getPrice();
     var customerId = payment.getCustomerId();
     var creditHistoryId = new CreditHistoryId(UUID.randomUUID());
-    var creditHistory = new CreditHistory(amount, creditHistoryId, customerId, transactionType);
+    var creditHistory = CreditHistory.builder()
+            .amount(amount)
+            .customerId(customerId)
+            .creditHistoryId(creditHistoryId)
+            .build();
     //
     creditHistories.add(creditHistory);
   }

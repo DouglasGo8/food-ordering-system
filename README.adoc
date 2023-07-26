@@ -1,8 +1,6 @@
 = Microservices & Event Sourcing, Clean Architecture, DDD, SAGA, Outbox & Kafka & Apache Camel
 
-== Why Camel?
-
-. To remove a lot of code bloat and unnecessary tons of layers imposed by Hexagonal Concept
+* Why Apache Camel?... Apache Camel brings EIP patterns and tries to remove a lot of code bloats and unnecessary tons of layers, sometimes, imposed by Clear Architecture and Hexagonal Concepts
 
 == Links
 
@@ -28,7 +26,7 @@ To get rid of hell submodules management, here I try to keep the hexagonal conce
 
 .Gemfile.lock
 ----
-|- order-service    (jar) => need be entire reorganaized
+|- order-service    (jar) => needs be entire reorganaized
 
 |- payment-service  (jar)
 |-|- dataaccess     RouteBuilders (REPO)(JOOQL future)
@@ -46,10 +44,18 @@ To get rid of hell submodules management, here I try to keep the hexagonal conce
 |-|-|-|- exception
 |-|-|-|- valueobject
 
-|- shared
+|- shared-order     (jar)
 |-|- domain
-|-|- avro
-|-|-|- model
+|- shared-avro      (jar)
+|-|- model
+|- shared-domain    (jar)(done)
+|-|- domain
+|-|-|- entity
+|-|-|- event
+|-|-|- exception
+|-|-|- valueobject
+
+
 ----
 
 == Deprecated Structure
@@ -59,10 +65,10 @@ image::architecture/thumbs/images/concepts/skeletal-structure-all.png[]
 
 == List Content
 
-. Microservices - powered by Quarkus and Apache Camel
+. Microservices—powered by Quarkus and Apache Camel
 . Clean & Hexagonal Architecture
 . Domain Driven Design (DDD): Bounded context, Entities, Aggregates, Value Objects, Domain services, Application services, and Domain Events
-. Kafka: Event store for eds (Event driven Services), enable loosely coupled services that communicates through events
+. Kafka: Event store for eds (Event-driven Services), enable loosely coupled services that communicate through events
 
 == Hexagonal Architecture
 
@@ -101,15 +107,15 @@ mvn install:install-file -Dfile=./target/shared-domain-1.0.jar \
   -DgeneratePom=true
 
 mvn clean -DskipTests compile package
-mvn install:install-file -Dfile=./target/core-1.0.jar \
-  -DgroupId=com.food.ordering.system.order.service.domain.core \
-  -DartifactId=core -Dversion=1.0 -Dpackaging=jar \
+mvn install:install-file -Dfile=./target/shared-order-core-1.0.jar \
+  -DgroupId=com.food.ordering.system.shared.order.core \
+  -DartifactId=shared-order-core -Dversion=1.0 -Dpackaging=jar \
   -DgeneratePom=true
 
 mvn clean -DskipTests compile package
-mvn install:install-file -Dfile=./target/avro-model-1.0.jar \
-  -DgroupId=com.food.ordering.system.shared.avro.model \
-  -DartifactId=avro-model -Dversion=1.0 -Dpackaging=jar \
+mvn install:install-file -Dfile=./target/shared-avro-1.0.jar \
+  -DgroupId=com.food.ordering.system.shared.avro \
+  -DartifactId=shared-avro -Dversion=1.0 -Dpackaging=jar \
   -DgeneratePom=true
 
 ----
@@ -123,7 +129,7 @@ mvn install:install-file -Dfile=./target/avro-model-1.0.jar \
 ... Ubiquitous Language: Common Language used by domain Experts and devs to avoid technical terms
 
 .Food Ordering Application classified (Domain)
-image::architecture/thumbs/images/ddd-strategic.png[]
+image::architecture/thumbs/images/concepts/ddd-strategic.png[]
 
 . Tactical DDD: Focuses on the implementation details of the domain logic such as:
 .. Entities: Domain object with a Unique Identifier, embodies critical business rules

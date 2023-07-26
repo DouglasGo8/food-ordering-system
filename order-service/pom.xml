@@ -1,30 +1,99 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<!-- Project Name -->
-<project
-        xmlns="http://maven.apache.org/POM/4.0.0"
-        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-        xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <parent>
     <artifactId>food-ordering-system</artifactId>
     <groupId>com.food.ordering.system</groupId>
     <version>1.0</version>
   </parent>
-  <!-- Project Identification -->
+
   <groupId>com.food.ordering.system.order.service</groupId>
   <artifactId>order-service</artifactId>
-  <version>1.0</version>
-  <packaging>pom</packaging>
-  <!-- Project Name -->
+  <version>1.0-SNAPSHOT</version>
+
   <name>Food Ordering System :: Order Service</name>
   <description>Microservices :: Clean Architecture :: DDD :: Saga :: Outbox &amp; Kafka</description>
 
-  <!-- modules -->
-  <modules>
-    <module>domain</module>
-    <module>application</module>
-  </modules>
+  <repositories>
+    <repository>
+      <id>confluent</id>
+      <url>https://packages.confluent.io/maven/</url>
+    </repository>
+  </repositories>
 
+  <dependencies>
+    <!-- Validator -->
+    <dependency>
+      <groupId>io.quarkus</groupId>
+      <artifactId>quarkus-hibernate-validator</artifactId>
+    </dependency>
+    <!-- HTTP -->
+    <dependency>
+      <groupId>org.apache.camel.quarkus</groupId>
+      <artifactId>camel-quarkus-netty-http</artifactId>
+    </dependency>
+
+    <!--
+     <dependency>
+      <groupId>org.apache.camel.quarkus</groupId>
+      <artifactId>camel-quarkus-timer</artifactId>
+    </dependency>Only test Effect
+    -->
+    <!-- SQL TEMPLATES -->
+    <dependency>
+      <groupId>org.apache.camel.quarkus</groupId>
+      <artifactId>camel-quarkus-sql</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.camel.quarkus</groupId>
+      <artifactId>camel-quarkus-jackson</artifactId>
+    </dependency>
+    <!-- POSTGRES -->
+    <dependency>
+      <groupId>io.quarkus</groupId>
+      <artifactId>quarkus-jdbc-postgresql</artifactId>
+    </dependency>
+    <!-- Kafka -->
+    <dependency>
+      <groupId>org.apache.camel.quarkus</groupId>
+      <artifactId>camel-quarkus-kafka</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.camel.quarkus</groupId>
+      <artifactId>camel-quarkus-avro</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>io.quarkus</groupId>
+      <artifactId>quarkus-confluent-registry-avro</artifactId>
+    </dependency>
+    <!-- Avro -->
+    <dependency>
+      <groupId>io.confluent</groupId>
+      <artifactId>kafka-avro-serializer</artifactId>
+      <version>7.3.2</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.avro</groupId>
+      <artifactId>avro</artifactId>
+    </dependency>
+
+    <!-- Food Order System -->
+    <dependency>
+      <groupId>com.food.ordering.system.shared.avro</groupId>
+      <artifactId>shared-avro</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.food.ordering.system.shared.domain</groupId>
+      <artifactId>shared-domain</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.food.ordering.system.shared.order.core</groupId>
+      <artifactId>shared-order-core</artifactId>
+    </dependency>
+  </dependencies>
+
+  <!-- mandatory -->
   <build>
     <plugins>
       <plugin>
@@ -42,4 +111,5 @@
       </plugin>
     </plugins>
   </build>
+
 </project>

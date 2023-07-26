@@ -20,16 +20,17 @@
       <groupId>io.quarkus</groupId>
       <artifactId>quarkus-hibernate-validator</artifactId>
     </dependency>
+
+    <!-- -->
     <dependency>
       <groupId>com.food.ordering.system.shared.domain</groupId>
       <artifactId>shared-domain</artifactId>
     </dependency>
-    <!-- -->
     <dependency>
-      <groupId>com.food.ordering.system.order.service.domain.core</groupId>
-      <artifactId>core</artifactId>
+      <groupId>com.food.ordering.system.shared.order.core</groupId>
+      <artifactId>shared-order-core</artifactId>
     </dependency>
-   
+
   </dependencies>
 
   <build>

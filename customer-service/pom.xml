@@ -18,10 +18,7 @@
 
 
   <dependencies>
-    <dependency>
-      <groupId>com.food.ordering.system.order.service.domain.core</groupId>
-      <artifactId>core</artifactId>
-    </dependency>
+
   </dependencies>
 
 

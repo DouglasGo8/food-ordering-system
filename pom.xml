@@ -12,10 +12,10 @@
   <!-- Project Identification -->
   <name>Food Ordering System</name>
   <description>Microservices :: Clean Architecture :: DDD :: Saga :: Outbox &amp; Kafka</description>
-  <!-- Props -->
+
   <properties>
     <!-- Quarkus -->
-    <quarkus.platform.version>2.15.3.Final</quarkus.platform.version>
+    <quarkus.platform.version>2.16.8.Final</quarkus.platform.version>
     <quarkus.platform.artifact-id>quarkus-bom</quarkus.platform.artifact-id>
     <quarkus.platform.group-id>io.quarkus.platform</quarkus.platform.group-id>
     <!-- Maven -->
@@ -27,6 +27,7 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
   </properties>
+
   <!-- BOM -->
   <dependencyManagement>
     <!-- Quarkus -->
@@ -47,30 +48,21 @@
         <scope>import</scope>
       </dependency>
       <!-- Food Ordering Service -->
+
+      <!-- Food Shared Domain -->
       <dependency>
-        <groupId>com.food.ordering.system.order.service.domain.core</groupId>
-        <artifactId>core</artifactId>
-        <version>${project.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>com.food.ordering.system.order.service.application</groupId>
-        <artifactId>application</artifactId>
-        <version>${project.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>com.food.ordering.system.order.service.domain.messaging</groupId>
-        <artifactId>messaging</artifactId>
+        <groupId>com.food.ordering.system.shared.avro</groupId>
+        <artifactId>shared-avro</artifactId>
         <version>1.0</version>
       </dependency>
-      <!-- Food Shared Domain -->
       <dependency>
         <groupId>com.food.ordering.system.shared.domain</groupId>
         <artifactId>shared-domain</artifactId>
         <version>1.0</version>
       </dependency>
       <dependency>
-        <groupId>com.food.ordering.system.shared.avro.model</groupId>
-        <artifactId>avro-model</artifactId>
+        <groupId>com.food.ordering.system.shared.order.core</groupId>
+        <artifactId>shared-order-core</artifactId>
         <version>1.0</version>
       </dependency>
     </dependencies>
@@ -80,7 +72,7 @@
     <dependency>
       <groupId>org.projectlombok</groupId>
       <artifactId>lombok</artifactId>
-      <version>1.18.26</version>
+      <version>1.18.28</version>
     </dependency>
     <dependency>
       <groupId>io.quarkus</groupId>
@@ -183,9 +175,11 @@
     </profile>
   </profiles>
   <modules>
-    <module>shared</module>
+    <module>shared-avro</module>
+    <module>shared-domain</module>
     <module>order-service</module>
     <module>payment-service</module>
     <module>customer-service</module>
+    <module>shared-order-core</module>
   </modules>
 </project>

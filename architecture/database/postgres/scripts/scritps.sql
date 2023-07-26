@@ -25,7 +25,7 @@ CREATE TABLE tbl_order_items
     sub_total  NUMERIC(10, 2) NOT NULL,
     CONSTRAINT tbl_order_items_pkey PRIMARY KEY (id, order_id),
     CONSTRAINT fk_order_id FOREIGN KEY (order_id)
-        REFERENCES tbl_orders (id) MATCH SIMPLE
+            REFERENCES tbl_orders (id) MATCH SIMPLE
         ON UPDATE NO ACTION
         ON DELETE RESTRICT
 );
@@ -109,8 +109,8 @@ CREATE TABLE tbl_restaurant_products
 --
 DROP MATERIALIZED VIEW if EXISTS order_restaurant_mview;
 --
--- Materialized view Useless
-CREATE MATERIALIZED VIEW order_restaurant_mview tablespace pg_default
+-- Materialized view used
+/*CREATE MATERIALIZED VIEW order_restaurant_mview tablespace pg_default
 AS
 SELECT r.id        AS restaurant_id,
        r.name      AS restaurant_name,
@@ -136,10 +136,10 @@ SELECT id, user_name, first_name, last_name
 FROM tbl_customer
 WITH DATA;
 --
--- Materialized view Useless
-REFRESH MATERIALIZED VIEW order_customer_mview;
+-- Materialized view not used
+REFRESH MATERIALIZED VIEW order_customer_mview;*/
 --
-DROP function IF EXISTS refresh_order_restaurant_mview;
+/*DROP function IF EXISTS refresh_order_restaurant_mview;
 --
 CREATE OR replace function refresh_order_restaurant_mview()
     returns trigger
@@ -150,14 +150,14 @@ AS
         return null;
     END;
 ' LANGUAGE plpgsql;
---
-DROP trigger IF EXISTS refresh_order_restaurant_mview ON tbl_restaurant_products;
+--*/
+/*DROP trigger IF EXISTS refresh_order_restaurant_mview ON tbl_restaurant_products;
 --
 CREATE trigger refresh_order_restaurant_mview
     after INSERT OR UPDATE OR DELETE OR truncate
     ON tbl_restaurant_products
     FOR each statement
-EXECUTE PROCEDURE refresh_order_restaurant_mview();
+EXECUTE PROCEDURE refresh_order_restaurant_mview();*/
 --
 insert into tbl_customer (id, user_name, first_name, last_name)
 values ('af20558e-5e77-4a6e-bb2f-fef1f14c0ee9', 'Joe', 'Joe', 'Doe');
@@ -170,9 +170,9 @@ INSERT INTO tbl_restaurants(id, name, active)
 VALUES ('d215b5f8-0249-4dc5-89a3-51fd148cfb46', 'restaurant_2', FALSE);
 --
 INSERT INTO tbl_products(id, name, price, available)
-VALUES ('d215b5f8-0249-4dc5-89a3-51fd148cfb47', 'product_1', 25.00, FALSE);
+VALUES ('d215b5f8-0249-4dc5-89a3-51fd148cfb47', 'product_1', 22.76, FALSE);
 INSERT INTO tbl_products(id, name, price, available)
-VALUES ('d215b5f8-0249-4dc5-89a3-51fd148cfb48', 'product_2', 50.00, TRUE);
+VALUES ('d215b5f8-0249-4dc5-89a3-51fd148cfb48', 'product_2', 77.14, TRUE);
 INSERT INTO tbl_products(id, name, price, available)
 VALUES ('d215b5f8-0249-4dc5-89a3-51fd148cfb49', 'product_3', 20.00, FALSE);
 INSERT INTO tbl_products(id, name, price, available)
