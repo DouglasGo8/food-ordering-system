@@ -1,6 +1,7 @@
 package com.food.ordering.system.payment.service;
 
 import com.food.ordering.system.payment.service.domain.core.PaymentDomainService;
+import com.food.ordering.system.payment.service.domain.core.entity.CreditHistory;
 import com.food.ordering.system.payment.service.domain.core.event.PaymentCancelledEvent;
 import com.food.ordering.system.payment.service.domain.core.event.PaymentCompletedEvent;
 import com.food.ordering.system.payment.service.domain.core.event.PaymentFailedEvent;
@@ -15,6 +16,8 @@ import javax.inject.Inject;
 import java.math.BigDecimal;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -101,8 +104,25 @@ public class AppTest implements BaseTest {
   public void validateAndInitializePaymentRepresentation() {
     var payment = this.createPaymentWithoutPaymentIdMock();
     var creditEntry = this.createCreditEntryMock();
-    var creditHistory = List.of(this.createCreditHistory());
-    var paymentEvent = this.paymentDomainService.validateAndInitializePayment(payment, creditEntry, creditHistory, List.of());
+    List<CreditHistory> creditHistory = new ArrayList<>();
+    creditHistory.add(this.createCreditHistory());
+    // Collections.singletonList(this.createCreditHistory());// List.of(this.createCreditHistory());
+    var paymentEvent = this.paymentDomainService
+            .validateAndInitializePayment(payment, creditEntry, creditHistory, List.of());
+    //
     assertNotNull(paymentEvent.getPayment().getId());
+    assertEquals(paymentEvent.getFailureMessages().size(), 0);
+  }
+
+  @Test
+  public void validateAndCancelPaymentRepresentation() {
+    var payment = this.createPaymentWithoutPaymentIdMock();
+    var creditEntry = this.createCreditEntryMock();
+    List<CreditHistory> creditHistory = new ArrayList<>();
+    creditHistory.add(this.createCreditHistory());
+    var paymentEvent = this.paymentDomainService
+            .validateAndCancelPayment(payment, creditEntry, creditHistory, List.of());
+    assertEquals(paymentEvent.getPayment().getPaymentStatus(), PaymentStatus.CANCELLED);
+    assertEquals(paymentEvent.getFailureMessages().size(), 0);
   }
 }

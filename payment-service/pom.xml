@@ -30,7 +30,6 @@
       <groupId>com.food.ordering.system.shared.order.core</groupId>
       <artifactId>shared-order-core</artifactId>
     </dependency>
-
   </dependencies>
 
   <build>

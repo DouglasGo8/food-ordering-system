@@ -9,6 +9,7 @@ import com.food.ordering.system.payment.service.domain.core.event.PaymentEvent;
 import com.food.ordering.system.payment.service.domain.core.event.PaymentFailedEvent;
 import com.food.ordering.system.payment.service.domain.core.valueobject.CreditHistoryId;
 import com.food.ordering.system.payment.service.domain.core.valueobject.TransactionType;
+import com.food.ordering.system.shared.domain.DomainConstants;
 import com.food.ordering.system.shared.domain.valueobject.Money;
 import com.food.ordering.system.shared.domain.valueobject.PaymentStatus;
 import lombok.NoArgsConstructor;
@@ -37,11 +38,11 @@ public class PaymentDomainServiceImpl implements PaymentDomainService {
     if (failureMessages.isEmpty()) {
       log.info("Payment is initiated for order id: {}", payment.getOrderId().getValue());
       payment.updateStatus(PaymentStatus.COMPLETED);
-      return new PaymentCompletedEvent(payment, ZonedDateTime.now(ZoneId.of("UTC")));
+      return new PaymentCompletedEvent(payment, ZonedDateTime.now(ZoneId.of(DomainConstants.UTC)));
     } else {
       log.info("Payment initiation is failed for order id: {}", payment.getOrderId().getValue());
       payment.updateStatus(PaymentStatus.FAILED);
-      return new PaymentFailedEvent(payment, ZonedDateTime.now(ZoneId.of("UTC")), failureMessages);
+      return new PaymentFailedEvent(payment, ZonedDateTime.now(ZoneId.of(DomainConstants.UTC)), failureMessages);
     }
   }
 
@@ -56,11 +57,11 @@ public class PaymentDomainServiceImpl implements PaymentDomainService {
       log.info("Payment is cancelled for order id: {}", payment.getOrderId().getValue());
       payment.updateStatus(PaymentStatus.CANCELLED);
       // Change UTC value to shared domain constant
-      return new PaymentCancelledEvent(payment, ZonedDateTime.now(ZoneId.of("UTC")));
+      return new PaymentCancelledEvent(payment, ZonedDateTime.now(ZoneId.of(DomainConstants.UTC)));
     } else {
       log.info("Payment cancellation is failed for order id: {}", payment.getOrderId().getValue());
       payment.updateStatus(PaymentStatus.FAILED);
-      return new PaymentFailedEvent(payment, ZonedDateTime.now(ZoneId.of("UTC")), failureMessages);
+      return new PaymentFailedEvent(payment, ZonedDateTime.now(ZoneId.of(DomainConstants.UTC)), failureMessages);
     }
   }
 
@@ -87,16 +88,19 @@ public class PaymentDomainServiceImpl implements PaymentDomainService {
             .amount(amount)
             .customerId(customerId)
             .creditHistoryId(creditHistoryId)
+            .transactionType(transactionType)
             .build();
     //
-    creditHistories.add(creditHistory);
+
+    creditHistories.add(creditHistory); // unsupported.operation.exception
   }
 
   private void validateCreditHistory(CreditEntry creditEntry, List<CreditHistory> creditHistories,
                                      List<String> failureMessages) {
 
-    var totalDebitHistory = this.getTotalHistoryAmount(creditHistories, TransactionType.DEBIT);
     var totalCreditHistory = this.getTotalHistoryAmount(creditHistories, TransactionType.CREDIT);
+    var totalDebitHistory = this.getTotalHistoryAmount(creditHistories, TransactionType.DEBIT);
+
     //
     if (totalDebitHistory.isGreaterThan(totalCreditHistory)) {
       log.error("Customer with id: {} doesn't have enough credit according to credit history!",
