@@ -15,5 +15,9 @@ public class PaymentRequestMessageListener extends RouteBuilder {
   @Override
   public void configure() {
 
+
+
+    //from("kafka:{{paymentRequestTopic")
+
   }
 }

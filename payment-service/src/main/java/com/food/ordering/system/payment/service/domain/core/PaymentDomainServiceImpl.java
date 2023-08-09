@@ -14,6 +14,7 @@ import com.food.ordering.system.shared.domain.valueobject.Money;
 import com.food.ordering.system.shared.domain.valueobject.PaymentStatus;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.camel.ExchangeProperty;
 
 import javax.enterprise.context.ApplicationScoped;
 import java.time.ZoneId;
@@ -26,8 +27,10 @@ import java.util.UUID;
 @ApplicationScoped
 public class PaymentDomainServiceImpl implements PaymentDomainService {
   @Override
-  public PaymentEvent validateAndInitializePayment(Payment payment, CreditEntry creditEntry,
-                                                   List<CreditHistory> creditHistories, List<String> failureMessages) {
+  public PaymentEvent validateAndInitializePayment(@ExchangeProperty("payment") Payment payment,
+                                                   CreditEntry creditEntry,
+                                                   List<CreditHistory> creditHistories,
+                                                   List<String> failureMessages) {
     payment.validatePayment(failureMessages);
     payment.initializePayment();
     this.validateCreditEntry(payment, creditEntry, failureMessages);

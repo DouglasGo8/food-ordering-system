@@ -10,7 +10,7 @@
 
   <groupId>com.food.ordering.system.order.service</groupId>
   <artifactId>order-service</artifactId>
-  <version>1.0-SNAPSHOT</version>
+  <version>1.0</version>
 
   <name>Food Ordering System :: Order Service</name>
   <description>Microservices :: Clean Architecture :: DDD :: Saga :: Outbox &amp; Kafka</description>

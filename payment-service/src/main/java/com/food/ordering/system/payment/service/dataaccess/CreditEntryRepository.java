@@ -14,6 +14,8 @@ public class CreditEntryRepository extends RouteBuilder {
   // Optional<CreditEntry> findByCustomerId(CustomerId customerId)
   @Override
   public void configure() {
-
+    from("direct:creditEntryRepository").routeId("CreditEntryRepositoryRouteId")
+      .transform(constant("CreditEntry"))
+      .end();
   }
 }

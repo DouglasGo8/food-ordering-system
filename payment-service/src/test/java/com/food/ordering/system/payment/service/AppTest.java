@@ -1,5 +1,7 @@
 package com.food.ordering.system.payment.service;
 
+import com.food.ordering.system.payment.service.domain.application.dto.PaymentRequest;
+import com.food.ordering.system.payment.service.domain.application.mapper.PaymentDataMapper;
 import com.food.ordering.system.payment.service.domain.core.PaymentDomainService;
 import com.food.ordering.system.payment.service.domain.core.entity.CreditHistory;
 import com.food.ordering.system.payment.service.domain.core.event.PaymentCancelledEvent;
@@ -7,6 +9,7 @@ import com.food.ordering.system.payment.service.domain.core.event.PaymentComplet
 import com.food.ordering.system.payment.service.domain.core.event.PaymentFailedEvent;
 import com.food.ordering.system.shared.domain.DomainConstants;
 import com.food.ordering.system.shared.domain.valueobject.Money;
+import com.food.ordering.system.shared.domain.valueobject.PaymentOrderStatus;
 import com.food.ordering.system.shared.domain.valueobject.PaymentStatus;
 import io.quarkus.test.junit.QuarkusTest;
 import lombok.extern.slf4j.Slf4j;
@@ -14,11 +17,12 @@ import org.junit.jupiter.api.Test;
 
 import javax.inject.Inject;
 import java.math.BigDecimal;
+import java.time.Instant;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
+import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -28,8 +32,28 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 public class AppTest implements BaseTest {
 
   @Inject
+  PaymentDataMapper paymentDataMapper;
+
+  @Inject
   PaymentDomainService paymentDomainService;
 
+
+  @Test
+  public void paymentRequestRepresentation() {
+    var paymentRequest = PaymentRequest.builder()
+            .id(UUID.randomUUID().toString())
+            .orderId(UUID.randomUUID().toString())
+            .price(BigDecimal.valueOf(10))
+            .customerId(UUID.randomUUID().toString())
+            .createdAt(Instant.now())
+            .sagaId("")
+            .paymentOrderStatus(PaymentOrderStatus.PENDING)
+            .build();
+
+
+    assertNotNull(paymentRequest.getId());
+    assertEquals(paymentRequest.getPaymentOrderStatus(), PaymentOrderStatus.PENDING);
+  }
 
   @Test
 
@@ -124,5 +148,11 @@ public class AppTest implements BaseTest {
             .validateAndCancelPayment(payment, creditEntry, creditHistory, List.of());
     assertEquals(paymentEvent.getPayment().getPaymentStatus(), PaymentStatus.CANCELLED);
     assertEquals(paymentEvent.getFailureMessages().size(), 0);
+  }
+
+  @Test
+  public void paymentDataMapperRequestModelToPaymentRepresentation() {
+    // paymentRequest
+    //this.paymentDataMapper.paymentRequestModelToPayment(null)
   }
 }

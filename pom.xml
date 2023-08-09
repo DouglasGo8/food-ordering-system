@@ -4,11 +4,14 @@
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
+
   <!-- Project Identification -->
+
   <groupId>com.food.ordering.system</groupId>
   <artifactId>food-ordering-system</artifactId>
   <version>1.0</version>
   <packaging>pom</packaging>
+
   <!-- Project Identification -->
   <name>Food Ordering System</name>
   <description>Microservices :: Clean Architecture :: DDD :: Saga :: Outbox &amp; Kafka</description>

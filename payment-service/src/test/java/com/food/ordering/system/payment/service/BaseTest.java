@@ -73,12 +73,12 @@ public interface BaseTest {
   default PaymentRequest createPaymentRequest() {
     return PaymentRequest.builder()
             .createdAt(Instant.now())
-            .customerId(UUID.randomUUID().toString())
+            .customerId(UUID.fromString("af20558e-5e77-4a6e-bb2f-fef1f14c0ee9").toString())
             .id(UUID.randomUUID().toString())
             // must be a valid orderId
             .orderId("ec78b161-3899-4866-8753-886b84a8fbce")
             .paymentOrderStatus(PaymentOrderStatus.PENDING)
-            .price(BigDecimal.valueOf(12))
+            .price(BigDecimal.valueOf(12.76d))
             .sagaId("")
             .build();
   }

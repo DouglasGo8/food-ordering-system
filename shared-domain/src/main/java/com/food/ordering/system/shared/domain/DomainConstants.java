@@ -17,5 +17,6 @@ public interface DomainConstants {
   String CUSTOMER_NOT_FOUND_ID = "Could not find customer with customer id: ${exchangeProperty.customerId}";
   String RESTAURANT_INFO_NOT_FOUND = "Could not find restaurant with restaurant id: %s";
 
+  String PAYMENT_REQUEST_RECEIVED = "Received payment complete event for order id ${body.orderId}";
 
 }

@@ -5,7 +5,6 @@ import com.food.ordering.system.shared.domain.valueobject.PaymentOrderStatus;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
-import lombok.Setter;
 
 import java.math.BigDecimal;
 import java.time.Instant;
@@ -21,7 +20,6 @@ public class PaymentRequest {
   //
   private BigDecimal price;
   private Instant createdAt;
-  // needs organize shared project
-  @Setter
+  //
   private PaymentOrderStatus paymentOrderStatus;
 }
