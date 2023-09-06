@@ -23,10 +23,7 @@ import java.math.BigDecimal;
 import java.text.NumberFormat;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Stream;
 
 @Slf4j
@@ -47,22 +44,22 @@ public class PaymentDomainServiceImpl implements PaymentDomainService {
                     .format(creditEntries.get(0).get("total_credit_amount"))))))
             .build();
     //
-    var newCreditHistories = creditHistories.stream()
+    var newCreditHistories = new ArrayList<>(creditHistories.stream()
             .flatMap(map -> Stream.of(CreditHistory.builder()
                     .creditHistoryId(new CreditHistoryId(UUID.fromString(map.get("id"))))
                     .customerId(new CustomerId(UUID.fromString(map.get("customer_id"))))
                     .amount(new Money(BigDecimal.valueOf(Double.parseDouble(NumberFormat.getInstance().format(map.get("amount"))))))
                     .build()))
-            .toList();
+            .toList());
     //
     payment.validatePayment(failureMessages);
     payment.initializePayment();
     //
     this.validateCreditEntry(payment, newCreditEntry, failureMessages);
     this.subtractCreditEntry(payment, newCreditEntry);
-    // need Fix java.lang.UnsupportedOperationException
+    // fixed java.lang.UnsupportedOperationException
     this.updateCreditHistory(payment, newCreditHistories, TransactionType.DEBIT);
-    //this.validateCreditHistory(newCreditEntry, newCreditHistories, failureMessages);
+    this.validateCreditHistory(newCreditEntry, newCreditHistories, failureMessages);
     //
     if (failureMessages.isEmpty()) {
       log.info("Payment is initiated for order id: {}", payment.getOrderId().getValue());
@@ -121,7 +118,7 @@ public class PaymentDomainServiceImpl implements PaymentDomainService {
             .build();
     //
 
-    creditHistories.add(creditHistory); // unsupported.operation.exception
+    creditHistories.add(creditHistory);
   }
 
   private void validateCreditHistory(CreditEntry creditEntry, List<CreditHistory> creditHistories,
