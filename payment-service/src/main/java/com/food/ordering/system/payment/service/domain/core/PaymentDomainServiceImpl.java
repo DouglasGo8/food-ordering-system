@@ -7,9 +7,11 @@ import com.food.ordering.system.payment.service.domain.core.event.PaymentCancell
 import com.food.ordering.system.payment.service.domain.core.event.PaymentCompletedEvent;
 import com.food.ordering.system.payment.service.domain.core.event.PaymentEvent;
 import com.food.ordering.system.payment.service.domain.core.event.PaymentFailedEvent;
+import com.food.ordering.system.payment.service.domain.core.valueobject.CreditEntryId;
 import com.food.ordering.system.payment.service.domain.core.valueobject.CreditHistoryId;
 import com.food.ordering.system.payment.service.domain.core.valueobject.TransactionType;
 import com.food.ordering.system.shared.domain.DomainConstants;
+import com.food.ordering.system.shared.domain.valueobject.CustomerId;
 import com.food.ordering.system.shared.domain.valueobject.Money;
 import com.food.ordering.system.shared.domain.valueobject.PaymentStatus;
 import lombok.NoArgsConstructor;
@@ -17,26 +19,50 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.camel.ExchangeProperty;
 
 import javax.enterprise.context.ApplicationScoped;
+import java.math.BigDecimal;
+import java.text.NumberFormat;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
+import java.util.stream.Stream;
 
 @Slf4j
 @NoArgsConstructor
 @ApplicationScoped
 public class PaymentDomainServiceImpl implements PaymentDomainService {
+
+
   @Override
   public PaymentEvent validateAndInitializePayment(@ExchangeProperty("payment") Payment payment,
-                                                   CreditEntry creditEntry,
-                                                   List<CreditHistory> creditHistories,
+                                                   @ExchangeProperty("creditEntries") ArrayList<Map<String, String>> creditEntries,
+                                                   @ExchangeProperty("creditHistories") ArrayList<Map<String, String>> creditHistories,
                                                    List<String> failureMessages) {
+    var newCreditEntry = CreditEntry.builder()
+            .creditEntryId(new CreditEntryId(UUID.fromString(creditEntries.get(0).get("id"))))
+            .customerId(new CustomerId(UUID.fromString(creditEntries.get(0).get("customer_id"))))
+            .totalCreditAmount(new Money(BigDecimal.valueOf(Double.parseDouble(NumberFormat.getInstance()
+                    .format(creditEntries.get(0).get("total_credit_amount"))))))
+            .build();
+    //
+    var newCreditHistories = creditHistories.stream()
+            .flatMap(map -> Stream.of(CreditHistory.builder()
+                    .creditHistoryId(new CreditHistoryId(UUID.fromString(map.get("id"))))
+                    .customerId(new CustomerId(UUID.fromString(map.get("customer_id"))))
+                    .amount(new Money(BigDecimal.valueOf(Double.parseDouble(NumberFormat.getInstance().format(map.get("amount"))))))
+                    .build()))
+            .toList();
+    //
     payment.validatePayment(failureMessages);
     payment.initializePayment();
-    this.validateCreditEntry(payment, creditEntry, failureMessages);
-    this.subtractCreditEntry(payment, creditEntry);
-    this.updateCreditHistory(payment, creditHistories, TransactionType.DEBIT);
-    this.validateCreditHistory(creditEntry, creditHistories, failureMessages);
+    //
+    this.validateCreditEntry(payment, newCreditEntry, failureMessages);
+    this.subtractCreditEntry(payment, newCreditEntry);
+    // need Fix java.lang.UnsupportedOperationException
+    this.updateCreditHistory(payment, newCreditHistories, TransactionType.DEBIT);
+    //this.validateCreditHistory(newCreditEntry, newCreditHistories, failureMessages);
     //
     if (failureMessages.isEmpty()) {
       log.info("Payment is initiated for order id: {}", payment.getOrderId().getValue());
@@ -50,11 +76,11 @@ public class PaymentDomainServiceImpl implements PaymentDomainService {
   }
 
   @Override
-  public PaymentEvent validateAndCancelPayment(Payment payment, CreditEntry creditEntry,
-                                               List<CreditHistory> creditHistories, List<String> failureMessages) {
+  public PaymentEvent validateAndCancelPayment(Payment payment, ArrayList<Map<String, String>> creditEntry,
+                                               ArrayList<Map<String, String>> creditHistories, List<String> failureMessages) {
     payment.validatePayment(failureMessages);
-    this.addCreditEntry(payment, creditEntry);
-    this.updateCreditHistory(payment, creditHistories, TransactionType.CREDIT);
+    this.addCreditEntry(payment, null/* creditEntry*/);
+    this.updateCreditHistory(payment, null /*creditHistories*/, TransactionType.CREDIT);
 
     if (failureMessages.isEmpty()) {
       log.info("Payment is cancelled for order id: {}", payment.getOrderId().getValue());

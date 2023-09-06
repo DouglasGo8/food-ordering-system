@@ -1,6 +1,7 @@
 package com.food.ordering.system.payment.service.messaging.consumer;
 
 import lombok.NoArgsConstructor;
+import org.apache.camel.LoggingLevel;
 import org.apache.camel.builder.RouteBuilder;
 
 import javax.enterprise.context.ApplicationScoped;
@@ -16,8 +17,23 @@ public class PaymentRequestMessageListener extends RouteBuilder {
   public void configure() {
 
 
+    //kafka:topic?
+    from("direct:completedPayment").routeId("CompletedPaymentRouter")
+            .log(LoggingLevel.INFO, "Received..")
+            .to("direct:persistPayment") // paymentEvent
 
-    //from("kafka:{{paymentRequestTopic")
+            //.to("seda:publishPaymentEvent") // PaymentEvent*Cancel*Completed*Failed
+
+            .end();
+
+
+
+    //kafka:topic?
+    from("direct:cancelPayment").routeId("CancelPaymentRouter")
+            .log(LoggingLevel.INFO, "Received...")
+            .to("direct:persistCancelPayment") // paymentEvent
+            //.to("seda:publishPaymentEvent") // PaymentEvent*Cancel*Completed*Failed
+            .end();
 
   }
 }

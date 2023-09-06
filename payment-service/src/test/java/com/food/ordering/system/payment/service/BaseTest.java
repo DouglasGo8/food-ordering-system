@@ -57,6 +57,7 @@ public interface BaseTest {
             .build();
   }
 
+
   default CreditHistory createCreditHistory() {
     var money = new Money(BigDecimal.valueOf(20));
     var customerId = new CustomerId(UUID.randomUUID());

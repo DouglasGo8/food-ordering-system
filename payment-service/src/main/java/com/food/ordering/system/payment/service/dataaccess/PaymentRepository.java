@@ -18,13 +18,23 @@ public class PaymentRepository extends RouteBuilder {
   @Override
   public void configure() {
 
-    from("direct:paymentRepository").routeId("PaymentRepositoryRoute")
+    from("direct:savePayment").routeId("SavePaymentRepositoryRouteId")
             //.to("sql:findByCustomerId")
             //.choice().when("isEmpty")
             //  .log(LoggingLevel.ERROR, "Could not find credit entry for CustomerId ${body.customerId}")
             //  .throwException(new PaymentApplicationServiceException("Could not find credit entry for CustomerId ${body.customerId}"))
             .transform(constant("Save the Payment"))
             .end();
+
+    // refactory
+    from("direct:paymentFindOrderId").routeId("FindOrderIdRouter")
+            .transform(constant("Find Order Router"))
+            //.choice().when("isEmpty")
+            //.log(LoggingLevel.ERROR, "Payment with order id: ${body.??} could not be found!")
+            //.throwException(new PaymentApplicationServiceException("Payment with order id body.orderId could not be found!"))
+            .end();
+
+
 
   }
 }

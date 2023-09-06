@@ -25,7 +25,7 @@ CREATE TABLE tbl_order_items
     sub_total  NUMERIC(10, 2) NOT NULL,
     CONSTRAINT tbl_order_items_pkey PRIMARY KEY (id, order_id),
     CONSTRAINT fk_order_id FOREIGN KEY (order_id)
-            REFERENCES tbl_orders (id) MATCH SIMPLE
+        REFERENCES tbl_orders (id) MATCH SIMPLE
         ON UPDATE NO ACTION
         ON DELETE RESTRICT
 );
@@ -107,9 +107,44 @@ CREATE TABLE tbl_restaurant_products
         ON DELETE RESTRICT
 );
 --
-DROP MATERIALIZED VIEW if EXISTS order_restaurant_mview;
+DROP TABLE IF EXISTS tbl_payments CASCADE;
+
+CREATE TABLE tbl_payments
+(
+    id          TEXT                     NOT NULL,
+    customer_id TEXT                     NOT NULL,
+    order_id    TEXT                     NOT NULL,
+    price       NUMERIC(10, 2)           NOT NULL,
+    created_at  TIMESTAMP WITH TIME ZONE NOT NULL,
+    status      TEXT                     NOT NULL,
+    CONSTRAINT payments_pkey PRIMARY KEY (id)
+);
+
+DROP TABLE IF EXISTS tbl_credit_entry CASCADE;
+
+CREATE TABLE tbl_credit_entry
+(
+    id                  TEXT           NOT NULL,
+    customer_id         TEXT           NOT NULL,
+    total_credit_amount NUMERIC(10, 2) NOT NULL,
+    CONSTRAINT credit_entry_pkey PRIMARY KEY (id)
+);
+
+DROP TABLE IF EXISTS tbl_credit_history CASCADE;
+
+CREATE TABLE tbl_credit_history
+(
+    id          TEXT           NOT NULL,
+    customer_id TEXT           NOT NULL,
+    amount      NUMERIC(10, 2) NOT NULL,
+    type        TEXT           NOT NULL,
+    CONSTRAINT credit_history_pkey PRIMARY KEY (id)
+);
+
+
 --
 -- Materialized view used
+--DROP MATERIALIZED VIEW if EXISTS order_restaurant_mview;
 /*CREATE MATERIALIZED VIEW order_restaurant_mview tablespace pg_default
 AS
 SELECT r.id        AS restaurant_id,
@@ -190,6 +225,22 @@ VALUES ('d215b5f8-0249-4dc5-89a3-51fd148cfb53', 'd215b5f8-0249-4dc5-89a3-51fd148
 INSERT INTO tbl_restaurant_products(id, restaurant_id, product_id)
 VALUES ('d215b5f8-0249-4dc5-89a3-51fd148cfb54', 'd215b5f8-0249-4dc5-89a3-51fd148cfb46',
         'd215b5f8-0249-4dc5-89a3-51fd148cfb50');
+--
+INSERT INTO tbl_credit_entry(id, customer_id, total_credit_amount)
+VALUES ('d215b5f8-0249-4dc5-89a3-51fd148cfb21', 'af20558e-5e77-4a6e-bb2f-fef1f14c0ee9', 500.00);
+-- History for Each Credit Entry
+INSERT INTO tbl_credit_history(id, customer_id, amount, type)
+VALUES ('d215b5f8-0249-4dc5-89a3-51fd148cfb23', 'af20558e-5e77-4a6e-bb2f-fef1f14c0ee9', 100.00, 'CREDIT');
+INSERT INTO tbl_credit_history(id, customer_id, amount, type)
+VALUES ('d215b5f8-0249-4dc5-89a3-51fd148cfb24', 'af20558e-5e77-4a6e-bb2f-fef1f14c0ee9', 600.12, 'CREDIT');
+INSERT INTO tbl_credit_history(id, customer_id, amount, type)
+VALUES ('d215b5f8-0249-4dc5-89a3-51fd148cfb25', 'af20558e-5e77-4a6e-bb2f-fef1f14c0ee9', 200.00, 'DEBIT');
+
+INSERT INTO tbl_credit_entry(id, customer_id, total_credit_amount)
+VALUES ('d215b5f8-0249-4dc5-89a3-51fd148cfb22', '7b68d44f-0882-4309-b4db-06c5341156f1', 100.00);
+INSERT INTO tbl_credit_history(id, customer_id, amount, type)
+VALUES ('d215b5f8-0249-4dc5-89a3-51fd148cfb26', '7b68d44f-0882-4309-b4db-06c5341156f1', 100.00, 'CREDIT');
+
 --
 DROP procedure if EXISTS insert_tbl_orders;
 --
@@ -346,3 +397,42 @@ BEGIN
         WHERE o.tracking_id = find_tracking_byId.p_id;
 END;
 $$ LANGUAGE plpgsql;*/
+
+DROP function if EXISTS findCustomerIdCreditEntry_fn;
+
+CREATE OR REPLACE FUNCTION findCustomerIdCreditEntry_fn(p_id TEXT)
+    RETURNS TABLE
+            (
+                id TEXT,
+                customer_id TEXT,
+                total_credit_amount NUMERIC(10, 2)
+            )
+AS
+$$
+BEGIN
+    RETURN QUERY
+        SELECT t.id, t.customer_id, t.total_credit_amount
+        FROM tbl_credit_entry t
+        WHERE t.customer_id = findCustomerIdCreditEntry_fn.p_id;
+END;
+$$ LANGUAGE plpgsql;
+
+---
+DROP function if EXISTS findCustomerIdCreditHistory_fn;
+---
+CREATE OR REPLACE FUNCTION findCustomerIdCreditHistory_fn(p_id TEXT)
+    RETURNS TABLE
+            (
+                id TEXT,
+                customer_id TEXT,
+                amount NUMERIC(10, 2)
+            )
+AS
+$$
+BEGIN
+    RETURN QUERY
+        SELECT t.id, t.customer_id, t.amount
+        FROM tbl_credit_history t
+        WHERE t.customer_id = findCustomerIdCreditHistory_fn.p_id;
+END;
+$$ LANGUAGE plpgsql;

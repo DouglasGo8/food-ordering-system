@@ -21,6 +21,20 @@
       <artifactId>quarkus-hibernate-validator</artifactId>
     </dependency>
 
+    <dependency>
+      <groupId>org.apache.camel.quarkus</groupId>
+      <artifactId>camel-quarkus-sql</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.camel.quarkus</groupId>
+      <artifactId>camel-quarkus-jackson</artifactId>
+    </dependency>
+    <!-- POSTGRES -->
+    <dependency>
+      <groupId>io.quarkus</groupId>
+      <artifactId>quarkus-jdbc-postgresql</artifactId>
+    </dependency>
+
     <!-- -->
     <dependency>
       <groupId>com.food.ordering.system.shared.domain</groupId>

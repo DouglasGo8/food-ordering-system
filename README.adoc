@@ -18,6 +18,7 @@
 - https://github.com/confluentinc/cp-all-in-one/tree/7.3.2-post/cp-all-in-one[Kafka Confluent Docker Compose CP-ALL-IN-ONE]
 - https://github.com/tstuber/camel-quarkus-kafka-schema-registry[Camel Quarkus Kafka with Avro]
 - https://howtodoinjava.com/junit5/expected-exception-example/[Throws Junit]
+- https://www.javainuse.com/camel/camel_jdbc[Camel JDBC Sample]
 
 '''
 
@@ -302,4 +303,49 @@ restaurant-approval-response partitions 3
 # payment-consumer-group-id = payment-topic-consumer
 # restaurant-approval-consumer-group-id = restaurant-approval-topic-consumer
 
+----
+
+.ExchangeProperties Camel
+[source,java]
+----
+public void camelExchangeJdbcFunctions(
+          //@ExchangeProperty("creditEntry") ArrayList<Map<String, String>> creditEntry,
+          @ExchangeProperty("creditHistories") ArrayList<Map<String, String>> creditHistories
+
+  ) {
+
+    //log.info("{}", creditHistories.size());
+
+    var list = creditHistories.stream()
+            .flatMap(v -> Stream.of(CreditHistory.builder()
+                    .creditHistoryId(new CreditHistoryId(UUID.fromString(v.get("id"))))
+                    .customerId(new CustomerId(UUID.fromString(v.get("customer_id"))))
+                    .amount(new Money(BigDecimal.valueOf(Double.parseDouble(NumberFormat.getInstance().format(v.get("amount"))))))
+                    .build()))
+            .toList();
+
+    //log.info("{}", creditEntry.size());
+    //log.info("{}", creditEntry.get(0).get("total_credit_amount"));
+    //creditEntry.forEach(m -> log.info("=> ({})", new Money(new BigDecimal(m.get("total_credit_amount")))));
+    //var amount = NumberFormat.getInstance().format(creditEntry.get(0).get("total_credit_amount"));
+    //log.info("{}", amount);
+    /*var list = List.of(CreditEntry.builder()
+            .creditEntryId(new CreditEntryId(UUID.fromString(creditEntry.get(0).get("id"))))
+            .customerId(new CustomerId(UUID.fromString(creditEntry.get(0).get("customer_id"))))
+            .totalCreditAmount(new Money(BigDecimal.valueOf(Long.parseLong(
+                    NumberFormat.getInstance().format(creditEntry.get(0).get("total_credit_amount"))))))
+            .build());*
+    /*var list = creditEntry.stream()
+            .flatMap(v -> Stream.of(CreditEntry.builder()
+                    .creditEntryId(new CreditEntryId(UUID.fromString(v.get("id"))))
+                    .customerId(new CustomerId(UUID.fromString(v.get("customer_id"))))
+                    .totalCreditAmount(new Money(new BigDecimal(v.get("total_credit_amount"))))
+                    .build()))
+            .collect(Collectors.toList());*/
+    //
+    //list.forEach(e -> log.info("---> {}", e.getTotalCreditAmount().getAmount()));
+    list.forEach(e -> log.info("---> {}", e.getAmount().getAmount()));
+
+
+  }
 ----

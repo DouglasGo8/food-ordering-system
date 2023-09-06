@@ -6,6 +6,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.AdviceWith;
 import org.apache.camel.quarkus.test.CamelQuarkusTestSupport;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import javax.inject.Inject;
@@ -21,17 +22,25 @@ public class CamelAppIT extends CamelQuarkusTestSupport implements BaseTest {
 
   @Test
   @SneakyThrows
-  public void paymentRequestHelperRouteRepresentation() {
+  public void persistPaymentRouteRepresentation() {
 
-    AdviceWith.adviceWith(super.context, "PaymentRequestHelperRouter", r -> r.weaveAddLast().to("mock:result"));
+    AdviceWith.adviceWith(super.context, "PersistPaymentRouter", r -> r.weaveAddLast().to("mock:result"));
     //
     var body = this.createPaymentRequest();
     var mock = super.getMockEndpoint("mock:result");
-    this.producerTemplate.sendBody("direct:paymentRequestHelper", body);
+    this.producerTemplate.sendBody("direct:persistPayment", body);
     //
     mock.setExpectedMessageCount(1);
     //
     mock.assertIsSatisfied();
+  }
 
+  @Test
+  @Disabled
+  @SneakyThrows
+  public void persistCancelPaymentRouteRepresentation() {
+    var body = this.createPaymentRequest();
+    this.producerTemplate.sendBody("direct:persistCancelPayment", body);
+    //
   }
 }

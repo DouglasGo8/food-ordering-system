@@ -13,5 +13,8 @@ public class PaymentMessagePublisher extends RouteBuilder {
   @Override
   public void configure() {
 
+    from("seda:publishPaymentEvent").routeId("PublishPaymentEventRouter")
+            .log("Publishing payment Event with payment id: and order id")
+            .end();
   }
 }

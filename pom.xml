@@ -18,7 +18,7 @@
 
   <properties>
     <!-- Quarkus -->
-    <quarkus.platform.version>2.16.9.Final</quarkus.platform.version>
+    <quarkus.platform.version>2.16.10.Final</quarkus.platform.version>
     <quarkus.platform.artifact-id>quarkus-bom</quarkus.platform.artifact-id>
     <quarkus.platform.group-id>io.quarkus.platform</quarkus.platform.group-id>
     <!-- Maven -->
