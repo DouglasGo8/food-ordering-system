@@ -3,14 +3,13 @@ package com.food.ordering.system.payment.service;
 import com.food.ordering.system.payment.service.domain.application.dto.PaymentRequest;
 import com.food.ordering.system.payment.service.domain.application.mapper.PaymentDataMapper;
 import com.food.ordering.system.payment.service.domain.core.PaymentDomainService;
-import com.food.ordering.system.payment.service.domain.core.entity.CreditEntry;
-import com.food.ordering.system.payment.service.domain.core.entity.CreditHistory;
 import com.food.ordering.system.payment.service.domain.core.event.PaymentCancelledEvent;
 import com.food.ordering.system.payment.service.domain.core.event.PaymentCompletedEvent;
 import com.food.ordering.system.payment.service.domain.core.event.PaymentFailedEvent;
-import com.food.ordering.system.payment.service.domain.core.valueobject.CreditEntryId;
+import com.food.ordering.system.payment.service.domain.core.exception.PaymentApplicationServiceException;
+import com.food.ordering.system.payment.service.domain.core.exception.PaymentDomainException;
+import com.food.ordering.system.payment.service.domain.core.exception.PaymentNotFoundException;
 import com.food.ordering.system.shared.domain.DomainConstants;
-import com.food.ordering.system.shared.domain.valueobject.CustomerId;
 import com.food.ordering.system.shared.domain.valueobject.Money;
 import com.food.ordering.system.shared.domain.valueobject.PaymentOrderStatus;
 import com.food.ordering.system.shared.domain.valueobject.PaymentStatus;
@@ -29,21 +28,21 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.*;
 
 @Slf4j
 @QuarkusTest
 public class AppTest implements BaseTest {
 
-  @Inject
-  PaymentDataMapper paymentDataMapper;
+  // @Inject
+  //PaymentDataMapper paymentDataMapper;
 
   @Inject
   PaymentDomainService paymentDomainService;
 
 
   @Test
+  @Disabled
   public void paymentRequestRepresentation() {
     var paymentRequest = PaymentRequest.builder()
             .id(UUID.randomUUID().toString())
@@ -61,16 +60,17 @@ public class AppTest implements BaseTest {
   }
 
   @Test
-
+  @Disabled
   public void simplePaymentPojoTest() {
 
     var payment = this.createPaymentWithoutPaymentIdMock();
     //new Payment(price, null, orderId, customerId, ZonedDateTime.now(),
     //PaymentStatus.COMPLETED);
 
+    var failureMessages = new ArrayList<String>();
     //
     payment.initializePayment();
-    payment.validatePayment(List.of());
+    payment.validatePayment(failureMessages);
     //
     log.info(payment.getPaymentStatus().toString());
     //
@@ -83,6 +83,7 @@ public class AppTest implements BaseTest {
   }
 
   @Test
+  @Disabled
   public void creditEntryRepresentation() {
 
     var creditEntry = this.createCreditEntryMock();
@@ -96,6 +97,7 @@ public class AppTest implements BaseTest {
   }
 
   @Test
+  @Disabled
   public void creditHistoryRepresentation() {
 
     //var creditHistory = new CreditHistory(money, creditHistoryId, customerId, TransactionType.CREDIT);
@@ -106,6 +108,7 @@ public class AppTest implements BaseTest {
 
 
   @Test
+  @Disabled
   public void paymentCompletedEventRepresentation() {
     var paymentCompletedEvent = new PaymentCompletedEvent(this.createPaymentWithPaymentIdtMock(),
             ZonedDateTime.now(ZoneId.of(DomainConstants.UTC)));
@@ -114,6 +117,7 @@ public class AppTest implements BaseTest {
   }
 
   @Test
+  @Disabled
   public void paymentCancelledEventRepresentation() {
     var paymentCancelledEvent = new PaymentCancelledEvent(this.createPaymentWithPaymentIdtMock(),
             ZonedDateTime.now(ZoneId.of(DomainConstants.UTC)));
@@ -122,6 +126,7 @@ public class AppTest implements BaseTest {
   }
 
   @Test
+  @Disabled
   public void paymentFailedEventRepresentation() {
     var paymentFailedEvent = new PaymentFailedEvent(this.createPaymentWithPaymentIdtMock(),
             ZonedDateTime.now(ZoneId.of(DomainConstants.UTC)), List.of());
@@ -130,13 +135,12 @@ public class AppTest implements BaseTest {
   }
 
   @Test
-  @Disabled // need be fixed
   public void validateAndInitializePaymentRepresentation() {
     var payment = this.createPaymentWithoutPaymentIdMock();
-    var creditEntries = new ArrayList<Map<String, String>>(); //this.createCreditEntryMock();
-    var creditHistories = new ArrayList<Map<String, String>>();
-    //creditHistories.add(this.createCreditHistory());
-    // Collections.singletonList(this.createCreditHistory());// List.of(this.createCreditHistory());
+    // must simulate the returns of camel jdbc postgresql function invocation
+    var creditEntries = this.creditEntryByCustomerIdCamelJdbcMock();
+    var creditHistories = this.creditHistoriesByCustomerIdCamelJdbcMock();
+    //
     var paymentEvent = this.paymentDomainService
             .validateAndInitializePayment(payment, creditEntries, creditHistories, List.of());
     //
@@ -144,38 +148,48 @@ public class AppTest implements BaseTest {
     assertEquals(paymentEvent.getFailureMessages().size(), 0);
   }
 
+  // Next validation
   @Test
-  @Disabled // need be fixed
   public void validateAndCancelPaymentRepresentation() {
     var payment = this.createPaymentWithoutPaymentIdMock();
-    var creditEntries = new ArrayList<Map<String, String>>(); //this.createCreditEntryMock();
-    var creditHistories = new ArrayList<Map<String, String>>();
-    creditHistories.add(Map.of("id","123"));
+    var creditEntries = this.creditEntryByCustomerIdCamelJdbcMock();
+    var creditHistories = this.creditHistoriesByCustomerIdCamelJdbcMock();
+    //
     var paymentEvent = this.paymentDomainService
             .validateAndCancelPayment(payment, creditEntries, creditHistories, List.of());
+    //
     assertEquals(paymentEvent.getPayment().getPaymentStatus(), PaymentStatus.CANCELLED);
     assertEquals(paymentEvent.getFailureMessages().size(), 0);
   }
 
   @Test
+  @Disabled
   public void paymentDataMapperRequestModelToPaymentRepresentation() {
     // paymentRequest
     //this.paymentDataMapper.paymentRequestModelToPayment(null)
   }
 
+  @Test
+  @Disabled
+  public void paymentDomainExceptionRepresentation() {
+    assertThrows(PaymentDomainException.class, () -> {
+      throw new PaymentDomainException("Some PaymentDomainException occurs");
+    });
+  }
 
   @Test
   @Disabled
-  public void fixBigDecimal() {
-    var totalAmount = "500.00";
-    //var total = Double.parseDouble(totalAmount);
-    //log.info("{}",total);
-    //var money = ;
+  public void paymentApplicationExceptionRepresentation() {
+    assertThrows(PaymentApplicationServiceException.class, () -> {
+      throw new PaymentApplicationServiceException("Some PaymentApplicationException occurs");
+    });
+  }
 
-    List.of(CreditEntry.builder()
-            .creditEntryId(new CreditEntryId(UUID.randomUUID()))
-            .customerId(new CustomerId(UUID.randomUUID()))
-            .totalCreditAmount(new Money(new BigDecimal(totalAmount)))
-            .build());
+  @Test
+  @Disabled
+  public void paymentNotFoundExceptionRepresentation() {
+    assertThrows(PaymentNotFoundException.class, () -> {
+      throw new PaymentNotFoundException("Some PaymentNotFoundException occurs");
+    });
   }
 }

@@ -227,14 +227,14 @@ VALUES ('d215b5f8-0249-4dc5-89a3-51fd148cfb54', 'd215b5f8-0249-4dc5-89a3-51fd148
         'd215b5f8-0249-4dc5-89a3-51fd148cfb50');
 --
 INSERT INTO tbl_credit_entry(id, customer_id, total_credit_amount)
-VALUES ('d215b5f8-0249-4dc5-89a3-51fd148cfb21', 'af20558e-5e77-4a6e-bb2f-fef1f14c0ee9', 500.00);
+VALUES ('d215b5f8-0249-4dc5-89a3-51fd148cfb21', 'af20558e-5e77-4a6e-bb2f-fef1f14c0ee9', 650.12);
 -- History for Each Credit Entry
 INSERT INTO tbl_credit_history(id, customer_id, amount, type)
 VALUES ('d215b5f8-0249-4dc5-89a3-51fd148cfb23', 'af20558e-5e77-4a6e-bb2f-fef1f14c0ee9', 100.00, 'CREDIT');
 INSERT INTO tbl_credit_history(id, customer_id, amount, type)
 VALUES ('d215b5f8-0249-4dc5-89a3-51fd148cfb24', 'af20558e-5e77-4a6e-bb2f-fef1f14c0ee9', 600.12, 'CREDIT');
 INSERT INTO tbl_credit_history(id, customer_id, amount, type)
-VALUES ('d215b5f8-0249-4dc5-89a3-51fd148cfb25', 'af20558e-5e77-4a6e-bb2f-fef1f14c0ee9', 200.00, 'DEBIT');
+VALUES ('d215b5f8-0249-4dc5-89a3-51fd148cfb25', 'af20558e-5e77-4a6e-bb2f-fef1f14c0ee9', 50.00, 'DEBIT');
 
 INSERT INTO tbl_credit_entry(id, customer_id, total_credit_amount)
 VALUES ('d215b5f8-0249-4dc5-89a3-51fd148cfb22', '7b68d44f-0882-4309-b4db-06c5341156f1', 100.00);
@@ -425,13 +425,14 @@ CREATE OR REPLACE FUNCTION findCustomerIdCreditHistory_fn(p_id TEXT)
             (
                 id TEXT,
                 customer_id TEXT,
-                amount NUMERIC(10, 2)
+                amount NUMERIC(10, 2),
+                type TEXT
             )
 AS
 $$
 BEGIN
     RETURN QUERY
-        SELECT t.id, t.customer_id, t.amount
+        SELECT t.id, t.customer_id, t.amount, t.type
         FROM tbl_credit_history t
         WHERE t.customer_id = findCustomerIdCreditHistory_fn.p_id;
 END;

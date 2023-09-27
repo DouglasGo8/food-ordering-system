@@ -4,6 +4,8 @@
 
 == Links
 
+- https://github.com/agelenler/food-ordering-system[Repository for source code]
+- https://github.com/agelenler/food-ordering-system-infra[Repository for infrastructure code]
 - https://quarkus.io/[Quarkus IO]
 - https://camel.apache.org/manual/rest-dsl.html[Apache Camel Rest DSL]
 - https://camel.apache.org/camel-quarkus/2.15.x/user-guide/testing.html[Camel Quarkus Testing]

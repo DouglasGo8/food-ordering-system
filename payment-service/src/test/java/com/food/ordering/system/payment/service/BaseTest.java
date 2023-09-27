@@ -12,11 +12,13 @@ import com.food.ordering.system.shared.domain.valueobject.*;
 
 import java.math.BigDecimal;
 import java.time.Instant;
+import java.util.ArrayList;
+import java.util.Map;
 import java.util.UUID;
 
 public interface BaseTest {
   default Payment createPaymentWithoutPaymentIdMock() {
-    var price = new Money(BigDecimal.valueOf(12));
+    var price = new Money(BigDecimal.valueOf(12.76d));
     var orderId = new OrderId(UUID.randomUUID());
     //var paymentId = new PaymentId(UUID.randomUUID());
     var customerId = new CustomerId(UUID.randomUUID());
@@ -55,6 +57,56 @@ public interface BaseTest {
             .customerId(customerId)
             .totalCreditAmount(money)
             .build();
+  }
+
+  default ArrayList<Map<String, Object>> creditEntryByCustomerIdCamelJdbcMock() {
+
+    // simulates camel jdbc return invoking a postgresql function
+
+    return new ArrayList<>() {{
+      add(Map.of
+              (
+                      "id",
+                      "d215b5f8-0249-4dc5-89a3-51fd148cfb21",
+                      "customer_id",
+                      "af20558e-5e77-4a6e-bb2f-fef1f14c0ee9",
+                      "total_credit_amount",
+                      new BigDecimal("650.12")
+              )
+      );
+    }};
+
+  }
+
+  default ArrayList<Map<String, Object>> creditHistoriesByCustomerIdCamelJdbcMock() {
+    // simulates camel jdbc return invoking a postgresql function
+    return new ArrayList<>() {{
+      add(Map.of
+              (
+                      "id", "d215b5f8-0249-4dc5-89a3-51fd148cfb23",
+                      "customer_id", "af20558e-5e77-4a6e-bb2f-fef1f14c0ee9",
+                      "amount", new BigDecimal("100.00"),
+                      "type", "CREDIT"
+              )
+      );
+      add(Map.of
+              (
+                      "id", "d215b5f8-0249-4dc5-89a3-51fd148cfb25",
+                      "customer_id", "af20558e-5e77-4a6e-bb2f-fef1f14c0ee9",
+                      "amount", new BigDecimal("50.00"),
+                      "type", "DEBIT"
+              )
+      );
+      add(Map.of
+              (
+                      "id", "d215b5f8-0249-4dc5-89a3-51fd148cfb24",
+                      "customer_id", "af20558e-5e77-4a6e-bb2f-fef1f14c0ee9",
+                      "amount", new BigDecimal("600.12"),
+                      "type", "CREDIT"
+              )
+      );
+    }};
+
   }
 
 

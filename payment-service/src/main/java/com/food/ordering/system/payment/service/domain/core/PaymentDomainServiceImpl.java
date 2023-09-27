@@ -20,10 +20,12 @@ import org.apache.camel.ExchangeProperty;
 
 import javax.enterprise.context.ApplicationScoped;
 import java.math.BigDecimal;
-import java.text.NumberFormat;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 import java.util.stream.Stream;
 
 @Slf4j
@@ -31,26 +33,15 @@ import java.util.stream.Stream;
 @ApplicationScoped
 public class PaymentDomainServiceImpl implements PaymentDomainService {
 
-
   @Override
   public PaymentEvent validateAndInitializePayment(@ExchangeProperty("payment") Payment payment,
-                                                   @ExchangeProperty("creditEntries") ArrayList<Map<String, String>> creditEntries,
-                                                   @ExchangeProperty("creditHistories") ArrayList<Map<String, String>> creditHistories,
+                                                   @ExchangeProperty("creditEntries") ArrayList<Map<String, Object>> creditEntries,
+                                                   @ExchangeProperty("creditHistories") ArrayList<Map<String, Object>> creditHistories,
                                                    List<String> failureMessages) {
-    var newCreditEntry = CreditEntry.builder()
-            .creditEntryId(new CreditEntryId(UUID.fromString(creditEntries.get(0).get("id"))))
-            .customerId(new CustomerId(UUID.fromString(creditEntries.get(0).get("customer_id"))))
-            .totalCreditAmount(new Money(BigDecimal.valueOf(Double.parseDouble(NumberFormat.getInstance()
-                    .format(creditEntries.get(0).get("total_credit_amount"))))))
-            .build();
     //
-    var newCreditHistories = new ArrayList<>(creditHistories.stream()
-            .flatMap(map -> Stream.of(CreditHistory.builder()
-                    .creditHistoryId(new CreditHistoryId(UUID.fromString(map.get("id"))))
-                    .customerId(new CustomerId(UUID.fromString(map.get("customer_id"))))
-                    .amount(new Money(BigDecimal.valueOf(Double.parseDouble(NumberFormat.getInstance().format(map.get("amount"))))))
-                    .build()))
-            .toList());
+    var newCreditEntry = this.convertListCreditEntriesToCreditEntry(creditEntries);
+    //
+    var newCreditHistories = this.convertListCreditHistoriesJdbcToListCreditHistories(creditHistories);
     //
     payment.validatePayment(failureMessages);
     payment.initializePayment();
@@ -73,11 +64,15 @@ public class PaymentDomainServiceImpl implements PaymentDomainService {
   }
 
   @Override
-  public PaymentEvent validateAndCancelPayment(Payment payment, ArrayList<Map<String, String>> creditEntry,
-                                               ArrayList<Map<String, String>> creditHistories, List<String> failureMessages) {
+  public PaymentEvent validateAndCancelPayment(Payment payment, ArrayList<Map<String, Object>> creditEntries,
+                                               ArrayList<Map<String, Object>> creditHistories, List<String> failureMessages) {
     payment.validatePayment(failureMessages);
-    this.addCreditEntry(payment, null/* creditEntry*/);
-    this.updateCreditHistory(payment, null /*creditHistories*/, TransactionType.CREDIT);
+    //
+    var newCreditEntry = this.convertListCreditEntriesToCreditEntry(creditEntries);
+    var newCreditHistories = this.convertListCreditHistoriesJdbcToListCreditHistories(creditHistories);
+
+    this.addCreditEntry(payment, newCreditEntry);
+    this.updateCreditHistory(payment, newCreditHistories, TransactionType.CREDIT);
 
     if (failureMessages.isEmpty()) {
       log.info("Payment is cancelled for order id: {}", payment.getOrderId().getValue());
@@ -89,6 +84,30 @@ public class PaymentDomainServiceImpl implements PaymentDomainService {
       payment.updateStatus(PaymentStatus.FAILED);
       return new PaymentFailedEvent(payment, ZonedDateTime.now(ZoneId.of(DomainConstants.UTC)), failureMessages);
     }
+  }
+
+  private CreditEntry convertListCreditEntriesToCreditEntry(ArrayList<Map<String, Object>> creditEntries) {
+    return CreditEntry.builder()
+            .creditEntryId(new CreditEntryId(UUID.fromString(creditEntries.get(0).get("id").toString())))
+            .customerId(new CustomerId(UUID.fromString(creditEntries.get(0).get("customer_id").toString())))
+            //.totalCreditAmount(new Money(BigDecimal.valueOf(Double.parseDouble(NumberFormat.getInstance()
+            //        .format(creditEntries.get(0).get("total_credit_amount"))))))
+            .totalCreditAmount(new Money((BigDecimal) creditEntries.get(0).get("total_credit_amount")))
+            //.totalCreditAmount(new Money(new BigDecimal(creditEntries.get(0).get("total_credit_amount"))))
+            .build();
+  }
+
+  private List<CreditHistory> convertListCreditHistoriesJdbcToListCreditHistories(ArrayList<Map<String, Object>> creditHistories) {
+    return new ArrayList<>(creditHistories.stream()
+            .flatMap(map -> Stream.of(CreditHistory.builder()
+                    .creditHistoryId(new CreditHistoryId(UUID.fromString(map.get("id").toString())))
+                    .customerId(new CustomerId(UUID.fromString(map.get("customer_id").toString())))
+                    .amount(new Money((BigDecimal) map.get("amount")))
+                    .transactionType(TransactionType.valueOf(map.get("type").toString()))
+                    //.amount(new Money(BigDecimal.valueOf(Double.parseDouble(NumberFormat.getInstance().format(map.get("amount"))))))
+                    //        .amount(new Money(new BigDecimal(map.get("amount"))))
+                    .build()))
+            .toList());
   }
 
 

@@ -6,13 +6,14 @@ import com.food.ordering.system.payment.service.domain.core.event.PaymentEvent;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 public interface PaymentDomainService {
-  PaymentEvent validateAndInitializePayment(Payment payment, ArrayList<Map<String, String>> creditEntries,
-                                            ArrayList<Map<String, String>> creditHistories,
+  PaymentEvent validateAndInitializePayment(Payment payment, ArrayList<Map<String, Object>> creditEntries,
+                                            ArrayList<Map<String, Object>> creditHistories,
                                             List<String> failureMessages);
 
-  PaymentEvent validateAndCancelPayment(Payment payment, ArrayList<Map<String, String>> creditEntry,
-                                        ArrayList<Map<String, String>> creditHistories,
+  PaymentEvent validateAndCancelPayment(Payment payment, ArrayList<Map<String, Object>> creditEntry,
+                                        ArrayList<Map<String, Object>> creditHistories,
                                         List<String> failureMessages);
 }
