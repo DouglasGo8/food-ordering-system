@@ -115,7 +115,7 @@ CREATE TABLE tbl_payments
     customer_id TEXT                     NOT NULL,
     order_id    TEXT                     NOT NULL,
     price       NUMERIC(10, 2)           NOT NULL,
-    created_at  TIMESTAMP WITH TIME ZONE NOT NULL,
+    created_at  TEXT                     NOT NULL,
     status      TEXT                     NOT NULL,
     CONSTRAINT payments_pkey PRIMARY KEY (id)
 );
@@ -338,6 +338,56 @@ BEGIN
         WHERE t.id = find_restaurant_byId.p_id;
 END;
 $$ LANGUAGE plpgsql;
+--
+DROP PROCEDURE if EXISTS insert_tbl_payment;
+--
+CREATE OR REPLACE PROCEDURE insert_tbl_payment (
+    p_payment_id TEXT,
+    p_customer_id TEXT,
+    p_order_id TEXT,
+    p_price NUMERIC(10, 2),
+    p_created_at TIMESTAMP,
+    p_status TEXT
+)
+    LANGUAGE plpgsql
+AS
+$$
+-- BODY
+BEGIN
+    INSERT INTO tbl_payments(id, customer_id, order_id, price, created_at, status)
+    VALUES (p_payment_id, p_customer_id, p_order_id, p_price, p_created_at, p_status);
+END;
+$$;
+--
+call insert_tbl_payment(
+        '14a736f8-e381-4d9a-b617-5a8706a25c9b', -- payment_id
+        'a5da1c79-9bd5-46af-9a07-8c6be207e1d0', -- customer_id
+        'ec78b161-3899-4866-8753-886b84a8fbce', -- order_id
+        22.3, -- price
+        '2023-11-07T05:05:27.811042-03:00',
+        'COMPLETED');
+--
+DROP PROCEDURE if EXISTS insert_tbl_credit_entry;
+--
+CREATE OR REPLACE PROCEDURE insert_tbl_credit_entry (
+    p_credit_entry_id TEXT,
+    p_customer_id TEXT,
+    p_total_credit_amount NUMERIC(10, 2)
+)
+    LANGUAGE plpgsql
+AS
+$$
+BEGIN
+    INSERT INTO tbl_credit_entry(id, customer_id, total_credit_amount)
+    VALUES (p_credit_entry_id, p_customer_id, p_total_credit_amount);
+END;
+$$;
+--
+call insert_tbl_credit_entry(
+     'd215b5f8-0249-4dc5-89a3-51fd148css21',
+     'af20558e-5e77-4a6e-bb2f-fef1f14c0ee9',
+     650.12
+);
 --
 DROP function if EXISTS find_customer_byId;
 --

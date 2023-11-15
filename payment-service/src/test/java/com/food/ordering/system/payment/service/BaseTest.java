@@ -13,6 +13,7 @@ import com.food.ordering.system.shared.domain.valueobject.*;
 import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
@@ -59,11 +60,11 @@ public interface BaseTest {
             .build();
   }
 
-  default ArrayList<Map<String, Object>> creditEntryByCustomerIdCamelJdbcMock() {
+  default CreditEntry creditEntryByCustomerIdCamelJdbcMock() {
 
     // simulates camel jdbc return invoking a postgresql function
 
-    return new ArrayList<>() {{
+    /*return new ArrayList<>() {{
       add(Map.of
               (
                       "id",
@@ -74,13 +75,23 @@ public interface BaseTest {
                       new BigDecimal("650.12")
               )
       );
-    }};
+    }}.get(0);*/
+
+
+    /*var p =*/
+    return CreditEntry.builder()
+            .creditEntryId(new CreditEntryId(UUID.fromString("d215b5f8-0249-4dc5-89a3-51fd148cfb21")))
+            .customerId(new CustomerId(UUID.fromString("af20558e-5e77-4a6e-bb2f-fef1f14c0ee9")))
+            .totalCreditAmount(new Money(new BigDecimal("650.12")))
+            .build();
+
+    //p.getTotalCreditAmount().getAmount()
 
   }
 
-  default ArrayList<Map<String, Object>> creditHistoriesByCustomerIdCamelJdbcMock() {
+  default List<CreditHistory> creditHistoriesByCustomerIdCamelJdbcMock() {
     // simulates camel jdbc return invoking a postgresql function
-    return new ArrayList<>() {{
+    /*return new ArrayList<>() {{
       add(Map.of
               (
                       "id", "d215b5f8-0249-4dc5-89a3-51fd148cfb23",
@@ -105,8 +116,24 @@ public interface BaseTest {
                       "type", "CREDIT"
               )
       );
-    }};
-
+    }};*/
+    return List.of(
+            CreditHistory.builder()
+                    .creditHistoryId(new CreditHistoryId(UUID.fromString("d215b5f8-0249-4dc5-89a3-51fd148cfb23")))
+                    .customerId(new CustomerId(UUID.fromString("af20558e-5e77-4a6e-bb2f-fef1f14c0ee9")))
+                    .amount(new Money(new BigDecimal("100.00")))
+                    .transactionType(TransactionType.CREDIT).build(),
+            CreditHistory.builder()
+                    .creditHistoryId(new CreditHistoryId(UUID.fromString("d215b5f8-0249-4dc5-89a3-51fd148cfb25")))
+                    .customerId(new CustomerId(UUID.fromString("af20558e-5e77-4a6e-bb2f-fef1f14c0ee9")))
+                    .amount(new Money(new BigDecimal("50.00")))
+                    .transactionType(TransactionType.DEBIT).build(),
+            CreditHistory.builder()
+                    .creditHistoryId(new CreditHistoryId(UUID.fromString("d215b5f8-0249-4dc5-89a3-51fd148cfb24")))
+                    .customerId(new CustomerId(UUID.fromString("af20558e-5e77-4a6e-bb2f-fef1f14c0ee9")))
+                    .amount(new Money(new BigDecimal("600.12")))
+                    .transactionType(TransactionType.CREDIT).build()
+    );
   }
 
 

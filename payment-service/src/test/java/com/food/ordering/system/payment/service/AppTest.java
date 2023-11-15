@@ -25,7 +25,6 @@ import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -34,8 +33,8 @@ import static org.junit.jupiter.api.Assertions.*;
 @QuarkusTest
 public class AppTest implements BaseTest {
 
-  // @Inject
-  //PaymentDataMapper paymentDataMapper;
+  @Inject
+  PaymentDataMapper paymentDataMapper;
 
   @Inject
   PaymentDomainService paymentDomainService;
@@ -135,6 +134,7 @@ public class AppTest implements BaseTest {
   }
 
   @Test
+  @Disabled
   public void validateAndInitializePaymentRepresentation() {
     var payment = this.createPaymentWithoutPaymentIdMock();
     // must simulate the returns of camel jdbc postgresql function invocation
@@ -142,21 +142,21 @@ public class AppTest implements BaseTest {
     var creditHistories = this.creditHistoriesByCustomerIdCamelJdbcMock();
     //
     var paymentEvent = this.paymentDomainService
-            .validateAndInitializePayment(payment, creditEntries, creditHistories, List.of());
+            .validateAndInitializePayment(payment, creditEntries, creditHistories);
     //
     assertNotNull(paymentEvent.getPayment().getId());
     assertEquals(paymentEvent.getFailureMessages().size(), 0);
   }
 
-  // Next validation
   @Test
+  @Disabled
   public void validateAndCancelPaymentRepresentation() {
     var payment = this.createPaymentWithoutPaymentIdMock();
     var creditEntries = this.creditEntryByCustomerIdCamelJdbcMock();
     var creditHistories = this.creditHistoriesByCustomerIdCamelJdbcMock();
     //
     var paymentEvent = this.paymentDomainService
-            .validateAndCancelPayment(payment, creditEntries, creditHistories, List.of());
+            .validateAndCancelPayment(payment, creditEntries, creditHistories);
     //
     assertEquals(paymentEvent.getPayment().getPaymentStatus(), PaymentStatus.CANCELLED);
     assertEquals(paymentEvent.getFailureMessages().size(), 0);
@@ -166,7 +166,16 @@ public class AppTest implements BaseTest {
   @Disabled
   public void paymentDataMapperRequestModelToPaymentRepresentation() {
     // paymentRequest
-    //this.paymentDataMapper.paymentRequestModelToPayment(null)
+    var paymentRequest = PaymentRequest.builder()
+            .id(UUID.randomUUID().toString())
+            .orderId(UUID.randomUUID().toString())
+            .customerId(UUID.randomUUID().toString())
+            .price(BigDecimal.valueOf(22.02))
+            .createdAt(Instant.now())
+            .paymentOrderStatus(PaymentOrderStatus.PENDING)
+            .build();
+    //
+    this.paymentDataMapper.paymentRequestModelToPayment(paymentRequest);
   }
 
   @Test

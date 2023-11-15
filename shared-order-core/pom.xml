@@ -21,7 +21,6 @@
     <dependency>
       <groupId>com.food.ordering.system.shared.domain</groupId>
       <artifactId>shared-domain</artifactId>
-      <version>1.0</version>
     </dependency>
   </dependencies>
 

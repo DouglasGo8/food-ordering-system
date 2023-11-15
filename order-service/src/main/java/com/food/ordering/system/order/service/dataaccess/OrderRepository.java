@@ -13,14 +13,14 @@ public class OrderRepository extends RouteBuilder {
 
     from("direct:saveOrder").routeId("saveOrder")
             .setProperty("fail_msg", constant("")) // success saveOrder scenario
-            .to("sql-stored:classpath:templates/insertOrders.sql") // saveOrder
+            .to("sql-stored:classpath:templates/insertOrder.sql") // saveOrder
             .end();
 
     // Removes code boilerplate from orderItemsToOrderItemEntities method
     from("direct:saveOrderItems").routeId("saveOrderItems")
             .split(simple("${body.items}")).streaming(true)
             //.parallelProcessing()
-            .to("sql-stored:classpath:templates/insertOrderItems.sql")
+            .to("sql-stored:classpath:templates/insertOrderItem.sql")
             .end();
 
 

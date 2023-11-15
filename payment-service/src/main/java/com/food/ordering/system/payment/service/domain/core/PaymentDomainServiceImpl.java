@@ -33,24 +33,26 @@ import java.util.stream.Stream;
 @ApplicationScoped
 public class PaymentDomainServiceImpl implements PaymentDomainService {
 
+  // Course content - Lesson 48/06:08
   @Override
   public PaymentEvent validateAndInitializePayment(@ExchangeProperty("payment") Payment payment,
-                                                   @ExchangeProperty("creditEntries") ArrayList<Map<String, Object>> creditEntries,
-                                                   @ExchangeProperty("creditHistories") ArrayList<Map<String, Object>> creditHistories,
-                                                   List<String> failureMessages) {
+                                                   @ExchangeProperty("creditEntry") CreditEntry creditEntry,
+                                                   @ExchangeProperty("creditHistories") List<CreditHistory> creditHistories) {
     //
-    var newCreditEntry = this.convertListCreditEntriesToCreditEntry(creditEntries);
+    var failureMessages = new ArrayList<String>();
     //
-    var newCreditHistories = this.convertListCreditHistoriesJdbcToListCreditHistories(creditHistories);
+    //var newCreditEntry = this.convertListCreditEntriesToCreditEntry(creditEntries);
+    //
+    //var newCreditHistories = this.convertListCreditHistoriesJdbcToListCreditHistories(creditHistories);
     //
     payment.validatePayment(failureMessages);
     payment.initializePayment();
     //
-    this.validateCreditEntry(payment, newCreditEntry, failureMessages);
-    this.subtractCreditEntry(payment, newCreditEntry);
+    this.validateCreditEntry(payment, creditEntry, failureMessages);
+    this.subtractCreditEntry(payment, creditEntry);
     // fixed java.lang.UnsupportedOperationException
-    this.updateCreditHistory(payment, newCreditHistories, TransactionType.DEBIT);
-    this.validateCreditHistory(newCreditEntry, newCreditHistories, failureMessages);
+    this.updateCreditHistory(payment, creditHistories, TransactionType.DEBIT);
+    this.validateCreditHistory(creditEntry, creditHistories, failureMessages);
     //
     if (failureMessages.isEmpty()) {
       log.info("Payment is initiated for order id: {}", payment.getOrderId().getValue());
@@ -64,15 +66,17 @@ public class PaymentDomainServiceImpl implements PaymentDomainService {
   }
 
   @Override
-  public PaymentEvent validateAndCancelPayment(Payment payment, ArrayList<Map<String, Object>> creditEntries,
-                                               ArrayList<Map<String, Object>> creditHistories, List<String> failureMessages) {
+  public PaymentEvent validateAndCancelPayment(Payment payment, CreditEntry creditEntry,
+                                               List<CreditHistory> creditHistories) {
+    var failureMessages = new ArrayList<String>();
+    //
     payment.validatePayment(failureMessages);
     //
-    var newCreditEntry = this.convertListCreditEntriesToCreditEntry(creditEntries);
-    var newCreditHistories = this.convertListCreditHistoriesJdbcToListCreditHistories(creditHistories);
+    //var newCreditEntry = this.convertListCreditEntriesToCreditEntry(creditEntries);
+    //var newCreditHistories = this.convertListCreditHistoriesJdbcToListCreditHistories(creditHistories);
 
-    this.addCreditEntry(payment, newCreditEntry);
-    this.updateCreditHistory(payment, newCreditHistories, TransactionType.CREDIT);
+    this.addCreditEntry(payment, creditEntry);
+    this.updateCreditHistory(payment, creditHistories, TransactionType.CREDIT);
 
     if (failureMessages.isEmpty()) {
       log.info("Payment is cancelled for order id: {}", payment.getOrderId().getValue());
@@ -86,7 +90,7 @@ public class PaymentDomainServiceImpl implements PaymentDomainService {
     }
   }
 
-  private CreditEntry convertListCreditEntriesToCreditEntry(ArrayList<Map<String, Object>> creditEntries) {
+  public CreditEntry convertListCreditEntriesToCreditEntry(ArrayList<Map<String, Object>> creditEntries) {
     return CreditEntry.builder()
             .creditEntryId(new CreditEntryId(UUID.fromString(creditEntries.get(0).get("id").toString())))
             .customerId(new CustomerId(UUID.fromString(creditEntries.get(0).get("customer_id").toString())))
@@ -97,7 +101,7 @@ public class PaymentDomainServiceImpl implements PaymentDomainService {
             .build();
   }
 
-  private List<CreditHistory> convertListCreditHistoriesJdbcToListCreditHistories(ArrayList<Map<String, Object>> creditHistories) {
+  public List<CreditHistory> convertListCreditHistoriesJdbcToListCreditHistories(ArrayList<Map<String, Object>> creditHistories) {
     return new ArrayList<>(creditHistories.stream()
             .flatMap(map -> Stream.of(CreditHistory.builder()
                     .creditHistoryId(new CreditHistoryId(UUID.fromString(map.get("id").toString())))

@@ -3,22 +3,32 @@ package com.food.ordering.system.payment.service.domain.application.mapper;
 
 import com.food.ordering.system.payment.service.domain.application.dto.PaymentRequest;
 import com.food.ordering.system.payment.service.domain.core.entity.Payment;
+import com.food.ordering.system.payment.service.domain.core.valueobject.PaymentId;
 import com.food.ordering.system.shared.domain.valueobject.CustomerId;
 import com.food.ordering.system.shared.domain.valueobject.Money;
 import com.food.ordering.system.shared.domain.valueobject.OrderId;
+import com.food.ordering.system.shared.domain.valueobject.PaymentStatus;
 import lombok.NoArgsConstructor;
+import org.apache.camel.Handler;
 
 import javax.enterprise.context.ApplicationScoped;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.UUID;
 
 @NoArgsConstructor
 @ApplicationScoped
 public class PaymentDataMapper {
+  @Handler
   public Payment paymentRequestModelToPayment(PaymentRequest paymentRequest) {
     return Payment.builder()
+            .paymentId(new PaymentId(UUID.randomUUID()))
             .orderId(new OrderId(UUID.fromString(paymentRequest.getOrderId())))
             .customerId(new CustomerId(UUID.fromString(paymentRequest.getCustomerId())))
             .price(new Money(paymentRequest.getPrice()))
+            .createdAt(ZonedDateTime.now(ZoneId.systemDefault()).toOffsetDateTime().toZonedDateTime())
+            .paymentStatus(PaymentStatus.COMPLETED)
             .build();
   }
 }

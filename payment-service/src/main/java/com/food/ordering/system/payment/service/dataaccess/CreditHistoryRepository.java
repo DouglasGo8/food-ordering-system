@@ -29,7 +29,9 @@ public class CreditHistoryRepository extends RouteBuilder {
     .end();
 
     from("direct:saveCreditHistories").routeId("SaveCreditHistoriesRouter")
-            .transform(constant("SaveCreditHistoriesRouter"))
+            .transform(exchangeProperty("creditHistories"))
+            .log("${body}")
+            //.transform(constant("SaveCreditHistoriesRouter"))
             .end();
   }
 }
