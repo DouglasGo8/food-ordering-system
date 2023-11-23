@@ -29,9 +29,10 @@ public class CreditHistoryRepository extends RouteBuilder {
     .end();
 
     from("direct:saveCreditHistories").routeId("SaveCreditHistoriesRouter")
-            .transform(exchangeProperty("creditHistories"))
-            .log("${body}")
-            //.transform(constant("SaveCreditHistoriesRouter"))
+            // must be the last item of the List
+            .transform(simple("${exchangeProperty.creditHistories[last]}"))
+            //.log("${body.transactionType}")
+            .to("sql-stored:classpath:templates/insertCreditHistory.sql") // done
             .end();
   }
 }

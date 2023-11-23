@@ -16,6 +16,7 @@ public class PaymentRepository extends RouteBuilder {
   public void configure() {
 
     from("direct:savePayment").routeId("SavePaymentRouteId")
+            .transform(exchangeProperty("payment"))
             .to("sql-stored:classpath:templates/insertPayment.sql")
             //.log("${body.price}")
             //.transform(constant("Save the Payment"))

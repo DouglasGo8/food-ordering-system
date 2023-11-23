@@ -111,12 +111,12 @@ DROP TABLE IF EXISTS tbl_payments CASCADE;
 
 CREATE TABLE tbl_payments
 (
-    id          TEXT                     NOT NULL,
-    customer_id TEXT                     NOT NULL,
-    order_id    TEXT                     NOT NULL,
-    price       NUMERIC(10, 2)           NOT NULL,
-    created_at  TEXT                     NOT NULL,
-    status      TEXT                     NOT NULL,
+    id          TEXT           NOT NULL,
+    customer_id TEXT           NOT NULL,
+    order_id    TEXT           NOT NULL,
+    price       NUMERIC(10, 2) NOT NULL,
+    created_at  TEXT           NOT NULL,
+    status      TEXT           NOT NULL,
     CONSTRAINT payments_pkey PRIMARY KEY (id)
 );
 
@@ -290,7 +290,7 @@ call insert_tbl_orders(
         'New York',
         '10040',
         null
-    );
+     );
 --
 DROP procedure if EXISTS insert_tbl_order_items;
 --
@@ -341,7 +341,7 @@ $$ LANGUAGE plpgsql;
 --
 DROP PROCEDURE if EXISTS insert_tbl_payment;
 --
-CREATE OR REPLACE PROCEDURE insert_tbl_payment (
+CREATE OR REPLACE PROCEDURE insert_tbl_payment(
     p_payment_id TEXT,
     p_customer_id TEXT,
     p_order_id TEXT,
@@ -369,7 +369,7 @@ call insert_tbl_payment(
 --
 DROP PROCEDURE if EXISTS insert_tbl_credit_entry;
 --
-CREATE OR REPLACE PROCEDURE insert_tbl_credit_entry (
+CREATE OR REPLACE PROCEDURE insert_tbl_credit_entry(
     p_credit_entry_id TEXT,
     p_customer_id TEXT,
     p_total_credit_amount NUMERIC(10, 2)
@@ -379,15 +379,39 @@ AS
 $$
 BEGIN
     INSERT INTO tbl_credit_entry(id, customer_id, total_credit_amount)
-    VALUES (p_credit_entry_id, p_customer_id, p_total_credit_amount);
+    VALUES (p_credit_entry_id, p_customer_id, p_total_credit_amount)
+    --
+    ON CONFLICT ON CONSTRAINT credit_entry_pkey DO UPDATE SET total_credit_amount = p_total_credit_amount;
 END;
 $$;
 --
 call insert_tbl_credit_entry(
-     'd215b5f8-0249-4dc5-89a3-51fd148css21',
+        'd215b5f8-0249-4dc5-89a3-51fd148cfb21',
+        'af20558e-5e77-4a6e-bb2f-fef1f14c0ee9',
+        637.36 --650.12
+     );
+--
+DROP procedure if EXISTS insert_tbl_credit_history;
+--
+CREATE OR REPLACE PROCEDURE insert_tbl_credit_history(
+    p_credit_history_id TEXT,
+    p_customer_id TEXT,
+    p_amount NUMERIC(10, 2),
+    p_type TEXT
+)
+LANGUAGE plpgsql
+AS
+$$
+BEGIN
+    INSERT INTO tbl_credit_history(id, customer_id, amount, type)
+    VALUES (p_credit_history_id, p_customer_id, p_amount, p_type);
+END;
+$$;
+--
+call insert_tbl_credit_history('bf1202b6-c298-4b4c-b86b-6b24fd996049',
      'af20558e-5e77-4a6e-bb2f-fef1f14c0ee9',
-     650.12
-);
+     33.12,
+     'DEBIT');
 --
 DROP function if EXISTS find_customer_byId;
 --
@@ -453,8 +477,8 @@ DROP function if EXISTS findCustomerIdCreditEntry_fn;
 CREATE OR REPLACE FUNCTION findCustomerIdCreditEntry_fn(p_id TEXT)
     RETURNS TABLE
             (
-                id TEXT,
-                customer_id TEXT,
+                id                  TEXT,
+                customer_id         TEXT,
                 total_credit_amount NUMERIC(10, 2)
             )
 AS
@@ -473,10 +497,10 @@ DROP function if EXISTS findCustomerIdCreditHistory_fn;
 CREATE OR REPLACE FUNCTION findCustomerIdCreditHistory_fn(p_id TEXT)
     RETURNS TABLE
             (
-                id TEXT,
+                id          TEXT,
                 customer_id TEXT,
-                amount NUMERIC(10, 2),
-                type TEXT
+                amount      NUMERIC(10, 2),
+                type        TEXT
             )
 AS
 $$

@@ -6,7 +6,6 @@ import com.food.ordering.system.payment.service.domain.core.PaymentDomainService
 import com.food.ordering.system.shared.domain.DomainConstants;
 import lombok.NoArgsConstructor;
 import org.apache.camel.LoggingLevel;
-import org.apache.camel.PropertyInject;
 import org.apache.camel.builder.AggregationStrategies;
 import org.apache.camel.builder.RouteBuilder;
 
@@ -20,13 +19,15 @@ import java.util.concurrent.Executors;
 public class PaymentRequestHelper extends RouteBuilder {
 
 
+  final String transformToCreditEntry = "convertListCreditEntriesToCreditEntry(${body[0]['#result-set-1']})";
+  final String transformToCreditHistories = "convertListCreditHistoriesJdbcToListCreditHistories(${body[1]['#result-set-1']})";
   ////
   //// persistPayment @Transactional /PaymentRequest/
   ////
   @Override
   public void configure() {
 
-    // lesson 48
+    // lesson 48, done
     from("direct:persistPayment").routeId("PersistPaymentRouter")
       .log(LoggingLevel.INFO, DomainConstants.PAYMENT_REQUEST_RECEIVED)
       .setProperty("payment", method(PaymentDataMapper.class))
@@ -38,28 +39,23 @@ public class PaymentRequestHelper extends RouteBuilder {
         .to("direct:creditEntryFindByCustomerId", "direct:creditHistoryFindByCustomerId")
       .end() // end Multicast
       //.log(LoggingLevel.INFO, "${body}")
-      .setProperty("creditEntry",
-              method(PaymentDomainServiceImpl.class, "convertListCreditEntriesToCreditEntry(${body[0]['#result-set-1']})"))
-      .setProperty("creditHistories",
-              method(PaymentDomainServiceImpl.class, "convertListCreditHistoriesJdbcToListCreditHistories(${body[1]['#result-set-1']})"))
+      .setProperty("creditEntry", method(PaymentDomainServiceImpl.class, transformToCreditEntry))
+      .setProperty("creditHistories", method(PaymentDomainServiceImpl.class, transformToCreditHistories))
       //.setProperty("creditEntry", simple("${body[0]['#result-set-1']}"))
       //.log("${exchangeProperty.creditEntry.customerId.value}")
       //.setProperty("creditHistories", simple("${body[1]['#result-set-1']}"))
-      //.bean(PaymentDomainService.class, "validateAndInitializePayment") // PaymentEvent
+      .bean(PaymentDomainService.class, "validateAndInitializePayment") // paymentEvent
       //.log("${body}")
-  //    .setProperty("paymentEvent", body())
-      //.transform(exchangeProperty("payment"))
-      //.to("direct:savePayment")
+      .setProperty("paymentEvent", body())
       //.log("${body}")
       // failures.isEmpty choice
-      // PK Problem section 06 lesson 48 time 7:00
-      //.multicast().parallelProcessing().executorService(Executors.newFixedThreadPool(3))
-      //  .to("direct:saveCreditEntry"/*, "direct:saveCreditHistories"*/)
-      //.end()
-      //
-      //
-      //.log(LoggingLevel.INFO, "${exchangeProperty.creditHistory}")
-      //.log(LoggingLevel.INFO, "Body here ${body[0]['#result-set-1'][0]['id']}")
+      // PK Problem section 06 lesson 48 time 7:00 solved with Postgres ON CONFLICT approach
+      .multicast().parallelProcessing()
+            .executorService(Executors.newFixedThreadPool(3))
+        .to("direct:savePayment", "direct:saveCreditEntry", "direct:saveCreditHistories")
+      .end()
+      .transform(exchangeProperty("payment"))
+      .log("${body}")
       // return PaymentEvent
     .end();
 
