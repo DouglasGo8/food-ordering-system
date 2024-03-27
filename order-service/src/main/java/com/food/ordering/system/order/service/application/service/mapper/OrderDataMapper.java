@@ -17,14 +17,15 @@ import com.food.ordering.system.shared.order.core.service.domain.entity.Product;
 import com.food.ordering.system.shared.order.core.service.domain.entity.Restaurant;
 import com.food.ordering.system.shared.order.core.service.domain.event.OrderCreatedEvent;
 import com.food.ordering.system.shared.order.core.service.domain.valueobject.StreetAddress;
+import jakarta.inject.Inject;
+import jakarta.validation.Valid;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.camel.Body;
 import org.apache.camel.ExchangeProperty;
 
-import javax.enterprise.context.ApplicationScoped;
-import javax.inject.Inject;
-import javax.validation.Valid;
+import jakarta.enterprise.context.ApplicationScoped;
+
 import java.util.List;
 import java.util.UUID;
 import java.util.function.Function;

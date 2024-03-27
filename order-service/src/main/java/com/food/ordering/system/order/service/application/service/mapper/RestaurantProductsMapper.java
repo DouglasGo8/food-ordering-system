@@ -15,7 +15,7 @@ import org.apache.camel.Body;
 import org.apache.camel.ExchangeProperty;
 import org.apache.camel.component.sql.ResultSetIterator;
 
-import javax.enterprise.context.ApplicationScoped;
+import jakarta.enterprise.context.ApplicationScoped;
 import java.util.ArrayList;
 import java.util.UUID;
 import java.util.stream.Collectors;

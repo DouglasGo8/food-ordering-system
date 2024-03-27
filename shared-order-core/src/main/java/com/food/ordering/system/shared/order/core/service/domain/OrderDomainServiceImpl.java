@@ -7,9 +7,10 @@ import com.food.ordering.system.shared.order.core.service.domain.event.OrderCanc
 import com.food.ordering.system.shared.order.core.service.domain.event.OrderCreatedEvent;
 import com.food.ordering.system.shared.order.core.service.domain.event.OrderPaidEvent;
 import com.food.ordering.system.shared.order.core.service.domain.exception.OrderDomainException;
+import jakarta.enterprise.context.ApplicationScoped;
 import lombok.extern.slf4j.Slf4j;
 
-import javax.enterprise.context.ApplicationScoped;
+
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.List;

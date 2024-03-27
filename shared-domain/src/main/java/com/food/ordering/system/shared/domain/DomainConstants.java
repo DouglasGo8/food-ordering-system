@@ -16,6 +16,8 @@ public interface DomainConstants {
   String ORDER_STATE_INIT_CANCEL_INVALID = "Order isn't in correct state for init cancel operation!";
   String CUSTOMER_NOT_FOUND_ID = "Could not find customer with customer id: ${exchangeProperty.customerId}";
   String RESTAURANT_INFO_NOT_FOUND = "Could not find restaurant with restaurant id: %s";
+
+  String PAYMENT_ORDER_ID_NOT_FOUND = "Payment with order id : ${variable.orderId} could not be found!";
   String PAYMENT_REQUEST_RECEIVED = "Received payment complete event for order id ${body.orderId}";
   String PAYMENT_ROLLBACK_RECEIVED = "Received payment rollback event for order id ${body.orderId}";
 }

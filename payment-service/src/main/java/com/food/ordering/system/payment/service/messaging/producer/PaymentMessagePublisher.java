@@ -3,7 +3,7 @@ package com.food.ordering.system.payment.service.messaging.producer;
 import lombok.NoArgsConstructor;
 import org.apache.camel.builder.RouteBuilder;
 
-import javax.enterprise.context.ApplicationScoped;
+import jakarta.enterprise.context.ApplicationScoped;
 
 @NoArgsConstructor
 @ApplicationScoped

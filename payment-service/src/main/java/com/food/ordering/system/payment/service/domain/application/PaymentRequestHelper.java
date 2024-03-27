@@ -9,7 +9,7 @@ import org.apache.camel.LoggingLevel;
 import org.apache.camel.builder.AggregationStrategies;
 import org.apache.camel.builder.RouteBuilder;
 
-import javax.enterprise.context.ApplicationScoped;
+import jakarta.enterprise.context.ApplicationScoped;
 import java.util.ArrayList;
 import java.util.concurrent.Executors;
 
@@ -19,8 +19,11 @@ import java.util.concurrent.Executors;
 public class PaymentRequestHelper extends RouteBuilder {
 
 
-  final String transformToCreditEntry = "convertListCreditEntriesToCreditEntry(${body[0]['#result-set-1']})";
-  final String transformToCreditHistories = "convertListCreditHistoriesJdbcToListCreditHistories(${body[1]['#result-set-1']})";
+  final String transformToPayment = "convertListPaymentJdbcToPayment(${body[0]['#result-set-1']})";
+  final String transformToCreditEntryOnPersist = "convertListCreditEntriesToCreditEntry(${body[0]['#result-set-1']})";
+  final String transformToCreditEntryOnCancel = "convertListCreditEntriesToCreditEntry(${body[1]['#result-set-1']})";
+  final String transformToCreditHistoriesOnPersist = "convertListCreditHistoriesJdbcToListCreditHistories(${body[1]['#result-set-1']})";
+  final String transformToCreditHistoriesOnCancel = "convertListCreditHistoriesJdbcToListCreditHistories(${body[2]['#result-set-1']})";
   ////
   //// persistPayment @Transactional /PaymentRequest/
   ////
@@ -30,7 +33,7 @@ public class PaymentRequestHelper extends RouteBuilder {
     // lesson 48, done
     from("direct:persistPayment").routeId("PersistPaymentRouter")
       .log(LoggingLevel.INFO, DomainConstants.PAYMENT_REQUEST_RECEIVED)
-      .setProperty("payment", method(PaymentDataMapper.class))
+      .setVariable("payment", method(PaymentDataMapper.class))
       // String.class only test purpose
       .multicast(AggregationStrategies.flexible().accumulateInCollection(ArrayList.class)).streaming()
             //.parallelAggregate().parallelProcessing()
@@ -39,23 +42,25 @@ public class PaymentRequestHelper extends RouteBuilder {
         .to("direct:creditEntryFindByCustomerId", "direct:creditHistoryFindByCustomerId")
       .end() // end Multicast
       //.log(LoggingLevel.INFO, "${body}")
-      .setProperty("creditEntry", method(PaymentDomainServiceImpl.class, transformToCreditEntry))
-      .setProperty("creditHistories", method(PaymentDomainServiceImpl.class, transformToCreditHistories))
+      .setVariable("creditEntry", method(PaymentDomainServiceImpl.class, transformToCreditEntryOnPersist))
+      .setProperty("creditHistories", method(PaymentDomainServiceImpl.class, transformToCreditHistoriesOnPersist))
       //.setProperty("creditEntry", simple("${body[0]['#result-set-1']}"))
       //.log("${exchangeProperty.creditEntry.customerId.value}")
       //.setProperty("creditHistories", simple("${body[1]['#result-set-1']}"))
       .bean(PaymentDomainService.class, "validateAndInitializePayment") // paymentEvent
       //.log("${body}")
-      .setProperty("paymentEvent", body())
+      //.setVariable("paymentEvent", body())
       //.log("${body}")
       // failures.isEmpty choice
       // PK Problem section 06 lesson 48 time 7:00 solved with Postgres ON CONFLICT approach
       .multicast().parallelProcessing()
             .executorService(Executors.newFixedThreadPool(3))
-        .to("direct:savePayment", "direct:saveCreditEntry", "direct:saveCreditHistories")
-      .end()
-      .transform(exchangeProperty("payment"))
-      .log("${body}")
+        .to("direct:savePayment",
+                "direct:saveCreditEntry",
+                "direct:saveCreditHistories")
+      .end() // end Multicast
+      .transform(variable("payment"))
+      .log(LoggingLevel.INFO,"${body}")
       // return PaymentEvent
     .end();
 
@@ -63,21 +68,31 @@ public class PaymentRequestHelper extends RouteBuilder {
     //// persistCancelCamel @Transactional /PaymentRequest/
     from("direct:persistCancelPayment").routeId("PersistCancelPaymentRouter")
       .log(LoggingLevel.INFO, DomainConstants.PAYMENT_ROLLBACK_RECEIVED)
-      //.to("direct:paymentFindOrderId") // payment
+      //.setVariable("payload", body())
+      //.to("direct:paymentFindOrderId") // paymentByOrderId
+      //.setVariable("paymentOrderById", body())
+      //.transform(simple("${variable.payload}"))
       // refactory to re-use
       .multicast(AggregationStrategies.flexible().accumulateInCollection(ArrayList.class)).streaming()
             //.parallelAggregate().parallelProcessing()
             //.executorService(Executors.newFixedThreadPool(3))
-            // [0]CreditEntry [1]List<CreditHistory>
-            .to("direct:creditEntryFindByCustomerId", "direct:creditHistoryFindByCustomerId")
+            // [0]Payment [1]CreditEntry [1]List<CreditHistory>
+           .to("direct:paymentFindOrderId",
+                   "direct:creditEntryFindByCustomerId",
+                   "direct:creditHistoryFindByCustomerId")
       .end() // end Multicast
-      //.bean(PaymentDomainServiceImpl.class, "validateAndCancelPayment") // PaymentEvent
+      .setVariable("payment", method(PaymentDomainServiceImpl.class, transformToPayment))
+      .setVariable("creditEntry", method(PaymentDomainServiceImpl.class, transformToCreditEntryOnCancel))
+      .setProperty("creditHistories", method(PaymentDomainServiceImpl.class, transformToCreditHistoriesOnCancel))
+      //
+      .bean(PaymentDomainServiceImpl.class, "validateAndCancelPayment") // paymentEvent
       .log(LoggingLevel.INFO, "${body}")
             // failures.isEmpty
-            //.to("direct:saveCreditEntry")
-            //.to("direct:saveCreditHistories")
-            // return PaymentEvent
-      .end();
+      .multicast().parallelProcessing()
+          .executorService(Executors.newFixedThreadPool(3))
+          .to("direct:updatePayment", "direct:saveCreditEntry", "direct:saveCreditHistories")
+      .end()// end Multicast
+    .end();
 
 
   }

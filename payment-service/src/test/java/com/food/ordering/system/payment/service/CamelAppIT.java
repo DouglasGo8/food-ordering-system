@@ -16,7 +16,7 @@ import org.apache.camel.quarkus.test.CamelQuarkusTestSupport;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
@@ -32,8 +32,11 @@ public class CamelAppIT extends CamelQuarkusTestSupport implements BaseTest {
   @Inject
   ProducerTemplate producerTemplate;
 
-
+  // Truncate both tables TBL_CREDIT_ENTRY/TBL_CREDIT_HISTORY
+  // after
+  // Insert script.sql default values
   @Test
+  @Disabled
   @SneakyThrows
   public void persistPaymentRouteRepresentation() {
 
@@ -50,13 +53,18 @@ public class CamelAppIT extends CamelQuarkusTestSupport implements BaseTest {
   }
 
   @Test
-  @Disabled
   @SneakyThrows
   public void persistCancelPaymentRouteRepresentation() {
+    AdviceWith.adviceWith(super.context, "PersistCancelPaymentRouter", r -> r.weaveAddLast().to("mock:result"));
+    //
     var body = this.createPaymentRequest();
     this.producerTemplate.sendBody("direct:persistCancelPayment", body);
-
+    var mock = super.getMockEndpoint("mock:result");
     //
+    //
+    mock.setExpectedMessageCount(1);
+    //
+    mock.assertIsSatisfied();
   }
 
   @Test

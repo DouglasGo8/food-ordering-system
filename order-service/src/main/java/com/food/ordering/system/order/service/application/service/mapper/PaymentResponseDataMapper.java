@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 import org.apache.camel.Body;
 import org.apache.camel.Handler;
 
-import javax.enterprise.context.ApplicationScoped;
+import jakarta.enterprise.context.ApplicationScoped;
 
 @NoArgsConstructor
 @ApplicationScoped

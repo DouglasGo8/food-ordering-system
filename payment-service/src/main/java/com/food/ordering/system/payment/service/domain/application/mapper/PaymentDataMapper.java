@@ -9,9 +9,10 @@ import com.food.ordering.system.shared.domain.valueobject.Money;
 import com.food.ordering.system.shared.domain.valueobject.OrderId;
 import com.food.ordering.system.shared.domain.valueobject.PaymentStatus;
 import lombok.NoArgsConstructor;
+import org.apache.camel.Body;
 import org.apache.camel.Handler;
 
-import javax.enterprise.context.ApplicationScoped;
+import jakarta.enterprise.context.ApplicationScoped;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
@@ -21,7 +22,7 @@ import java.util.UUID;
 @ApplicationScoped
 public class PaymentDataMapper {
   @Handler
-  public Payment paymentRequestModelToPayment(PaymentRequest paymentRequest) {
+  public Payment paymentRequestModelToPayment(@Body PaymentRequest paymentRequest) {
     return Payment.builder()
             .paymentId(new PaymentId(UUID.randomUUID()))
             .orderId(new OrderId(UUID.fromString(paymentRequest.getOrderId())))

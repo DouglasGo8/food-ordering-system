@@ -21,6 +21,7 @@
 - https://github.com/tstuber/camel-quarkus-kafka-schema-registry[Camel Quarkus Kafka with Avro]
 - https://howtodoinjava.com/junit5/expected-exception-example/[Throws Junit]
 - https://www.javainuse.com/camel/camel_jdbc[Camel JDBC Sample]
+- https://endoflife.date/quarkus-framework[Quarkus LTS Releases]
 
 '''
 

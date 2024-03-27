@@ -4,7 +4,7 @@ import com.food.ordering.system.order.service.application.service.mapper.Restaur
 import lombok.NoArgsConstructor;
 import org.apache.camel.builder.RouteBuilder;
 
-import javax.enterprise.context.ApplicationScoped;
+import jakarta.enterprise.context.ApplicationScoped;
 
 @NoArgsConstructor
 @ApplicationScoped

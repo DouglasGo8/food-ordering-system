@@ -6,7 +6,7 @@ import lombok.AllArgsConstructor;
 import org.apache.camel.LoggingLevel;
 import org.apache.camel.builder.RouteBuilder;
 
-import javax.enterprise.context.ApplicationScoped;
+import jakarta.enterprise.context.ApplicationScoped;
 
 
 @ApplicationScoped
@@ -31,8 +31,8 @@ public class CreditEntryRepository extends RouteBuilder {
       .end();
 
     from("direct:saveCreditEntry").routeId("SaveCreditEntryRepositoryRouter")
-            .transform(exchangeProperty("creditEntry"))
-            //.log("${body}")
+            .transform(variable("creditEntry"))
+            //.log("${body.id.value}")
             .to("sql-stored:classpath:templates/insertCreditEntry.sql") // done
             .end();
   }

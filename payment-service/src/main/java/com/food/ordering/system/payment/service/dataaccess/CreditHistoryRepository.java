@@ -6,7 +6,7 @@ import lombok.NoArgsConstructor;
 import org.apache.camel.LoggingLevel;
 import org.apache.camel.builder.RouteBuilder;
 
-import javax.enterprise.context.ApplicationScoped;
+import jakarta.enterprise.context.ApplicationScoped;
 
 @NoArgsConstructor
 @ApplicationScoped
@@ -33,6 +33,6 @@ public class CreditHistoryRepository extends RouteBuilder {
             .transform(simple("${exchangeProperty.creditHistories[last]}"))
             //.log("${body.transactionType}")
             .to("sql-stored:classpath:templates/insertCreditHistory.sql") // done
-            .end();
+    .end();
   }
 }

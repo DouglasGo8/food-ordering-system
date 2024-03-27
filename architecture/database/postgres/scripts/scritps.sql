@@ -346,7 +346,7 @@ CREATE OR REPLACE PROCEDURE insert_tbl_payment(
     p_customer_id TEXT,
     p_order_id TEXT,
     p_price NUMERIC(10, 2),
-    p_created_at TIMESTAMP,
+    p_created_at TEXT,
     p_status TEXT
 )
     LANGUAGE plpgsql
@@ -355,7 +355,8 @@ $$
 -- BODY
 BEGIN
     INSERT INTO tbl_payments(id, customer_id, order_id, price, created_at, status)
-    VALUES (p_payment_id, p_customer_id, p_order_id, p_price, p_created_at, p_status);
+    VALUES (p_payment_id, p_customer_id, p_order_id,
+            p_price, REPLACE(p_created_at, '[UTC]', ''), p_status);
 END;
 $$;
 --
@@ -366,6 +367,27 @@ call insert_tbl_payment(
         22.3, -- price
         '2023-11-07T05:05:27.811042-03:00',
         'COMPLETED');
+--
+DROP PROCEDURE if EXISTS update_tbl_payment;
+--
+CREATE OR REPLACE PROCEDURE update_tbl_payment(
+    p_payment_id TEXT,
+    p_order_id TEXT,
+    p_status TEXT
+)
+    LANGUAGE plpgsql
+AS
+$$
+-- BODY
+BEGIN
+    UPDATE tbl_payments
+    SET status = p_status
+    WHERE id = p_payment_id AND order_id = p_order_id;
+    --INSERT INTO tbl_payments(id, customer_id, order_id, price, created_at, status)
+    --VALUES (p_payment_id, p_customer_id, p_order_id,
+    --        p_price, REPLACE(p_created_at, '[UTC]', ''), p_status);
+END;
+$$;
 --
 DROP PROCEDURE if EXISTS insert_tbl_credit_entry;
 --
@@ -430,9 +452,9 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 --
-DROP function if EXISTS refresh_order_customer_mview;
+--DROP function if EXISTS refresh_order_customer_mview;
 --
-CREATE OR replace function refresh_order_customer_mview()
+/*CREATE OR replace function refresh_order_customer_mview()
     returns trigger
 AS
 '
@@ -440,13 +462,13 @@ AS
         refresh materialized VIEW order_customer_mview;
         return null;
     END;
-' LANGUAGE plpgsql;
+' LANGUAGE plpgsql;*/
 --
-CREATE TRIGGER refresh_order_customer_mview
-    AFTER INSERT OR UPDATE OR DELETE OR truncate
-    ON tbl_customer
-    FOR each statement
-EXECUTE PROCEDURE refresh_order_customer_mview();
+--CREATE TRIGGER refresh_order_customer_mview
+--    AFTER INSERT OR UPDATE OR DELETE OR truncate
+--    ON tbl_customer
+--    FOR each statement
+--EXECUTE PROCEDURE refresh_order_customer_mview();
 --
 -- FUNCTION findRestaurantInformation(idRestaurant)??
 --
@@ -509,5 +531,28 @@ BEGIN
         SELECT t.id, t.customer_id, t.amount, t.type
         FROM tbl_credit_history t
         WHERE t.customer_id = findCustomerIdCreditHistory_fn.p_id;
+END;
+$$ LANGUAGE plpgsql;
+---
+DROP function if EXISTS findPaymentByOrderId_fn;
+---
+CREATE OR REPLACE FUNCTION findPaymentByOrderId_fn(p_orderId TEXT)
+    RETURNS TABLE
+            (
+                id          TEXT,
+                customer_id TEXT,
+                order_id    TEXT,
+                price       NUMERIC(10, 2),
+                created_at  TEXT,
+                status      TEXT
+            )
+AS
+$$
+BEGIN
+    RETURN QUERY
+        SELECT p.id, p.customer_id, p.order_id, p.price,
+               p.created_at, p.status
+        FROM tbl_payments p
+        WHERE p.order_id = findPaymentByOrderId_fn.p_orderId;
 END;
 $$ LANGUAGE plpgsql;

@@ -11,7 +11,7 @@ import com.food.ordering.system.shared.order.core.service.domain.event.OrderEven
 import lombok.NoArgsConstructor;
 import org.apache.camel.Body;
 
-import javax.enterprise.context.ApplicationScoped;
+import jakarta.enterprise.context.ApplicationScoped;
 import java.util.List;
 import java.util.UUID;
 import java.util.function.Function;

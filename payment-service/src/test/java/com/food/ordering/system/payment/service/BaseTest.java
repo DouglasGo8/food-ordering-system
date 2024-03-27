@@ -12,6 +12,8 @@ import com.food.ordering.system.shared.domain.valueobject.*;
 
 import java.math.BigDecimal;
 import java.time.Instant;
+import java.time.ZoneOffset;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -151,8 +153,11 @@ public interface BaseTest {
   }
 
   default PaymentRequest createPaymentRequest() {
+
+    //
     return PaymentRequest.builder()
             .createdAt(Instant.now())
+            //.createdAt(Instant.parse("2024-03-26T18:55:01.538321Z"))
             .customerId(UUID.fromString("af20558e-5e77-4a6e-bb2f-fef1f14c0ee9").toString())
             .id(UUID.randomUUID().toString())
             // must be a valid orderId
