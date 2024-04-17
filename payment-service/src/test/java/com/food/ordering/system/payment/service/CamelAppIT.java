@@ -1,5 +1,6 @@
 package com.food.ordering.system.payment.service;
 
+import com.food.ordering.system.payment.service.domain.core.PaymentDomainService;
 import com.food.ordering.system.payment.service.domain.core.entity.CreditHistory;
 import com.food.ordering.system.payment.service.domain.core.entity.Payment;
 import com.food.ordering.system.payment.service.domain.core.valueobject.CreditHistoryId;
@@ -22,6 +23,7 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.List;
 import java.util.UUID;
 
 @Slf4j
@@ -32,9 +34,21 @@ public class CamelAppIT extends CamelQuarkusTestSupport implements BaseTest {
   @Inject
   ProducerTemplate producerTemplate;
 
+  @Inject
+  PaymentDomainService paymentDomainService;
+
   // Truncate both tables TBL_CREDIT_ENTRY/TBL_CREDIT_HISTORY
   // after
   // Insert script.sql default values
+  /*
+    TRUNCATE TABLE TBL_PAYMENTS
+    TRUNCATE TABLE TBL_CREDIT_ENTRY
+    TRUNCATE TABLE TBL_CREDIT_HISTORY
+    --
+    SELECT * FROM TBL_PAYMENTS
+    SELECT * FROM TBL_CREDIT_ENTRY
+    SELECT * FROM TBL_CREDIT_HISTORY
+   */
   @Test
   @Disabled
   @SneakyThrows
@@ -44,7 +58,8 @@ public class CamelAppIT extends CamelQuarkusTestSupport implements BaseTest {
     //
     var body = this.createPaymentRequest();
     var mock = super.getMockEndpoint("mock:result");
-    this.producerTemplate.sendBody("direct:persistPayment", body);
+    // from now, Invoked by RestEndpoint
+    this.producerTemplate.sendBody("direct:completePayment", body);
     //
     mock.setExpectedMessageCount(1);
     //
@@ -53,18 +68,30 @@ public class CamelAppIT extends CamelQuarkusTestSupport implements BaseTest {
   }
 
   @Test
+  @Disabled
   @SneakyThrows
   public void persistCancelPaymentRouteRepresentation() {
     AdviceWith.adviceWith(super.context, "PersistCancelPaymentRouter", r -> r.weaveAddLast().to("mock:result"));
     //
     var body = this.createPaymentRequest();
-    this.producerTemplate.sendBody("direct:persistCancelPayment", body);
+    // from now, Invoked by RestEndpoint
+    this.producerTemplate.sendBody("direct:cancelPayment", body);
     var mock = super.getMockEndpoint("mock:result");
     //
     //
     mock.setExpectedMessageCount(1);
     //
     mock.assertIsSatisfied();
+  }
+
+  @Test
+  public void paymentCompletedEvent() {
+    var payment = this.createPaymentWithPaymentIdtMock();
+    var creditEntry = this.creditEntryByCustomerIdCamelJdbcMock();
+    var creditHistories = this.creditHistoriesByCustomerIdCamelJdbcMock();
+    // PaymentCompletedEvent
+    var paymentEvent = this.paymentDomainService.validateAndInitializePayment(payment, creditEntry, creditHistories);
+
   }
 
   @Test

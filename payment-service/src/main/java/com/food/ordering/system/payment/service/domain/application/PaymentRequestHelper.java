@@ -18,8 +18,7 @@ import java.util.concurrent.Executors;
 @ApplicationScoped
 public class PaymentRequestHelper extends RouteBuilder {
 
-
-  final String transformToPayment = "convertListPaymentJdbcToPayment(${body[0]['#result-set-1']})";
+  //final String transformToPayment = "";
   final String transformToCreditEntryOnPersist = "convertListCreditEntriesToCreditEntry(${body[0]['#result-set-1']})";
   final String transformToCreditEntryOnCancel = "convertListCreditEntriesToCreditEntry(${body[1]['#result-set-1']})";
   final String transformToCreditHistoriesOnPersist = "convertListCreditHistoriesJdbcToListCreditHistories(${body[1]['#result-set-1']})";
@@ -49,7 +48,7 @@ public class PaymentRequestHelper extends RouteBuilder {
       //.setProperty("creditHistories", simple("${body[1]['#result-set-1']}"))
       .bean(PaymentDomainService.class, "validateAndInitializePayment") // paymentEvent
       //.log("${body}")
-      //.setVariable("paymentEvent", body())
+      .setVariable("paymentEvent", body())
       //.log("${body}")
       // failures.isEmpty choice
       // PK Problem section 06 lesson 48 time 7:00 solved with Postgres ON CONFLICT approach
@@ -59,9 +58,10 @@ public class PaymentRequestHelper extends RouteBuilder {
                 "direct:saveCreditEntry",
                 "direct:saveCreditHistories")
       .end() // end Multicast
-      .transform(variable("payment"))
+      .transform(variable("paymentEvent"))
       .log(LoggingLevel.INFO,"${body}")
       // return PaymentEvent
+      // async invoke PaymentRequestMessageLister Route
     .end();
 
     //Section 06 lesson 48 time 8:30
@@ -72,7 +72,7 @@ public class PaymentRequestHelper extends RouteBuilder {
       //.to("direct:paymentFindOrderId") // paymentByOrderId
       //.setVariable("paymentOrderById", body())
       //.transform(simple("${variable.payload}"))
-      // refactory to re-use
+      // refactor to re-use
       .multicast(AggregationStrategies.flexible().accumulateInCollection(ArrayList.class)).streaming()
             //.parallelAggregate().parallelProcessing()
             //.executorService(Executors.newFixedThreadPool(3))
@@ -81,17 +81,20 @@ public class PaymentRequestHelper extends RouteBuilder {
                    "direct:creditEntryFindByCustomerId",
                    "direct:creditHistoryFindByCustomerId")
       .end() // end Multicast
-      .setVariable("payment", method(PaymentDomainServiceImpl.class, transformToPayment))
+      .setVariable("payment", method(PaymentDomainServiceImpl.class, "{{spEL.transformToPayment}}"))
       .setVariable("creditEntry", method(PaymentDomainServiceImpl.class, transformToCreditEntryOnCancel))
       .setProperty("creditHistories", method(PaymentDomainServiceImpl.class, transformToCreditHistoriesOnCancel))
       //
       .bean(PaymentDomainServiceImpl.class, "validateAndCancelPayment") // paymentEvent
+      .setVariable("paymentEvent", body())
       .log(LoggingLevel.INFO, "${body}")
             // failures.isEmpty
       .multicast().parallelProcessing()
           .executorService(Executors.newFixedThreadPool(3))
           .to("direct:updatePayment", "direct:saveCreditEntry", "direct:saveCreditHistories")
       .end()// end Multicast
+      .transform(variable("paymentEvent"))
+       // async invoke PaymentRequestMessageLister Route
     .end();
 
 

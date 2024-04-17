@@ -175,7 +175,8 @@ public class AppTest implements BaseTest {
             .paymentOrderStatus(PaymentOrderStatus.PENDING)
             .build();
     //
-    this.paymentDataMapper.paymentRequestModelToPayment(paymentRequest);
+    var mapper = this.paymentDataMapper.paymentRequestModelToPayment(paymentRequest);
+    log.info("{}", mapper);
   }
 
   @Test

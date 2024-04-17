@@ -119,7 +119,7 @@ public interface BaseTest {
               )
       );
     }};*/
-    return List.of(
+    return new ArrayList<>(List.of(
             CreditHistory.builder()
                     .creditHistoryId(new CreditHistoryId(UUID.fromString("d215b5f8-0249-4dc5-89a3-51fd148cfb23")))
                     .customerId(new CustomerId(UUID.fromString("af20558e-5e77-4a6e-bb2f-fef1f14c0ee9")))
@@ -135,7 +135,7 @@ public interface BaseTest {
                     .customerId(new CustomerId(UUID.fromString("af20558e-5e77-4a6e-bb2f-fef1f14c0ee9")))
                     .amount(new Money(new BigDecimal("600.12")))
                     .transactionType(TransactionType.CREDIT).build()
-    );
+    ));
   }
 
 
