@@ -18,6 +18,7 @@ import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import jakarta.inject.Inject;
+
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
@@ -28,7 +29,6 @@ import java.util.UUID;
 
 @Slf4j
 @QuarkusTest
-
 public class CamelAppIT extends CamelQuarkusTestSupport implements BaseTest {
 
   @Inject
@@ -37,6 +37,10 @@ public class CamelAppIT extends CamelQuarkusTestSupport implements BaseTest {
   @Inject
   PaymentDomainService paymentDomainService;
 
+  // ***************
+  // *** WARNING ***
+  // ***************
+  // Before tests
   // Truncate both tables TBL_CREDIT_ENTRY/TBL_CREDIT_HISTORY
   // after
   // Insert script.sql default values
@@ -85,12 +89,24 @@ public class CamelAppIT extends CamelQuarkusTestSupport implements BaseTest {
   }
 
   @Test
+  @SneakyThrows
   public void paymentCompletedEvent() {
+    //
+    AdviceWith.adviceWith(super.context, "PaymentMessagePublisher", r -> r.weaveAddLast().to("mock:result"));
+    //
     var payment = this.createPaymentWithPaymentIdtMock();
     var creditEntry = this.creditEntryByCustomerIdCamelJdbcMock();
     var creditHistories = this.creditHistoriesByCustomerIdCamelJdbcMock();
     // PaymentCompletedEvent
-    var paymentEvent = this.paymentDomainService.validateAndInitializePayment(payment, creditEntry, creditHistories);
+    var body = this.paymentDomainService.validateAndInitializePayment(payment, creditEntry, creditHistories);
+    //
+    this.producerTemplate.sendBody("direct:paymentMessagePublisher", body);
+    var mock = super.getMockEndpoint("mock:result");
+    //
+    //body.getPayment().getPaymentStatus()
+    mock.setExpectedMessageCount(1);
+    //
+    mock.assertIsSatisfied();
 
   }
 
@@ -118,8 +134,6 @@ public class CamelAppIT extends CamelQuarkusTestSupport implements BaseTest {
     //creditHistory.getId()
 
     log.info("{}", ZonedDateTime.now(ZoneId.systemDefault()).toOffsetDateTime().toZonedDateTime());
-
-
 
 
   }

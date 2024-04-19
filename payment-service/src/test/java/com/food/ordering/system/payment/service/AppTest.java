@@ -1,7 +1,7 @@
 package com.food.ordering.system.payment.service;
 
 import com.food.ordering.system.payment.service.domain.application.dto.PaymentRequest;
-import com.food.ordering.system.payment.service.domain.application.mapper.PaymentDataMapper;
+import com.food.ordering.system.payment.service.domain.application.mapper.PaymentRequestDataMapper;
 import com.food.ordering.system.payment.service.domain.core.PaymentDomainService;
 import com.food.ordering.system.payment.service.domain.core.event.PaymentCancelledEvent;
 import com.food.ordering.system.payment.service.domain.core.event.PaymentCompletedEvent;
@@ -34,7 +34,7 @@ import static org.junit.jupiter.api.Assertions.*;
 public class AppTest implements BaseTest {
 
   @Inject
-  PaymentDataMapper paymentDataMapper;
+  PaymentRequestDataMapper paymentDataMapper;
 
   @Inject
   PaymentDomainService paymentDomainService;

@@ -1,8 +1,7 @@
-package com.food.ordering.system.payment.service.messaging;
+package com.food.ordering.system.payment.service.domain.application;
 
 import jakarta.enterprise.context.ApplicationScoped;
 import lombok.NoArgsConstructor;
-import org.apache.camel.LoggingLevel;
 import org.apache.camel.builder.RouteBuilder;
 
 

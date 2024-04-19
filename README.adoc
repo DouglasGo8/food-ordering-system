@@ -22,6 +22,8 @@
 - https://howtodoinjava.com/junit5/expected-exception-example/[Throws Junit]
 - https://www.javainuse.com/camel/camel_jdbc[Camel JDBC Sample]
 - https://endoflife.date/quarkus-framework[Quarkus LTS Releases]
+- https://packages.confluent.io/maven/io/confluent/kafka-avro-serializer/[Maven IO Confluent]
+- https://smallrye.io/jandex[Jandex Versions]
 
 '''
 

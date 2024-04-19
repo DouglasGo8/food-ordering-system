@@ -15,12 +15,11 @@ import org.apache.camel.Handler;
 import jakarta.enterprise.context.ApplicationScoped;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.UUID;
 
 @NoArgsConstructor
 @ApplicationScoped
-public class PaymentDataMapper {
+public class PaymentRequestDataMapper {
   @Handler
   public Payment paymentRequestModelToPayment(@Body PaymentRequest paymentRequest) {
     return Payment.builder()
