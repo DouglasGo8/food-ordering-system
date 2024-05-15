@@ -46,6 +46,7 @@ public class CreditEntry extends BaseEntity<CreditEntryId> {
     private CreditEntryId creditEntryId;
 
     private Builder() {
+      //
     }
 
     public static Builder builder() {

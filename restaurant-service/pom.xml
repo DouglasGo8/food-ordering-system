@@ -8,20 +8,15 @@
     <version>1.0</version>
   </parent>
 
-  <groupId>com.food.ordering.system.customer.service</groupId>
-  <artifactId>payment-service</artifactId>
+  <groupId>com.food.ordering.system.restaurant.service</groupId>
+  <artifactId>restaurant-service</artifactId>
   <version>1.0</version>
 
-  <name>Food Ordering System :: Payment Service</name>
+  <name>Food Ordering System :: Restaurant Service</name>
   <description>Microservices :: Clean Architecture :: DDD :: Saga :: Outbox &amp; Kafka</description>
 
+
   <dependencies>
-    <dependency>
-      <groupId>io.quarkus</groupId>
-      <artifactId>quarkus-hibernate-validator</artifactId>
-    </dependency>
-
-
     <!-- Food Order System -->
     <dependency>
       <groupId>com.food.ordering.system.shared.avro</groupId>
@@ -35,7 +30,6 @@
       <groupId>com.food.ordering.system.shared.order.core</groupId>
       <artifactId>shared-order-core</artifactId>
     </dependency>
-
   </dependencies>
 
   <build>
@@ -55,6 +49,5 @@
       </plugin>
     </plugins>
   </build>
-
 
 </project>

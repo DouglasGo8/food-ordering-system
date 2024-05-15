@@ -1,0 +1,87 @@
+package com.food.ordering.system.restaurant.service;
+
+import com.food.ordering.system.restaurant.service.domain.application.mapper.ValidateOrderMapper;
+import com.food.ordering.system.shared.domain.valueobject.*;
+import io.quarkus.test.junit.QuarkusTest;
+import lombok.extern.slf4j.Slf4j;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import static org.junit.jupiter.api.Assertions.*;
+
+@Slf4j
+@QuarkusTest
+public class AppTest implements BaseTest {
+
+  @Test
+  @Disabled
+  public void orderApprovedRepresentation() {
+    var orderApproved = this.orderApprovaldMock();
+
+    assertNotNull(orderApproved.getOrderId());
+    assertEquals(orderApproved.getApprovalStatus(), OrderApprovalStatus.APPROVED);
+  }
+
+
+  @Test
+  @Disabled
+  public void productRepresentation() {
+
+    var product = this.productMock();
+    //
+    assertNotNull(product.getId());
+    assertEquals(product.getName(), "Product 1");
+  }
+
+  @Test
+  @Disabled
+  public void updateWithConfirmedPriceAndAvailable() {
+    var product = this.productMock();
+    product.updateWithConfirmedPriceAndAvailable(product.getName(), product.getPrice(), true);
+
+    assertTrue(product.isAvailable());
+  }
+
+  @Test
+  @Disabled
+  public void orderDetailRepresentation() {
+    var orderDetail = this.orderDetailMock();
+
+    assertNotNull(orderDetail.getId());
+    assertEquals(orderDetail.getOrderStatus(), OrderStatus.APPROVED);
+  }
+
+  @Test
+  @Disabled
+  public void restaurantRepresentation() {
+    var restaurant = this.restaurantMock();
+    assertNotNull(restaurant.getId());
+    //restaurant.getOrderDetail().getId().getValue()
+    assertTrue(restaurant.getOrderDetail().getProducts().size() > 1);
+  }
+
+  // test validateOrder
+  @Test
+  @Disabled
+  public void validateOrderRestaurantRepresentation() {
+    var restaurant = this.restaurantMock();
+    var list = new ArrayList<String>();
+    //
+    restaurant.validateOrder(list);
+  }
+
+  // test constructOrderApproval
+  @Test
+  @Disabled
+  public void constructOrderApprovalRepresentation() {
+    var restaurant = this.restaurantMock();
+    restaurant.constructOrderApproval(restaurant.getOrderApproval().getApprovalStatus());
+    //
+    assertNotNull(restaurant.getOrderApproval().getOrderId());
+    assertEquals(restaurant.getOrderApproval().getApprovalStatus(), OrderApprovalStatus.APPROVED);
+  }
+
+}

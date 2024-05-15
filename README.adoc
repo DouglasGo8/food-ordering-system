@@ -351,6 +351,10 @@ public void camelExchangeJdbcFunctions(
     //list.forEach(e -> log.info("---> {}", e.getTotalCreditAmount().getAmount()));
     list.forEach(e -> log.info("---> {}", e.getAmount().getAmount()));
 
-
   }
 ----
+
+
+=== Restaurant Service
+
+image::architecture/thumbs/images/concepts/restaurant-actions-overview.png[]

@@ -112,6 +112,26 @@ public class CamelAppIT extends CamelQuarkusTestSupport implements BaseTest {
 
   @Test
   @Disabled
+  @SneakyThrows
+  public void paymentCancelledEvent() {
+    //
+    AdviceWith.adviceWith(super.context, "PaymentMessagePublisher", r -> r.weaveAddLast().to("mock:result"));
+    //
+    var payment = this.createPaymentWithPaymentIdtMock();
+    var creditEntry = this.creditEntryByCustomerIdCamelJdbcMock();
+    var creditHistories = this.creditHistoriesByCustomerIdCamelJdbcMock();
+    //
+    var body = this.paymentDomainService.validateAndCancelPayment(payment, creditEntry, creditHistories);
+    this.producerTemplate.sendBody("direct:paymentMessagePublisher", body);
+    var mock = super.getMockEndpoint("mock:result");
+    //
+    mock.setExpectedMessageCount(1);
+    //
+    mock.assertIsSatisfied();
+  }
+
+  @Test
+  @Disabled
   public void showTimedZone() {
     //log.info("time -> {}", ZonedDateTime.now());
 /*    var payment = Payment.Builder
