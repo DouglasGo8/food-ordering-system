@@ -4,11 +4,13 @@ import com.food.ordering.system.restaurant.service.domain.core.entity.OrderAppro
 import com.food.ordering.system.restaurant.service.domain.core.entity.OrderDetail;
 import com.food.ordering.system.restaurant.service.domain.core.entity.Product;
 import com.food.ordering.system.restaurant.service.domain.core.entity.Restaurant;
+import com.food.ordering.system.restaurant.service.domain.core.event.OrderApprovedEvent;
 import com.food.ordering.system.restaurant.service.domain.core.valueobject.OrderApprovalId;
 import com.food.ordering.system.shared.domain.valueobject.*;
 
 
 import java.math.BigDecimal;
+import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Random;
 import java.util.UUID;
@@ -83,10 +85,15 @@ public interface BaseTest {
     var orderApproval = this.orderApprovaldMock();
 
     return Restaurant.Builder.builder()
-            .id(orderApproval.getRestaurantId())
+            .restaurantId(orderApproval.getRestaurantId())
             .orderApproval(this.orderApprovaldMock())
             .active(true)
             .orderDetail(this.orderDetailWithListOfProducts())
             .build();
+  }
+
+  default OrderApprovedEvent orderApprovedEventMock() {
+    return new OrderApprovedEvent(this.orderApprovaldMock(), new RestaurantId(UUID.randomUUID()),
+            List.of(), ZonedDateTime.now());
   }
 }

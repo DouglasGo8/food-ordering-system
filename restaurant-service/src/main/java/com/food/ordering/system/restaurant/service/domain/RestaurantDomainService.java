@@ -19,21 +19,15 @@ public class RestaurantDomainService extends RouteBuilder {
   public void configure() throws Exception {
 
 
-    from("direct:validateOrder").routeId("RestaurantDomainServiceRoute") // receives ValidateOrderMapper
-            .setVariable("orderId", simple("${body.restaurant.orderDetail.id.value}"))
+    // ??? Is this route necessary ???
+    //from("direct:validateOrder").routeId("RestaurantDomainServiceRoute") // receives ValidateOrderMapper
+    //        .setVariable("orderId", simple("${body.restaurant.orderDetail.id.value}"))
             //.log("==> ${body.restaurant}")
-            .log("Validating order with id: ${variable.orderId}")
-            .bean(RestaurantServiceImpl::new) // returns OrderApprovalEvent
-            .log("${body}")
-
-
-            // bean(Restaurant.class, "constructOrderApproval"); OrderApprovalStatus.APPROVED returns OrderApprovedEvent
-            // .to(seda:orderEventDomainPublisher
-            // .otherwise
-            // log("Order Rejected)
-            // bean (restaurant.constructedOrderApproval(OrderApprovalStatus.REJECTED) // returns orderRejeectEvent
-            // .to(seda:orderEventDomainPublisher
-            .end();
+    //        .log("Validating order with id: ${variable.orderId}")
+    //        .bean(RestaurantServiceImpl::new) // returns OrderApprovalEvent
+    //        .log("${body}")
+            // .to(seda:orderDomainEventPublisher)
+   //         .end();
   }
 
 

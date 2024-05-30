@@ -18,7 +18,7 @@ public class OrderApproval extends BaseEntity<OrderApprovalId> {
   private final OrderApprovalStatus approvalStatus;
 
   public OrderApproval(Builder builder) {
-    setId(builder.orderApprovalId);
+    super.setId(builder.orderApprovalId);
     orderId = builder.orderId;
     restaurantId = builder.restaurantId;
     approvalStatus = builder.orderApprovalStatus;

@@ -1,4 +1,4 @@
-package com.food.ordering.system.payment.service.messaging.consumer;
+package com.food.ordering.system.payment.service.messaging.listener;
 
 import jakarta.enterprise.context.ApplicationScoped;
 import lombok.NoArgsConstructor;

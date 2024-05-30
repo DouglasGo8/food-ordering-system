@@ -141,11 +141,11 @@ CREATE TABLE tbl_credit_history
     CONSTRAINT credit_history_pkey PRIMARY KEY (id)
 );
 
-
 --
--- Materialized view used
---DROP MATERIALIZED VIEW if EXISTS order_restaurant_mview;
-/*CREATE MATERIALIZED VIEW order_restaurant_mview tablespace pg_default
+DROP MATERIALIZED VIEW IF EXISTS order_restaurant_m_view;
+--
+CREATE MATERIALIZED VIEW order_restaurant_m_view
+    TABLESPACE pg_default
 AS
 SELECT r.id        AS restaurant_id,
        r.name      AS restaurant_name,
@@ -160,32 +160,29 @@ FROM tbl_restaurants r,
 WHERE r.id = rp.restaurant_id
   AND p.id = rp.product_id
 WITH DATA;
---
-REFRESH MATERIALIZED VIEW order_restaurant_mview;
---
-DROP MATERIALIZED VIEW if EXISTS order_customer_mview;
---
-CREATE MATERIALIZED VIEW order_customer_mview
-AS
-SELECT id, user_name, first_name, last_name
-FROM tbl_customer
-WITH DATA;
---
--- Materialized view not used
-REFRESH MATERIALIZED VIEW order_customer_mview;*/
---
-/*DROP function IF EXISTS refresh_order_restaurant_mview;
---
-CREATE OR replace function refresh_order_restaurant_mview()
+
+refresh materialized VIEW order_restaurant_m_view;
+
+DROP function IF EXISTS refresh_order_restaurant_m_view;
+
+CREATE OR replace function refresh_order_restaurant_m_view()
     returns trigger
 AS
 '
     BEGIN
-        refresh materialized VIEW order_restaurant_mview;
+        refresh materialized VIEW order_restaurant_m_view;
         return null;
     END;
 ' LANGUAGE plpgsql;
---*/
+
+DROP trigger IF EXISTS refresh_order_restaurant_m_view ON tbl_restaurant_products;
+
+CREATE trigger refresh_order_restaurant_m_view
+    after INSERT OR UPDATE OR DELETE OR truncate
+    ON tbl_restaurant_products
+    FOR each statement
+EXECUTE PROCEDURE refresh_order_restaurant_m_view();
+
 /*DROP trigger IF EXISTS refresh_order_restaurant_mview ON tbl_restaurant_products;
 --
 CREATE trigger refresh_order_restaurant_mview
@@ -339,6 +336,9 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 --
+DROP function if EXISTS find_restaurantMView_byId;
+-- query based on commented view
+--
 DROP PROCEDURE if EXISTS insert_tbl_payment;
 --
 CREATE OR REPLACE PROCEDURE insert_tbl_payment(
@@ -382,7 +382,8 @@ $$
 BEGIN
     UPDATE tbl_payments
     SET status = p_status
-    WHERE id = p_payment_id AND order_id = p_order_id;
+    WHERE id = p_payment_id
+      AND order_id = p_order_id;
     --INSERT INTO tbl_payments(id, customer_id, order_id, price, created_at, status)
     --VALUES (p_payment_id, p_customer_id, p_order_id,
     --        p_price, REPLACE(p_created_at, '[UTC]', ''), p_status);
@@ -421,7 +422,7 @@ CREATE OR REPLACE PROCEDURE insert_tbl_credit_history(
     p_amount NUMERIC(10, 2),
     p_type TEXT
 )
-LANGUAGE plpgsql
+    LANGUAGE plpgsql
 AS
 $$
 BEGIN
@@ -431,9 +432,9 @@ END;
 $$;
 --
 call insert_tbl_credit_history('bf1202b6-c298-4b4c-b86b-6b24fd996049',
-     'af20558e-5e77-4a6e-bb2f-fef1f14c0ee9',
-     33.12,
-     'DEBIT');
+                               'af20558e-5e77-4a6e-bb2f-fef1f14c0ee9',
+                               33.12,
+                               'DEBIT');
 --
 DROP function if EXISTS find_customer_byId;
 --
@@ -550,8 +551,12 @@ AS
 $$
 BEGIN
     RETURN QUERY
-        SELECT p.id, p.customer_id, p.order_id, p.price,
-               p.created_at, p.status
+        SELECT p.id,
+               p.customer_id,
+               p.order_id,
+               p.price,
+               p.created_at,
+               p.status
         FROM tbl_payments p
         WHERE p.order_id = findPaymentByOrderId_fn.p_orderId;
 END;

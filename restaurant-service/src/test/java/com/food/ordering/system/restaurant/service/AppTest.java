@@ -1,6 +1,5 @@
 package com.food.ordering.system.restaurant.service;
 
-import com.food.ordering.system.restaurant.service.domain.application.mapper.ValidateOrderMapper;
 import com.food.ordering.system.shared.domain.valueobject.*;
 import io.quarkus.test.junit.QuarkusTest;
 import lombok.extern.slf4j.Slf4j;
@@ -8,7 +7,6 @@ import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -83,5 +81,16 @@ public class AppTest implements BaseTest {
     assertNotNull(restaurant.getOrderApproval().getOrderId());
     assertEquals(restaurant.getOrderApproval().getApprovalStatus(), OrderApprovalStatus.APPROVED);
   }
+
+  @Test
+  public void orderApprovedEventRepresentation() {
+    //
+    var event = this.orderApprovedEventMock();
+
+    assertNotNull(event.getRestaurantId());
+  }
+
+  @Test
+  public void orderRejectedEventRepresentation() {}
 
 }
