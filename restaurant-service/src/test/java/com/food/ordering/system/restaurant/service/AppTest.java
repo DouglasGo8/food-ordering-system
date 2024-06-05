@@ -1,6 +1,8 @@
 package com.food.ordering.system.restaurant.service;
 
-import com.food.ordering.system.shared.domain.valueobject.*;
+import com.food.ordering.system.restaurant.service.domain.core.event.OrderApprovalEvent;
+import com.food.ordering.system.shared.domain.valueobject.OrderApprovalStatus;
+import com.food.ordering.system.shared.domain.valueobject.OrderStatus;
 import io.quarkus.test.junit.QuarkusTest;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Disabled;
@@ -8,6 +10,8 @@ import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
 
+import static org.hamcrest.CoreMatchers.instanceOf;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 
 @Slf4j
@@ -86,11 +90,16 @@ public class AppTest implements BaseTest {
   public void orderApprovedEventRepresentation() {
     //
     var event = this.orderApprovedEventMock();
-
     assertNotNull(event.getRestaurantId());
+    assertThat(event, instanceOf(OrderApprovalEvent.class));
+    //assertThrows(ArgumentConversionException.class, ()-> not(instanceOf(OrderApprovalEvent.class)));
   }
 
   @Test
-  public void orderRejectedEventRepresentation() {}
+  public void orderRejectedEventRepresentation() {
+    var event = this.orderRejectedEventMock();
+    assertNotNull(event.getRestaurantId());
+    assertThat(event, instanceOf(OrderApprovalEvent.class));
+  }
 
 }

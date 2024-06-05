@@ -5,6 +5,7 @@ import com.food.ordering.system.restaurant.service.domain.core.entity.OrderDetai
 import com.food.ordering.system.restaurant.service.domain.core.entity.Product;
 import com.food.ordering.system.restaurant.service.domain.core.entity.Restaurant;
 import com.food.ordering.system.restaurant.service.domain.core.event.OrderApprovedEvent;
+import com.food.ordering.system.restaurant.service.domain.core.event.OrderRejectedEvent;
 import com.food.ordering.system.restaurant.service.domain.core.valueobject.OrderApprovalId;
 import com.food.ordering.system.shared.domain.valueobject.*;
 
@@ -93,7 +94,14 @@ public interface BaseTest {
   }
 
   default OrderApprovedEvent orderApprovedEventMock() {
-    return new OrderApprovedEvent(this.orderApprovaldMock(), new RestaurantId(UUID.randomUUID()),
+    return new OrderApprovedEvent(this.orderApprovaldMock(),
+            new RestaurantId(UUID.fromString("d215b5f8-0249-4dc5-89a3-51fd148cfb45")),
+            List.of(), ZonedDateTime.now());
+  }
+
+  default OrderRejectedEvent orderRejectedEventMock() {
+    return new OrderRejectedEvent(this.orderApprovaldMock(),
+            new RestaurantId(UUID.fromString("d215b5f8-0249-4dc5-89a3-51fd148cfb45")),
             List.of(), ZonedDateTime.now());
   }
 }

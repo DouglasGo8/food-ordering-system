@@ -1,34 +1,49 @@
 package com.food.ordering.system.restaurant.service.domain;
 
 
-import com.food.ordering.system.restaurant.service.domain.core.RestaurantServiceImpl;
+import com.food.ordering.system.restaurant.service.domain.core.entity.Restaurant;
+import com.food.ordering.system.restaurant.service.domain.core.event.OrderApprovalEvent;
+import com.food.ordering.system.restaurant.service.domain.core.event.OrderApprovedEvent;
+import com.food.ordering.system.restaurant.service.domain.core.event.OrderRejectedEvent;
+import com.food.ordering.system.shared.domain.DomainConstants;
+import com.food.ordering.system.shared.domain.valueobject.OrderApprovalStatus;
 import jakarta.enterprise.context.ApplicationScoped;
 import lombok.NoArgsConstructor;
-import org.apache.camel.builder.RouteBuilder;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.camel.Handler;
 
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+import java.util.List;
+
+@Slf4j
 @NoArgsConstructor
 @ApplicationScoped
-public class RestaurantDomainService extends RouteBuilder {
-
-  // direct:validateOrder
-  //OrderApprovalEvent validateOrder(Restaurant restaurant,
-  //                                 List<String> failureMessages
-  //         /*OrderApprovedEvent implementation */);
-
-  @Override
-  public void configure() throws Exception {
+public class RestaurantDomainService {
 
 
-    // ??? Is this route necessary ???
-    //from("direct:validateOrder").routeId("RestaurantDomainServiceRoute") // receives ValidateOrderMapper
-    //        .setVariable("orderId", simple("${body.restaurant.orderDetail.id.value}"))
-            //.log("==> ${body.restaurant}")
-    //        .log("Validating order with id: ${variable.orderId}")
-    //        .bean(RestaurantServiceImpl::new) // returns OrderApprovalEvent
-    //        .log("${body}")
-            // .to(seda:orderDomainEventPublisher)
-   //         .end();
+  // params can change due to persistOrderApproval Router pipe
+  @Handler
+  OrderApprovalEvent validateOrder(Restaurant restaurant, List<String> failureMessages) {
+    restaurant.validateOrder(failureMessages);
+    log.info("Validating order with id: {}", restaurant.getOrderDetail().getId().getValue());
+    //
+    if (failureMessages.isEmpty()) {
+      log.info("Order is approved for order id: {}", restaurant.getOrderDetail().getId().getValue());
+      restaurant.constructOrderApproval(OrderApprovalStatus.APPROVED);
+      //
+      return new OrderApprovedEvent(restaurant.getOrderApproval(),
+              restaurant.getId(), failureMessages,
+              ZonedDateTime.now(ZoneId.of(DomainConstants.UTC)));
+    }
+    //
+    restaurant.constructOrderApproval(OrderApprovalStatus.REJECTED);
+    //
+    return new OrderRejectedEvent(restaurant.getOrderApproval(),
+            restaurant.getId(), failureMessages,
+            ZonedDateTime.now(ZoneId.of(DomainConstants.UTC)));
   }
+
 
 
 }
