@@ -19,7 +19,7 @@ public class RestaurantRepository extends RouteBuilder {
             .setVariable("payload", body())
             .setHeader("ids", method(RestaurantDataAccessMapper.class, "{{joinedProductIds.camel.spEL}}"))
             //.log("${header.ids}")
-            .to("{{restaurantInfo.camel.sql.spEL}}") // ResultSetIterator
+            .to("{{restaurantInfo.camel.sql.spEL}}") // returns Array
             //.log("${body}")
             .choice().when(simple("${body.size} == 0"))
               .log(LoggingLevel.INFO, "RestaurantId ${variable.payload.id.value.toString} wasn't found")
