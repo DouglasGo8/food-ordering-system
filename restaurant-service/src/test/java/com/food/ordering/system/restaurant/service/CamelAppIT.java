@@ -17,6 +17,10 @@ public class CamelAppIT extends CamelQuarkusTestSupport implements BaseTest {
   @Test
   public void restaurantApprovalRequestMessageListenerRepresentation() {
     // RestaurantApprovalRequest
+
+    var body = this.restaurantApprovalRequestMock();
+
+    producerTemplate.sendBody("direct:approveOrder", body);
   }
 
 }

@@ -1,5 +1,6 @@
 package com.food.ordering.system.restaurant.service;
 
+import com.food.ordering.system.restaurant.service.domain.application.dto.RestaurantApprovalRequest;
 import com.food.ordering.system.restaurant.service.domain.core.entity.OrderApproval;
 import com.food.ordering.system.restaurant.service.domain.core.entity.OrderDetail;
 import com.food.ordering.system.restaurant.service.domain.core.entity.Product;
@@ -11,6 +12,7 @@ import com.food.ordering.system.shared.domain.valueobject.*;
 
 
 import java.math.BigDecimal;
+import java.time.Instant;
 import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Random;
@@ -33,17 +35,17 @@ public interface BaseTest {
   default List<Product> productMockList() {
 
     return List.of(Product.Builder.builder()
-                    .productId(new ProductId(UUID.randomUUID()))
+                    .productId(new ProductId(UUID.fromString("d215b5f8-0249-4dc5-89a3-51fd148cfb47")))
                     .available(true)
                     .name("Product 1")
-                    .price(new Money(BigDecimal.valueOf(new Random().nextDouble(10, 100))))
+                    .price(new Money(BigDecimal.valueOf(22.76)))
                     .quantity(1)
                     .build(),
             Product.Builder.builder()
-                    .productId(new ProductId(UUID.randomUUID()))
+                    .productId(new ProductId(UUID.fromString("d215b5f8-0249-4dc5-89a3-51fd148cfb48")))
                     .available(true)
                     .name("Product 2")
-                    .price(new Money(BigDecimal.valueOf(new Random().nextDouble(10, 100))))
+                    .price(new Money(BigDecimal.valueOf(77.14)))
                     .quantity(2)
                     .build()
     );
@@ -103,5 +105,18 @@ public interface BaseTest {
     return new OrderRejectedEvent(this.orderApprovaldMock(),
             new RestaurantId(UUID.fromString("d215b5f8-0249-4dc5-89a3-51fd148cfb45")),
             List.of(), ZonedDateTime.now());
+  }
+
+  default RestaurantApprovalRequest restaurantApprovalRequestMock() {
+    return RestaurantApprovalRequest.builder()
+            .id(UUID.randomUUID().toString())
+            .restaurantId("d215b5f8-0249-4dc5-89a3-51fd148cfb45")
+            .orderId("ec78b161-3899-4866-8753-886b84a8fbce")
+            .sagaId("")
+            .restaurantOrderStatus(RestaurantOrderStatus.PAID)
+            .price(BigDecimal.valueOf(156.77))
+            .createdAt(Instant.now())
+            .products(this.productMockList())
+            .build();
   }
 }

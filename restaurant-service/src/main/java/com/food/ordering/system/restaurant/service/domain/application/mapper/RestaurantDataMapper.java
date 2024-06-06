@@ -12,6 +12,8 @@ import com.food.ordering.system.shared.domain.valueobject.OrderStatus;
 import com.food.ordering.system.shared.domain.valueobject.RestaurantId;
 import jakarta.enterprise.context.ApplicationScoped;
 import lombok.NoArgsConstructor;
+import org.apache.camel.Body;
+import org.apache.camel.Handler;
 
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -20,7 +22,8 @@ import java.util.stream.Collectors;
 @ApplicationScoped
 public class RestaurantDataMapper {
 
-  public Restaurant restaurantApprovalRequestModelToRestaurant(RestaurantApprovalRequest
+  @Handler
+  public Restaurant restaurantApprovalRequestModelToRestaurant(@Body RestaurantApprovalRequest
                                                                            restaurantApprovalRequest) {
     return Restaurant.Builder.builder()
             .restaurantId(new RestaurantId(UUID.fromString(restaurantApprovalRequest.getRestaurantId())))

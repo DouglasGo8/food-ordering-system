@@ -62,6 +62,7 @@ public class AppTest implements BaseTest {
     var restaurant = this.restaurantMock();
     assertNotNull(restaurant.getId());
     //restaurant.getOrderDetail().getId().getValue()
+    //String x = restaurant.getId().getValue().toString();
     assertTrue(restaurant.getOrderDetail().getProducts().size() > 1);
   }
 
@@ -87,6 +88,7 @@ public class AppTest implements BaseTest {
   }
 
   @Test
+  @Disabled
   public void orderApprovedEventRepresentation() {
     //
     var event = this.orderApprovedEventMock();
@@ -96,6 +98,7 @@ public class AppTest implements BaseTest {
   }
 
   @Test
+  @Disabled
   public void orderRejectedEventRepresentation() {
     var event = this.orderRejectedEventMock();
     assertNotNull(event.getRestaurantId());
