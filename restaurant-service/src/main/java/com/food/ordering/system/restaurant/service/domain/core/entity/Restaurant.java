@@ -7,6 +7,7 @@ import com.food.ordering.system.shared.domain.valueobject.OrderApprovalStatus;
 import com.food.ordering.system.shared.domain.valueobject.OrderStatus;
 import com.food.ordering.system.shared.domain.valueobject.RestaurantId;
 import lombok.Getter;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.List;
@@ -16,6 +17,7 @@ import java.util.UUID;
 @Getter
 public class Restaurant extends AggregateRoot<RestaurantId> {
 
+  @Setter
   private boolean active;
   private OrderApproval orderApproval;
   private final OrderDetail orderDetail;
@@ -57,10 +59,6 @@ public class Restaurant extends AggregateRoot<RestaurantId> {
             .orderId(this.getOrderDetail().getId())
             .orderApprovalStatus(orderApprovalStatus)
             .build();
-  }
-
-  public void setActive(boolean active) {
-    this.active = active;
   }
 
 

@@ -11,6 +11,7 @@ import jakarta.enterprise.context.ApplicationScoped;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.camel.Handler;
+import org.apache.camel.Variable;
 
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
@@ -21,11 +22,16 @@ import java.util.List;
 @ApplicationScoped
 public class RestaurantDomainService {
 
-
   // params can change due to persistOrderApproval Router pipe
   @Handler
-  OrderApprovalEvent validateOrder(Restaurant restaurant, List<String> failureMessages) {
+  OrderApprovalEvent validateOrder(@Variable("restaurant") Restaurant restaurant,
+                                   @Variable("fail") List<String> failureMessages) {
+
+
+
     restaurant.validateOrder(failureMessages);
+
+
     log.info("Validating order with id: {}", restaurant.getOrderDetail().getId().getValue());
     //
     if (failureMessages.isEmpty()) {
@@ -42,8 +48,9 @@ public class RestaurantDomainService {
     return new OrderRejectedEvent(restaurant.getOrderApproval(),
             restaurant.getId(), failureMessages,
             ZonedDateTime.now(ZoneId.of(DomainConstants.UTC)));
-  }
 
+     //return null;
+  }
 
 
 }

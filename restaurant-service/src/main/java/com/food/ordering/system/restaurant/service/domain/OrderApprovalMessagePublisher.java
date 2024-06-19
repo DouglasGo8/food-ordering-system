@@ -2,6 +2,7 @@ package com.food.ordering.system.restaurant.service.domain;
 
 import jakarta.enterprise.context.ApplicationScoped;
 import lombok.NoArgsConstructor;
+import org.apache.camel.LoggingLevel;
 import org.apache.camel.builder.RouteBuilder;
 
 @NoArgsConstructor
@@ -12,8 +13,9 @@ public class OrderApprovalMessagePublisher extends RouteBuilder {
   public void configure() {
 
     // receives RestaurantApprovalRequest
-    //from("seda:orderApprovalMessage").routeId("OrderApprovalMessagePublisher")
+    from("seda:orderApprovalEventMessage").routeId("OrderApprovalMessagePublisher")
+            .log(LoggingLevel.INFO, "Sending ${body} to Kafka")
             // to:kafka
-    //        .end();
+            .end();
   }
 }

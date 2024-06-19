@@ -114,7 +114,7 @@ public interface BaseTest {
             .orderId("ec78b161-3899-4866-8753-886b84a8fbce")
             .sagaId("")
             .restaurantOrderStatus(RestaurantOrderStatus.PAID)
-            .price(BigDecimal.valueOf(156.77))
+            .price(BigDecimal.valueOf(177.04))
             .createdAt(Instant.now())
             .products(this.productMockList())
             .build();

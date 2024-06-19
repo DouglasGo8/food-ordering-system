@@ -202,7 +202,7 @@ INSERT INTO tbl_restaurants(id, name, active)
 VALUES ('d215b5f8-0249-4dc5-89a3-51fd148cfb46', 'restaurant_2', FALSE);
 --
 INSERT INTO tbl_products(id, name, price, available)
-VALUES ('d215b5f8-0249-4dc5-89a3-51fd148cfb47', 'product_1', 22.76, FALSE);
+VALUES ('d215b5f8-0249-4dc5-89a3-51fd148cfb47', 'product_1', 22.76, TRUE);
 INSERT INTO tbl_products(id, name, price, available)
 VALUES ('d215b5f8-0249-4dc5-89a3-51fd148cfb48', 'product_2', 77.14, TRUE);
 INSERT INTO tbl_products(id, name, price, available)
@@ -239,7 +239,7 @@ INSERT INTO tbl_credit_history(id, customer_id, amount, type)
 VALUES ('d215b5f8-0249-4dc5-89a3-51fd148cfb26', '7b68d44f-0882-4309-b4db-06c5341156f1', 100.00, 'CREDIT');
 
 --
-DROP procedure if EXISTS insert_tbl_orders;
+DROP PROCEDURE if EXISTS insert_tbl_orders;
 --
 CREATE OR REPLACE PROCEDURE insert_tbl_orders(
     -- tbl_orders
@@ -435,6 +435,33 @@ call insert_tbl_credit_history('bf1202b6-c298-4b4c-b86b-6b24fd996049',
                                'af20558e-5e77-4a6e-bb2f-fef1f14c0ee9',
                                33.12,
                                'DEBIT');
+--
+--
+DROP PROCEDURE if EXISTS insert_tbl_order_approval;
+--
+CREATE OR REPLACE PROCEDURE insert_tbl_order_approval(
+    -- tbl_order_approval
+    p_id TEXT,
+    p_restaurant_id TEXT,
+    p_order_id TEXT,
+    p_status TEXT
+)
+    LANGUAGE plpgsql
+AS
+$$
+BEGIN
+    INSERT INTO tbl_order_approval (id, restaurant_id, order_id, status)
+    VALUES (p_id, p_restaurant_id, p_order_id, p_status);
+    --
+    --COMMIT;
+    --
+END;
+$$;
+--
+call insert_tbl_order_approval('88f9368e-a6e4-4aa0-8651-db351efe3f13',
+                               'd215b5f8-0249-4dc5-89a3-51fd148cfb45',
+                               'ec78b161-3899-4866-8753-886b84a8fbce',
+                               'APPROVED');
 --
 DROP function if EXISTS find_customer_byId;
 --

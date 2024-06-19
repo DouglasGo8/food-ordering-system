@@ -11,8 +11,9 @@ public class RestaurantApprovalRequestMessageListener extends RouteBuilder {
   @Override
   public void configure() {
 
-    // RestaurantApprovalRequestMessageListenerImpl Implementation Sct::07::Vdo58
+    // RestaurantApprovalRequestKafkaListener Implementation Sct::07::Vdo58
     // receives RestaurantApprovalRequest
+    // possible kafka:Consumer @KafkaListener receiving a RestaurantApprovalRequestAvroModel
     from("direct:approveOrder").routeId("RestaurantApprovalRequestMessageListenerRouteId")
             .to("direct:persistOrderApproval")
             // RestaurantApprovalRequestHelper.persistOrderApproval(RestaurantApprovalRequest) // returns OrderApprovalEvent

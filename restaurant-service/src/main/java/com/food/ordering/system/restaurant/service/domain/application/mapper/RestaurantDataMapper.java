@@ -23,8 +23,7 @@ import java.util.stream.Collectors;
 public class RestaurantDataMapper {
 
   @Handler
-  public Restaurant restaurantApprovalRequestModelToRestaurant(@Body RestaurantApprovalRequest
-                                                                           restaurantApprovalRequest) {
+  public Restaurant restaurantApprovalRequestToRestaurant(@Body RestaurantApprovalRequest restaurantApprovalRequest) {
     return Restaurant.Builder.builder()
             .restaurantId(new RestaurantId(UUID.fromString(restaurantApprovalRequest.getRestaurantId())))
             .orderDetail(OrderDetail.Builder
