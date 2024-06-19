@@ -34,6 +34,7 @@ public interface BaseTest {
 
   default List<Product> productMockList() {
 
+    // --------------------------------------------- ITEM 1
     return List.of(Product.Builder.builder()
                     .productId(new ProductId(UUID.fromString("d215b5f8-0249-4dc5-89a3-51fd148cfb47")))
                     .available(true)
@@ -41,6 +42,7 @@ public interface BaseTest {
                     .price(new Money(BigDecimal.valueOf(22.76)))
                     .quantity(1)
                     .build(),
+            // --------------------------------------------- ITEM 2
             Product.Builder.builder()
                     .productId(new ProductId(UUID.fromString("d215b5f8-0249-4dc5-89a3-51fd148cfb48")))
                     .available(true)
