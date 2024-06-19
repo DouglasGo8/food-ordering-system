@@ -21,7 +21,7 @@ public class RestaurantApprovalRequestHelper extends RouteBuilder {
 
 
   @Override
-  public void configure() throws Exception {
+  public void configure() {
 
     // OrderApprovalEvent
     from("direct:persistOrderApproval").routeId("RestaurantApprovalRequestHelperRouteId") // RestaurantApprovalRequest
@@ -36,10 +36,12 @@ public class RestaurantApprovalRequestHelper extends RouteBuilder {
             .bean(RestaurantRepoMapper::new)
             .setVariable("restaurant", body())
             .bean(RestaurantDomainService::new) // returns OrderApprovalEvent
+            //.setProperty("orderApprovalEvent", body())
             //.log("${body}")
-            .recipientList(constant("{{sendOrderApprovalEventCopy.spEL}}"))
-              .delimiter(";")
-              .parallelProcessing()
+            .wireTap("direct:saveOrderApproval")
+            //.recipientList(constant("{{sendOrderApprovalEventCopy.spEL}}")).delimiter(";")
+            //  .parallelProcessing()
+            //.transform(exchangeProperty("orderApprovalEvent"))
             .end();
   }
 
