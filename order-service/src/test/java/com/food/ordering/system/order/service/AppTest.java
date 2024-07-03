@@ -25,7 +25,7 @@ import java.util.UUID;
 import static org.junit.jupiter.api.Assertions.*;
 
 @Slf4j
-@Disabled
+//@Disabled
 @QuarkusTest
 public class AppTest implements BaseTest {
 
@@ -33,7 +33,6 @@ public class AppTest implements BaseTest {
   OrderDataMapper mapper;
 
   @Test
-
   public void createOrderWithSingleItemCommandRepresentation() {
     var price = BigDecimal.valueOf(33_76L);
     var createOrderCommand = CreateOrderCommandDTO.builder()
@@ -53,7 +52,6 @@ public class AppTest implements BaseTest {
   }
 
   @Test
-  
   public void createOrderWithMultipleItemCommandRepresentation() {
 
     var items = this.createMultipleOrderItemsMock();
@@ -73,7 +71,6 @@ public class AppTest implements BaseTest {
   }
 
   @Test
-  
   public void createOrderResponseRepresentation() {
     //
     var createOrderResponse = CreateOrderResponseDTO.builder()
@@ -86,7 +83,6 @@ public class AppTest implements BaseTest {
   }
 
   @Test
-  
   public void createPaymentResponseRepresentation() {
     var paymentResponse = PaymentResponseDTO
             .builder()
@@ -105,7 +101,6 @@ public class AppTest implements BaseTest {
   }
 
   @Test
-  
   public void createRestaurantApprovalResponse() {
     var restaurantApprovalResponse = RestaurantApprovalResponseDTO.builder()
             .id("a9b7ba11-0aea-422a-b648-660b82342569")
@@ -121,7 +116,6 @@ public class AppTest implements BaseTest {
   }
 
   @Test
-  
   public void createTrackOrderQueryRepresentation() {
     var tracked = TrackOrderQueryDTO.builder().orderTrackingId(UUID.randomUUID()).build();
     //
@@ -129,7 +123,6 @@ public class AppTest implements BaseTest {
   }
 
   @Test
-  
   public void createTrackOrderResponseRepresentation() {
     var trackedResponse = TrackOrderResponseDTO.builder()
             .orderTrackingId(UUID.randomUUID())
@@ -141,7 +134,6 @@ public class AppTest implements BaseTest {
   }
 
   @Test
-  
   public void orderDataMapperCreateOrderCommandToRestaurantRepresentation() {
     var body = this.createOrderCommandDTOFullMock();
     var restaurant = mapper.createOrderCommandToRestaurant(body);
@@ -174,7 +166,6 @@ public class AppTest implements BaseTest {
   }
 
   @Test
-  
   public void orderDataMapperOrderToTrackOrderResponse() {
     var order = this.initializerToValidateOrderInitiateMock();
     order.validateOrder();

@@ -1,8 +1,8 @@
 package com.food.ordering.system.order.service;
 
+import com.food.ordering.system.order.service.domain.core.event.OrderCreatedEvent;
+import com.food.ordering.system.order.service.domain.core.exception.OrderDomainException;
 import com.food.ordering.system.shared.domain.DomainConstants;
-import com.food.ordering.system.shared.order.core.service.domain.event.OrderCreatedEvent;
-import com.food.ordering.system.shared.order.core.service.domain.exception.OrderDomainException;
 import io.quarkus.test.junit.QuarkusTest;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
