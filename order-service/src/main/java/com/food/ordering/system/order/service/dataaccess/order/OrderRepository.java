@@ -1,0 +1,28 @@
+package com.food.ordering.system.order.service.dataaccess.order;
+
+import lombok.NoArgsConstructor;
+import org.apache.camel.builder.RouteBuilder;
+
+import jakarta.enterprise.context.ApplicationScoped;
+
+@NoArgsConstructor
+@ApplicationScoped
+public class OrderRepository extends RouteBuilder {
+  @Override
+  public void configure() {
+
+    from("direct:saveOrder").routeId("saveOrder")
+            .setProperty("fail_msg", constant("")) // success saveOrder scenario
+            .to("sql-stored:classpath:templates/insertOrder.sql") // saveOrder
+            .end();
+
+    // Removes code boilerplate from orderItemsToOrderItemEntities method
+    from("direct:saveOrderItems").routeId("saveOrderItems")
+            .split(simple("${body.items}")).streaming(true)
+            //.parallelProcessing()
+            .to("sql-stored:classpath:templates/insertOrderItem.sql")
+            .end();
+
+
+  }
+}

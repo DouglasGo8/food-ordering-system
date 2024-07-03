@@ -34,6 +34,11 @@
       <id>confluent</id>
       <url>https://packages.confluent.io/maven/</url>
     </repository>
+    <repository>
+      <id>maven_central</id>
+      <name>Maven Central</name>
+      <url>https://repo.maven.apache.org/maven2/</url>
+    </repository>
   </repositories>
   <!-- BOM -->
   <dependencyManagement>
@@ -66,11 +71,13 @@
         <artifactId>shared-domain</artifactId>
         <version>1.0</version>
       </dependency>
+      <!--
       <dependency>
         <groupId>com.food.ordering.system.shared.order.core</groupId>
         <artifactId>shared-order-core</artifactId>
         <version>1.0</version>
       </dependency>
+      -->
     </dependencies>
   </dependencyManagement>
   <!-- Common Dependencies -->
@@ -87,6 +94,11 @@
     <dependency>
       <groupId>io.quarkus</groupId>
       <artifactId>quarkus-confluent-registry-avro</artifactId>
+    </dependency>
+    <!-- Saga -->
+    <dependency>
+      <groupId>org.apache.camel.quarkus</groupId>
+      <artifactId>camel-quarkus-saga</artifactId>
     </dependency>
     <!-- Avro -->
     <dependency>
@@ -113,7 +125,7 @@
     <dependency>
       <groupId>org.projectlombok</groupId>
       <artifactId>lombok</artifactId>
-      <version>1.18.32</version>
+      <version>1.18.34</version>
     </dependency>
     <dependency>
       <groupId>io.quarkus</groupId>
@@ -226,7 +238,6 @@
     <module>order-service</module>
     <module>payment-service</module>
     <module>customer-service</module>
-    <module>shared-order-core</module>
     <module>restaurant-service</module>
   </modules>
 </project>

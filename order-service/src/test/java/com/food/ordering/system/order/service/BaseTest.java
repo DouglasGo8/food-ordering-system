@@ -1,17 +1,18 @@
 package com.food.ordering.system.order.service;
 
-import com.food.ordering.system.order.service.application.service.dto.create.CreateOrderCommandDTO;
-import com.food.ordering.system.order.service.application.service.dto.create.OrderAddressDTO;
-import com.food.ordering.system.order.service.application.service.dto.create.OrderItemDTO;
+import com.food.ordering.system.order.service.domain.application.dto.create.CreateOrderCommandDTO;
+import com.food.ordering.system.order.service.domain.application.dto.create.OrderAddressDTO;
+import com.food.ordering.system.order.service.domain.application.dto.create.OrderItemDTO;
+import com.food.ordering.system.order.service.domain.core.entity.Order;
+import com.food.ordering.system.order.service.domain.core.entity.OrderItem;
+import com.food.ordering.system.order.service.domain.core.entity.Product;
+import com.food.ordering.system.order.service.domain.core.valueobject.OrderItemId;
+import com.food.ordering.system.order.service.domain.core.valueobject.StreetAddress;
 import com.food.ordering.system.shared.domain.valueobject.CustomerId;
 import com.food.ordering.system.shared.domain.valueobject.Money;
 import com.food.ordering.system.shared.domain.valueobject.ProductId;
 import com.food.ordering.system.shared.domain.valueobject.RestaurantId;
-import com.food.ordering.system.shared.order.core.service.domain.entity.Order;
-import com.food.ordering.system.shared.order.core.service.domain.entity.OrderItem;
-import com.food.ordering.system.shared.order.core.service.domain.entity.Product;
-import com.food.ordering.system.shared.order.core.service.domain.valueobject.OrderItemId;
-import com.food.ordering.system.shared.order.core.service.domain.valueobject.StreetAddress;
+
 
 import java.math.BigDecimal;
 import java.util.List;

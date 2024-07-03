@@ -80,7 +80,7 @@ image::architecture/thumbs/images/concepts/skeletal-structure-all.png[]
 
 . Classified as Ports & Adapters
 . Divides the software as insides and outsides, starting inside by domain layer
-. The principle of Hexagonal is isolate the domain layer from any dependency such UI, Data layer infrastructure or any framework
+. The principle of Hexagonal is isolating the domain layer from any dependency such UI, Data layer infrastructure or any framework
 
 .Hexagonal Principle
 image::architecture/thumbs/images/concepts/hexagonal_principle.png[]
@@ -111,13 +111,7 @@ mvn install:install-file -Dfile=./target/shared-domain-1.0.jar \
   -DgroupId=com.food.ordering.system.shared.domain \
   -DartifactId=shared-domain -Dversion=1.0 -Dpackaging=jar \
   -DgeneratePom=true
-
-mvn clean -DskipTests compile package
-mvn install:install-file -Dfile=./target/shared-order-core-1.0.jar \
-  -DgroupId=com.food.ordering.system.shared.order.core \
-  -DartifactId=shared-order-core -Dversion=1.0 -Dpackaging=jar \
-  -DgeneratePom=true
-
+#
 mvn clean -DskipTests compile package
 mvn install:install-file -Dfile=./target/shared-avro-1.0.jar \
   -DgroupId=com.food.ordering.system.shared.avro \
@@ -128,9 +122,9 @@ mvn install:install-file -Dfile=./target/shared-avro-1.0.jar \
 
 == DDD Introduction
 
-. Domain Drive Design offers solutions to common problem when building enterprise
+. Domain Drive Design offers solutions to a common problem when building enterprise
 . We can classify DDD as Strategic or Tactical
-.. Strategic DDD: Introduces boundaries for domain model, domain is an operational area of your application, e.g; Online food ordering
+.. Strategic DDD: Introduces boundaries for a domain model, domain is an operational area of your application, e.g.; Online food ordering
 ... Bounded Context: Central pattern in DDD, Boundary within a Domain
 ... Ubiquitous Language: Common Language used by domain Experts and devs to avoid technical terms
 
@@ -139,7 +133,7 @@ image::architecture/thumbs/images/concepts/ddd-strategic.png[]
 
 . Tactical DDD: Focuses on the implementation details of the domain logic such as:
 .. Entities: Domain object with a Unique Identifier, embodies critical business rules
-.. Aggregates: Group of Entities that needs a consistent state
+.. Aggregates: Group of Entities that need a consistent state
 
 .Tactical Strategic Exercise Applied p2
 image::architecture/thumbs/images/concepts/tactica_ddd_entities.png[]

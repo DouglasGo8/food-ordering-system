@@ -1,13 +1,13 @@
 package com.food.ordering.system.order.service;
 
-import com.food.ordering.system.order.service.application.service.dto.create.CreateOrderCommandDTO;
-import com.food.ordering.system.order.service.application.service.dto.create.CreateOrderResponseDTO;
-import com.food.ordering.system.order.service.application.service.dto.create.OrderItemDTO;
-import com.food.ordering.system.order.service.application.service.dto.message.PaymentResponseDTO;
-import com.food.ordering.system.order.service.application.service.dto.message.RestaurantApprovalResponseDTO;
-import com.food.ordering.system.order.service.application.service.dto.track.TrackOrderQueryDTO;
-import com.food.ordering.system.order.service.application.service.dto.track.TrackOrderResponseDTO;
-import com.food.ordering.system.order.service.application.service.mapper.OrderDataMapper;
+import com.food.ordering.system.order.service.domain.application.dto.create.CreateOrderCommandDTO;
+import com.food.ordering.system.order.service.domain.application.dto.create.CreateOrderResponseDTO;
+import com.food.ordering.system.order.service.domain.application.dto.create.OrderItemDTO;
+import com.food.ordering.system.order.service.domain.application.dto.message.PaymentResponseDTO;
+import com.food.ordering.system.order.service.domain.application.dto.message.RestaurantApprovalResponseDTO;
+import com.food.ordering.system.order.service.domain.application.dto.track.TrackOrderQueryDTO;
+import com.food.ordering.system.order.service.domain.application.dto.track.TrackOrderResponseDTO;
+import com.food.ordering.system.order.service.domain.application.mapper.OrderDataMapper;
 import com.food.ordering.system.shared.domain.valueobject.OrderApprovalStatus;
 import com.food.ordering.system.shared.domain.valueobject.OrderStatus;
 import com.food.ordering.system.shared.domain.valueobject.PaymentStatus;

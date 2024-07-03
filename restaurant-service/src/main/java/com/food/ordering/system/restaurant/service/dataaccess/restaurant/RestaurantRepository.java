@@ -1,7 +1,7 @@
 package com.food.ordering.system.restaurant.service.dataaccess.restaurant;
 
+import com.food.ordering.system.restaurant.service.domain.application.exception.RestaurantApplicationServiceException;
 import com.food.ordering.system.restaurant.service.domain.application.mapper.RestaurantDataAccessMapper;
-import com.food.ordering.system.shared.order.core.service.domain.exception.OrderDomainException;
 import jakarta.enterprise.context.ApplicationScoped;
 import lombok.NoArgsConstructor;
 import org.apache.camel.LoggingLevel;
@@ -23,7 +23,7 @@ public class RestaurantRepository extends RouteBuilder {
             //.log("${body}")
             .choice().when(simple("${body.size} == 0"))
               .log(LoggingLevel.INFO, "RestaurantId ${variable.payload.id.value.toString} wasn't found")
-              .throwException(new OrderDomainException("Could not find Restaurant"))
+              .throwException(new RestaurantApplicationServiceException("Could not find Restaurant"))
             .end();
   }
 }
