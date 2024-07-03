@@ -23,7 +23,7 @@ public class RestaurantApprovalRequestHelper extends RouteBuilder {
   @Override
   public void configure() {
 
-    // OrderApprovalEvent
+    // receives
     from("direct:persistOrderApproval").routeId("RestaurantApprovalRequestHelperRouteId") // RestaurantApprovalRequest
             .log(LoggingLevel.INFO, "Processing restaurant approval for Order Id. ${body.orderId}")
             .setVariable("orderId", simple("${body.orderId}"))

@@ -10,7 +10,6 @@ import com.food.ordering.system.restaurant.service.domain.core.event.OrderReject
 import com.food.ordering.system.restaurant.service.domain.core.valueobject.OrderApprovalId;
 import com.food.ordering.system.shared.domain.valueobject.*;
 
-
 import java.math.BigDecimal;
 import java.time.Instant;
 import java.time.ZonedDateTime;
@@ -53,12 +52,26 @@ public interface BaseTest {
     );
   }
 
+  default List<com.food.ordering.system.shared.avro.model.Product> productAvroMockList() {
+    return List.of(com.food.ordering.system.shared.avro.model.Product.newBuilder()
+                    .setId("d215b5f8-0249-4dc5-89a3-51fd148cfb47")
+                    .setQuantity(1)
+
+                    .build(),
+            // --------------------------------------------- ITEM 2
+            com.food.ordering.system.shared.avro.model.Product.newBuilder()
+                    .setId("d215b5f8-0249-4dc5-89a3-51fd148cfb48")
+                    .setQuantity(2)
+                    .build()
+    );
+  }
+
   default OrderApproval orderApprovaldMock() {
     return OrderApproval.Builder.builder()
             .orderApprovalId(new OrderApprovalId(UUID.randomUUID()))
             .orderApprovalStatus(OrderApprovalStatus.APPROVED)
             .orderId(new OrderId(UUID.randomUUID()))
-            .restaurantId(new RestaurantId(UUID.randomUUID()))
+            .restaurantId(new RestaurantId(UUID.fromString("d215b5f8-0249-4dc5-89a3-51fd148cfb45")))
             .build();
   }
 
