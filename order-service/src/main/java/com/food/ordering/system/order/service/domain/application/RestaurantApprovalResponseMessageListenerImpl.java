@@ -9,7 +9,8 @@ import org.apache.camel.builder.RouteBuilder;
 public class RestaurantApprovalResponseMessageListenerImpl extends RouteBuilder {
   @Override
   public void configure() throws Exception {
-    //from("direct:orderApproved")
-    //from("direct:orderRejected")
+
+
+    // OrderApprovalSaga
   }
 }

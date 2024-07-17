@@ -3,13 +3,12 @@ package com.food.ordering.system.order.service.domain.application;
 import com.food.ordering.system.order.service.domain.application.mapper.OrderDataMapper;
 import com.food.ordering.system.order.service.domain.application.mapper.RestaurantProductsMapper;
 import com.food.ordering.system.order.service.domain.core.exception.OrderDomainException;
-import com.food.ordering.system.order.service.domain.core.exception.OrderDomainNotFound;
+import com.food.ordering.system.order.service.domain.core.exception.OrderNotFoundException;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.camel.builder.RouteBuilder;
 
 import jakarta.enterprise.context.ApplicationScoped;
-
 
 @Slf4j
 @NoArgsConstructor
@@ -28,7 +27,7 @@ public class OrderCreateCommandHandler extends RouteBuilder {
             .transform(exceptionMessage());
     //.bean(ExceptionMapper.class); // ErrorDTO.class
 
-    onException(OrderDomainNotFound.class)
+    onException(OrderNotFoundException.class)
             .log("${body}");
     //.bean(ExceptionMapper.class); // ErrorDTO.class
     //

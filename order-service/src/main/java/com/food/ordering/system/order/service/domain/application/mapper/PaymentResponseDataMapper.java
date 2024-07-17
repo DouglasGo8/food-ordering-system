@@ -1,6 +1,6 @@
 package com.food.ordering.system.order.service.domain.application.mapper;
 
-import com.food.ordering.system.order.service.domain.application.dto.message.PaymentResponseDTO;
+import com.food.ordering.system.order.service.domain.application.dto.message.PaymentResponse;
 import com.food.ordering.system.shared.avro.model.PaymentResponseAvroModel;
 import com.food.ordering.system.shared.domain.valueobject.PaymentStatus;
 import lombok.NoArgsConstructor;
@@ -14,9 +14,9 @@ import jakarta.enterprise.context.ApplicationScoped;
 public class PaymentResponseDataMapper {
 
   @Handler
-  public PaymentResponseDTO paymentResponseAvroModelToPaymentResponseDTO(@Body PaymentResponseAvroModel paymentResponseAvroModel) {
+  public PaymentResponse paymentResponseAvroModelToPaymentResponse(@Body PaymentResponseAvroModel paymentResponseAvroModel) {
 
-    return PaymentResponseDTO.builder()
+    return PaymentResponse.builder()
             .id(paymentResponseAvroModel.getId())
             .sagaId(paymentResponseAvroModel.getSagaId())
             .paymentId(paymentResponseAvroModel.getPaymentId())
@@ -27,6 +27,5 @@ public class PaymentResponseDataMapper {
             .paymentStatus(PaymentStatus.valueOf(paymentResponseAvroModel.getPaymentStatus().name()))
             .failureMessages(paymentResponseAvroModel.getFailureMessages())
             .build();
-
   }
 }

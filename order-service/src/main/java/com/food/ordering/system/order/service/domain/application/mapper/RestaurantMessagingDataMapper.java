@@ -1,6 +1,6 @@
 package com.food.ordering.system.order.service.domain.application.mapper;
 
-import com.food.ordering.system.order.service.domain.application.dto.message.RestaurantApprovalResponseDTO;
+import com.food.ordering.system.order.service.domain.application.dto.message.RestaurantApprovalResponse;
 import com.food.ordering.system.order.service.domain.core.entity.OrderItem;
 import com.food.ordering.system.order.service.domain.core.event.OrderEvent;
 import com.food.ordering.system.shared.avro.model.Product;
@@ -42,8 +42,8 @@ public class RestaurantMessagingDataMapper {
             .build();
   }
 
-  public RestaurantApprovalResponseDTO approvalResponseAvroModelToApprovalResponse(@Body RestaurantApprovalResponseAvroModel restaurantApprovalResponseAvroModel) {
-    return RestaurantApprovalResponseDTO.builder()
+  public RestaurantApprovalResponse approvalResponseAvroModelToApprovalResponse(@Body RestaurantApprovalResponseAvroModel restaurantApprovalResponseAvroModel) {
+    return RestaurantApprovalResponse.builder()
             .id(restaurantApprovalResponseAvroModel.getId())
             .sagaId(restaurantApprovalResponseAvroModel.getSagaId())
             .restaurantId(restaurantApprovalResponseAvroModel.getRestaurantId())

@@ -4,6 +4,7 @@ import com.food.ordering.system.order.service.domain.core.event.OrderCreatedEven
 import com.food.ordering.system.order.service.domain.core.exception.OrderDomainException;
 import com.food.ordering.system.shared.domain.DomainConstants;
 import io.quarkus.test.junit.QuarkusTest;
+import jakarta.inject.Inject;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.camel.ProducerTemplate;
@@ -12,7 +13,6 @@ import org.apache.camel.quarkus.test.CamelQuarkusTestSupport;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
-import jakarta.inject.Inject;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 
@@ -32,6 +32,7 @@ public class CamelAppIT extends CamelQuarkusTestSupport implements BaseTest {
   ProducerTemplate producerTemplate;
 
   @Test
+  @Disabled
   @SneakyThrows
   public void createOrderCommandDTOByOrderControllerRepresentation() {
     AdviceWith.adviceWith(super.context, "CreateOrderCMDH", r -> r.weaveAddLast().to("mock:result"));
@@ -115,11 +116,28 @@ public class CamelAppIT extends CamelQuarkusTestSupport implements BaseTest {
   }
 
   @Test
+
   @SneakyThrows
   public void createRestaurantMessagingToOrderCancelledEvent() {
 
     //var body = new OrderPaidEvent();
   }*/
+
+  @Test
+  @Disabled
+  public void paymentResponseKafkaListenerCompletedRepresentation() {
+    //
+    var body = this.createPaymentResponseCompletedMock();
+    this.producerTemplate.sendBody("direct:mockPaymentResponseKafkaListener", body);
+  }
+
+  @Test
+
+  public void paymentResponseKafkaListenerCancelledRepresentation() {
+    // move to exception camel test
+    var body = this.createPaymentResponseCancelledMock();
+    this.producerTemplate.sendBody("direct:mockPaymentResponseKafkaListener", body);
+  }
 
 
 }

@@ -1,6 +1,6 @@
 = Microservices & Event Sourcing, Clean Architecture, DDD, SAGA, Outbox & Kafka & Apache Camel
 
-* Why Apache Camel?... Apache Camel brings EIP patterns and tries to remove a lot of code bloats and unnecessary tons of layers, sometimes, imposed by Clear Architecture and Hexagonal Concepts
+* Why Apache Camel?... Apache Camel brings EIP patterns and to remove a lot of code bloats and unnecessary layers, sometimes, mainly Hexagonal Concepts
 
 == Links
 
@@ -24,10 +24,10 @@
 - https://endoflife.date/quarkus-framework[Quarkus LTS Releases]
 - https://packages.confluent.io/maven/io/confluent/kafka-avro-serializer/[Maven IO Confluent]
 - https://smallrye.io/jandex[Jandex Versions]
-
+- https://github.com/jssaggu/camel-tutorial/blob/main/src/main/java/com/jss/routes/saga/SagaRoute.java[Saga Camel]
 '''
 
-* The main structure removes the submodules idea, why?
+* The main structure removes the sub-modules idea, why?
 To get rid of hell submodules management, here I try to keep the hexagonal concepts, but over the EIP and Camel perspectives; that means, the verbosity of frameworks will be reduced the main idea behind of Apache Camel is to eliminate tons of layers
 
 .Gemfile.lock
@@ -352,3 +352,18 @@ public void camelExchangeJdbcFunctions(
 === Restaurant Service
 
 image::architecture/thumbs/images/concepts/restaurant-actions-overview.png[]
+
+
+=== Saga Pattern
+
+[source, java]
+----
+interface SagaStep<T, S extends DomainEvent, U extends DomainEvent> {
+  S process(T data);
+  U rollback(T data);
+}
+
+class EmptyEvent implements DomainEvent<Void> {
+  void fire() {}
+}
+----

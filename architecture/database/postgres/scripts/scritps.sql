@@ -6,6 +6,7 @@ CREATE TABLE tbl_orders
 (
     id               TEXT           NOT NULL,
     customer_id      TEXT           NOT NULL,
+    restaurant_id    TEXT           NOT NULL,
     tracking_id      TEXT           NOT NULL,
     price            NUMERIC(10, 2) NOT NULL,
     order_status     TEXT           NOT NULL,
@@ -140,7 +141,6 @@ CREATE TABLE tbl_credit_history
     type        TEXT           NOT NULL,
     CONSTRAINT credit_history_pkey PRIMARY KEY (id)
 );
-
 --
 DROP MATERIALIZED VIEW IF EXISTS order_restaurant_m_view;
 --
@@ -161,7 +161,7 @@ WHERE r.id = rp.restaurant_id
   AND p.id = rp.product_id
 WITH DATA;
 
-refresh materialized VIEW order_restaurant_m_view;
+REFRESH MATERIALIZED VIEW order_restaurant_m_view;
 
 DROP function IF EXISTS refresh_order_restaurant_m_view;
 
@@ -182,14 +182,61 @@ CREATE trigger refresh_order_restaurant_m_view
     ON tbl_restaurant_products
     FOR each statement
 EXECUTE PROCEDURE refresh_order_restaurant_m_view();
-
-/*DROP trigger IF EXISTS refresh_order_restaurant_mview ON tbl_restaurant_products;
 --
-CREATE trigger refresh_order_restaurant_mview
+DROP MATERIALIZED VIEW IF EXISTS order_address_orderItems_m_view;
+--
+CREATE MATERIALIZED VIEW order_address_orderItems_m_view
+    TABLESPACE pg_default
+AS
+SELECT
+    od.id as order_id,
+    od.customer_id,
+    od.restaurant_id,
+    od.tracking_id,
+    od.price as order_total_price,
+    od.order_status,
+    od.failure_messages,
+    oi.id as order_item_id,
+    oi.product_id,
+    oi.price as order_item_price,
+    oi.quantity,
+    oi.sub_total,
+    oa.id as order_address_id,
+    oa.city,
+    oa.street,
+    oa.postal_code
+FROM
+    tbl_orders od
+        JOIN
+    tbl_order_address oa
+    ON od.id = oa.order_id
+        JOIN
+    tbl_order_items oi
+    ON
+        oi.order_id = od.id
+WITH DATA;
+--
+REFRESH MATERIALIZED VIEW order_address_orderItems_m_view;
+--
+DROP function IF EXISTS refresh_order_address_orderItems_m_view;
+--
+CREATE OR replace function refresh_order_address_orderItems_m_view()
+    returns trigger
+AS
+'
+    BEGIN
+        refresh materialized VIEW order_address_orderItems_m_view;
+        return null;
+    END;
+' LANGUAGE plpgsql;
+
+DROP trigger IF EXISTS refresh_order_address_orderItems_m_view ON tbl_orders;
+
+CREATE trigger refresh_order_address_orderItems_m_view
     after INSERT OR UPDATE OR DELETE OR truncate
-    ON tbl_restaurant_products
+    ON tbl_orders
     FOR each statement
-EXECUTE PROCEDURE refresh_order_restaurant_mview();*/
+EXECUTE PROCEDURE refresh_order_address_orderItems_m_view();
 --
 insert into tbl_customer (id, user_name, first_name, last_name)
 values ('af20558e-5e77-4a6e-bb2f-fef1f14c0ee9', 'Joe', 'Joe', 'Doe');
@@ -237,14 +284,38 @@ INSERT INTO tbl_credit_entry(id, customer_id, total_credit_amount)
 VALUES ('d215b5f8-0249-4dc5-89a3-51fd148cfb22', '7b68d44f-0882-4309-b4db-06c5341156f1', 100.00);
 INSERT INTO tbl_credit_history(id, customer_id, amount, type)
 VALUES ('d215b5f8-0249-4dc5-89a3-51fd148cfb26', '7b68d44f-0882-4309-b4db-06c5341156f1', 100.00, 'CREDIT');
-
+--
+DROP function if EXISTS find_order_byId(p_id TEXT);
+--
+CREATE OR REPLACE FUNCTION find_order_byId(p_id TEXT)
+    RETURNS TABLE
+            (
+                id                  TEXT,
+                customer_id         TEXT,
+                restaurant_id       TEXT,
+                tracking_id         TEXT,
+                price               NUMERIC(10, 2),
+                order_status        TEXT,
+                failure_messages    TEXT
+            )
+AS
+$$
+BEGIN
+    RETURN QUERY
+        SELECT o.*
+        FROM tbl_orders o
+        WHERE o.id = find_order_byId.p_id;
+END;
+$$ LANGUAGE plpgsql;
 --
 DROP PROCEDURE if EXISTS insert_tbl_orders;
 --
+-- needs be improved
 CREATE OR REPLACE PROCEDURE insert_tbl_orders(
     -- tbl_orders
     p_order_id TEXT,
     p_customer_id TEXT,
+    p_restaurant_id TEXT,
     p_tracking_id TEXT,
     p_price NUMERIC(10, 2),
     p_order_status TEXT,
@@ -261,16 +332,20 @@ CREATE OR REPLACE PROCEDURE insert_tbl_orders(
 AS
 $$
 BEGIN
-    INSERT INTO tbl_orders (id, customer_id, tracking_id, price, order_status, failure_messages)
-    VALUES (p_order_id, p_customer_id, p_tracking_id, p_price, p_order_status, p_failure_messages);
+    INSERT INTO tbl_orders (id, customer_id, restaurant_id, tracking_id, price, order_status, failure_messages)
+    VALUES (p_order_id, p_customer_id, p_restaurant_id,
+            p_tracking_id, p_price,
+            p_order_status, p_failure_messages)
+    ON CONFLICT ON CONSTRAINT tbl_orders_pkey DO UPDATE SET order_status = p_order_status;
     --
     INSERT INTO tbl_order_address (id, order_id, street, city, postal_code)
-    VALUES (p_address_id, p_order_id, p_street, p_city, p_postal_code);
-
+    VALUES (p_address_id, p_order_id, p_street, p_city, p_postal_code)
+    ON CONFLICT ON CONSTRAINT tbl_order_address_pkey DO NOTHING ;
     -- RETURNING p_order_id INTO pout_order_id
 
     pout_order_id := p_order_id;
     --COMMIT;
+
     --
 END;
 $$;
@@ -278,8 +353,9 @@ $$;
 call insert_tbl_orders(
         'ec78b161-3899-4866-8753-886b84a8fbce',
         'a5da1c79-9bd5-46af-9a07-8c6be207e1d0',
+        'd215b5f8-0249-4dc5-89a3-51fd148cfb45',
         '6329409b-5987-4188-8cae-4499fee16f72',
-        44.3,
+        38.68,
         'PENDING',
         '',
         '13a9a038-a92b-424a-8c18-e7f82b018d68',
@@ -312,10 +388,18 @@ $$;
 call insert_tbl_order_items(
         '1',
         'ec78b161-3899-4866-8753-886b84a8fbce',
-        '20a44234-db9c-4672-9455-dea9be80377b',
+        'd215b5f8-0249-4dc5-89a3-51fd148cfb47',
         22.3,
         1,
         22.3);
+
+call insert_tbl_order_items(
+        '2',
+        'ec78b161-3899-4866-8753-886b84a8fbce',
+        'd215b5f8-0249-4dc5-89a3-51fd148cfb48',
+        16.38,
+        2,
+        32.76);
 --
 DROP function if EXISTS find_restaurant_byId;
 --
@@ -436,7 +520,6 @@ call insert_tbl_credit_history('bf1202b6-c298-4b4c-b86b-6b24fd996049',
                                33.12,
                                'DEBIT');
 --
---
 DROP PROCEDURE if EXISTS insert_tbl_order_approval;
 --
 CREATE OR REPLACE PROCEDURE insert_tbl_order_approval(
@@ -480,50 +563,44 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 --
---DROP function if EXISTS refresh_order_customer_mview;
+DROP MATERIALIZED VIEW IF EXISTS order_customer_m_view;
 --
-/*CREATE OR replace function refresh_order_customer_mview()
+CREATE MATERIALIZED VIEW order_customer_m_view
+    TABLESPACE pg_default
+AS
+SELECT id,
+       user_name,
+       first_name,
+       last_name
+FROM tbl_customer
+WITH DATA;
+--
+REFRESH MATERIALIZED VIEW order_customer_m_view;
+--
+DROP function IF EXISTS refresh_order_customer_m_view;
+--
+CREATE OR replace function refresh_order_customer_m_view()
     returns trigger
 AS
 '
     BEGIN
-        refresh materialized VIEW order_customer_mview;
+        REFRESH MATERIALIZED VIEW order_customer_m_view;
         return null;
     END;
-' LANGUAGE plpgsql;*/
+' LANGUAGE plpgsql;
 --
---CREATE TRIGGER refresh_order_customer_mview
---    AFTER INSERT OR UPDATE OR DELETE OR truncate
---    ON tbl_customer
---    FOR each statement
---EXECUTE PROCEDURE refresh_order_customer_mview();
+DROP trigger IF EXISTS refresh_order_customer_m_view ON tbl_customer;
 --
--- FUNCTION findRestaurantInformation(idRestaurant)??
+CREATE trigger refresh_order_customer_m_view
+    after INSERT OR UPDATE OR DELETE OR truncate
+    ON tbl_customer
+    FOR each statement
+EXECUTE PROCEDURE refresh_order_customer_m_view();
 --
--- FUNCTION findByTrackingId(trackingId)??
--- DROP function if EXISTS find_tracking_byId;
---
-/*CREATE OR REPLACE FUNCTION find_tracking_byId(p_id TEXT)
-    RETURNS TABLE
-            (
-                customer_id      TEXT,
-                tracking_id      TEXT,
-                price            NUMERIC(10, 2),
-                order_status     TEXT,
-                failure_messages TEXT
-            )
-AS
-$$
-BEGIN
-    RETURN QUERY
-        SELECT o.price
-        FROM tbl_orders o
-        WHERE o.tracking_id = find_tracking_byId.p_id;
-END;
-$$ LANGUAGE plpgsql;*/
 
+--
 DROP function if EXISTS findCustomerIdCreditEntry_fn;
-
+--
 CREATE OR REPLACE FUNCTION findCustomerIdCreditEntry_fn(p_id TEXT)
     RETURNS TABLE
             (
@@ -540,7 +617,6 @@ BEGIN
         WHERE t.customer_id = findCustomerIdCreditEntry_fn.p_id;
 END;
 $$ LANGUAGE plpgsql;
-
 ---
 DROP function if EXISTS findCustomerIdCreditHistory_fn;
 ---

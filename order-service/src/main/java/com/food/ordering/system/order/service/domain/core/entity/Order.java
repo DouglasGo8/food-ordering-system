@@ -31,43 +31,24 @@ public class Order extends AggregateRoot<OrderId> {
   private OrderStatus orderStatus;
   private List<String> failureMessages;
 
+
+  private Order(Builder builder) {
+    super.setId(builder.orderId);
+    customerId = builder.customerId;
+    restaurantId = builder.restaurantId;
+    deliveryAddress = builder.deliveryAddress;
+    price = builder.price;
+    items = builder.items;
+    trackingId = builder.trackingId;
+    orderStatus = builder.orderStatus;
+    failureMessages = builder.failureMessages;
+  }
+
+  public static Builder builder() {
+    return new Builder();
+  }
+
   //
-  public Order(OrderId orderId, Money price, CustomerId customerId,
-               RestaurantId restaurantId, StreetAddress deliveryAddress, List<OrderItem> items) {
-    //
-    super.setId(orderId);
-    //
-    this.items = items;
-    this.price = price;
-    this.customerId = customerId;
-    this.restaurantId = restaurantId;
-    this.deliveryAddress = deliveryAddress;
-
-  }
-
-  public Order(OrderId orderId, Money price, CustomerId customerId, RestaurantId restaurantId,
-               StreetAddress deliveryAddress, List<OrderItem> items, OrderStatus orderStatus) {
-    //
-    super.setId(orderId);
-    //
-    this.items = items;
-    this.price = price;
-    this.customerId = customerId;
-    this.orderStatus = orderStatus;
-    this.restaurantId = restaurantId;
-    this.deliveryAddress = deliveryAddress;
-
-  }
-
-  public Order(Money price, CustomerId customerId, RestaurantId restaurantId,
-               StreetAddress deliveryAddress, List<OrderItem> items) {
-    //
-    this.items = items;
-    this.price = price;
-    this.customerId = customerId;
-    this.restaurantId = restaurantId;
-    this.deliveryAddress = deliveryAddress;
-  }
 
   public void initializerOrder() {
     this.setId(new OrderId(UUID.randomUUID()));
@@ -178,4 +159,69 @@ public class Order extends AggregateRoot<OrderId> {
   }
 
 
+  public static final class Builder {
+    private OrderId orderId;
+    private Money price;
+
+    private TrackingId trackingId;
+    private CustomerId customerId;
+    private OrderStatus orderStatus;
+    private RestaurantId restaurantId;
+    private StreetAddress deliveryAddress;
+    //
+    private List<OrderItem> items;
+    private List<String> failureMessages;
+
+    private Builder() {
+    }
+
+    public Builder price(Money price) {
+      this.price = price;
+      return this;
+    }
+
+    public Builder customerId(CustomerId customerId) {
+      this.customerId = customerId;
+      return this;
+    }
+
+    public Builder restaurantId(RestaurantId restaurantId) {
+      this.restaurantId = restaurantId;
+      return this;
+    }
+
+    public Builder deliveryAddress(StreetAddress deliveryAddress) {
+      this.deliveryAddress = deliveryAddress;
+      return this;
+    }
+
+    public Builder items(List<OrderItem> items) {
+      this.items = items;
+      return this;
+    }
+
+    public Builder trackingId(TrackingId trackingId) {
+      this.trackingId = trackingId;
+      return this;
+    }
+
+    public Builder orderStatus(OrderStatus orderStatus) {
+      this.orderStatus = orderStatus;
+      return this;
+    }
+
+    public Builder failureMessages(List<String> failureMessages) {
+      this.failureMessages = failureMessages;
+      return this;
+    }
+
+    public Builder orderId(OrderId id) {
+      this.orderId = id;
+      return this;
+    }
+
+    public Order build() {
+     return new Order(this);
+    }
+  }
 }

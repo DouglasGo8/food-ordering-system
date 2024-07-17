@@ -3,8 +3,8 @@ package com.food.ordering.system.order.service;
 import com.food.ordering.system.order.service.domain.application.dto.create.CreateOrderCommandDTO;
 import com.food.ordering.system.order.service.domain.application.dto.create.CreateOrderResponseDTO;
 import com.food.ordering.system.order.service.domain.application.dto.create.OrderItemDTO;
-import com.food.ordering.system.order.service.domain.application.dto.message.PaymentResponseDTO;
-import com.food.ordering.system.order.service.domain.application.dto.message.RestaurantApprovalResponseDTO;
+import com.food.ordering.system.order.service.domain.application.dto.message.PaymentResponse;
+import com.food.ordering.system.order.service.domain.application.dto.message.RestaurantApprovalResponse;
 import com.food.ordering.system.order.service.domain.application.dto.track.TrackOrderQueryDTO;
 import com.food.ordering.system.order.service.domain.application.dto.track.TrackOrderResponseDTO;
 import com.food.ordering.system.order.service.domain.application.mapper.OrderDataMapper;
@@ -17,6 +17,7 @@ import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import jakarta.inject.Inject;
+
 import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.List;
@@ -25,7 +26,7 @@ import java.util.UUID;
 import static org.junit.jupiter.api.Assertions.*;
 
 @Slf4j
-//@Disabled
+@Disabled
 @QuarkusTest
 public class AppTest implements BaseTest {
 
@@ -84,17 +85,7 @@ public class AppTest implements BaseTest {
 
   @Test
   public void createPaymentResponseRepresentation() {
-    var paymentResponse = PaymentResponseDTO
-            .builder()
-            .id("01938e95-9e40-4d18-b550-c00ebfd41238")
-            .sagaId("30593229-6fa0-4cab-a731-00503455cc3a")
-            .orderId("fc13c77c-5aeb-4102-8678-8244064ea6e5")
-            .paymentId("b3206282-bfc7-4d09-bf94-7ed1691672d5")
-            .customerId("4df6e8f8-09a9-48b9-a0f7-6dc7fdb84985")
-            .price(BigDecimal.valueOf(10_22L))
-            .createdAt(Instant.now())
-            .paymentStatus(PaymentStatus.COMPLETED)
-            .failureMessages(List.of("")).build();
+    var paymentResponse = this.createPaymentResponseCompletedMock();
     //
     assertNotNull(paymentResponse.getId());
     assertEquals(PaymentStatus.COMPLETED, paymentResponse.getPaymentStatus());
@@ -102,7 +93,7 @@ public class AppTest implements BaseTest {
 
   @Test
   public void createRestaurantApprovalResponse() {
-    var restaurantApprovalResponse = RestaurantApprovalResponseDTO.builder()
+    var restaurantApprovalResponse = RestaurantApprovalResponse.builder()
             .id("a9b7ba11-0aea-422a-b648-660b82342569")
             .sagaId("3d9df5dc-3263-45d8-89b2-bf545cf6205f")
             .orderId("57e0e4ce-9eab-44e5-98b1-575fa8763cd7")
@@ -137,6 +128,7 @@ public class AppTest implements BaseTest {
   public void orderDataMapperCreateOrderCommandToRestaurantRepresentation() {
     var body = this.createOrderCommandDTOFullMock();
     var restaurant = mapper.createOrderCommandToRestaurant(body);
+
     assertNotNull(restaurant.getId());
     assertFalse(restaurant.isActive());
   }
@@ -160,7 +152,7 @@ public class AppTest implements BaseTest {
     var body = this.createOrderCommandDTOFullMock();
     var order = mapper.createOrderCommandToOrder(body);
     var restaurant = mapper.createOrderCommandToRestaurant(body);
-    var orderCreatedEvent = mapper.validateAndInitializeOrder(order, restaurant );
+    var orderCreatedEvent = mapper.validateAndInitializeOrder(order, restaurant);
     var createOrderResponseDTO = mapper.orderToCreateOrderResponseDTO(orderCreatedEvent);
     assertNotNull(createOrderResponseDTO.getOrderTrackingID());
   }
@@ -170,6 +162,9 @@ public class AppTest implements BaseTest {
     var order = this.initializerToValidateOrderInitiateMock();
     order.validateOrder();
     order.initializerOrder();
+
+    log.info(order.getId().getValue().toString());
+
     //
     var trackOrderResponseDTO = mapper.orderToTrackOrderResponse(order);
     assertEquals(OrderStatus.PENDING, trackOrderResponseDTO.getOrderStatus());

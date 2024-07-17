@@ -60,7 +60,13 @@ public class OrderDataMapper {
     var customerId = new CustomerId(createOrderCommand.getCustomerId());
     var restaurantId = new RestaurantId(createOrderCommand.getRestaurantId());
     var deliveryAddress = this.orderAddressToStreetAddress(createOrderCommand.getAddress());
-    return new Order(orderPrice, customerId, restaurantId, deliveryAddress, items);
+    //
+    return Order.builder().price(orderPrice).customerId(customerId).restaurantId(restaurantId)
+            .deliveryAddress(deliveryAddress)
+            .items(items)
+            .build();
+
+    //Order(orderPrice, customerId, restaurantId, deliveryAddress, items);
   }
 
   public CreateOrderResponseDTO orderToCreateOrderResponseDTO(@Body OrderCreatedEvent orderCreatedEvent) {
@@ -86,11 +92,16 @@ public class OrderDataMapper {
   }
 
   private List<OrderItem> orderItemsToOrderItemEntities(List<OrderItemDTO> items) {
-    return items.stream().map(item -> new OrderItem(
-            new Product(new ProductId(item.getProductId()), new Money(item.getPrice())),
-            new Money(item.getPrice()),
-            new Money(item.getSubTotal()),
-            item.getQuantity())).toList();
+    return items.stream().map(item ->
+            OrderItem.builder()
+                    .product(new Product(new ProductId(item.getProductId())))
+                    .price(new Money(item.getPrice()))
+                    .subTotal(new Money(item.getSubTotal()))
+                    .quantity(item.getQuantity())
+                    .build())
+            .collect(Collectors.toList());
+
+
   }
 
 }
