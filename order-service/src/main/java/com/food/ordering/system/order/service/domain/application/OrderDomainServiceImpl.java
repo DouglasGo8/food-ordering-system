@@ -8,8 +8,10 @@ import com.food.ordering.system.order.service.domain.core.event.OrderPaidEvent;
 import com.food.ordering.system.order.service.domain.core.exception.OrderDomainException;
 import com.food.ordering.system.shared.domain.DomainConstants;
 
+import com.google.errorprone.annotations.Var;
 import jakarta.enterprise.context.ApplicationScoped;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.camel.Variable;
 
 
 import java.time.ZoneId;
@@ -52,7 +54,7 @@ public class OrderDomainServiceImpl implements OrderDomainService {
   }
 
   @Override
-  public OrderCancelledEvent cancelOrderPayment(Order order, List<String> failureMessages) {
+  public OrderCancelledEvent cancelOrderPayment(Order order, @Variable("failure_msg") List<String> failureMessages) {
     order.initCancel(failureMessages);
     log.info("Order payment is cancelling for order: {}", order.getId().getValue());
     return new OrderCancelledEvent(order, ZonedDateTime.now(ZoneId.of(DomainConstants.UTC)));

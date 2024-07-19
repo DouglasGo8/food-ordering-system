@@ -71,7 +71,6 @@ public class CamelAppIT extends CamelQuarkusTestSupport implements BaseTest {
 
   }
 
-
   @Test
   @Disabled
   @SneakyThrows
@@ -90,7 +89,6 @@ public class CamelAppIT extends CamelQuarkusTestSupport implements BaseTest {
     // PaymentStatus
     assertTrue(mock.getReceivedExchanges().get(0).getIn().getBody().toString().contains("PENDING"));
   }
-
 
   /*@Test
   @Disabled
@@ -132,11 +130,26 @@ public class CamelAppIT extends CamelQuarkusTestSupport implements BaseTest {
   }
 
   @Test
-
+  @Disabled
   public void paymentResponseKafkaListenerCancelledRepresentation() {
     // move to exception camel test
     var body = this.createPaymentResponseCancelledMock();
     this.producerTemplate.sendBody("direct:mockPaymentResponseKafkaListener", body);
+  }
+
+  @Test
+  @Disabled
+  // orderStatus should be PAID
+  public void restaurantApprovalResponseAvroModelApprovedRepresentation() {
+    var body = this.createRestaurantApprovalResponseApprovedMock();
+    this.producerTemplate.sendBody("direct:mockRestaurantResponseKafkaListener", body);
+  }
+
+  @Test
+  @Disabled
+  public void restaurantApprovalResponseAvroModelRejectedRepresentation() {
+    var body = this.createRestaurantApprovalResponseRejectedMock();
+    this.producerTemplate.sendBody("direct:mockRestaurantResponseKafkaListener", body);
   }
 
 

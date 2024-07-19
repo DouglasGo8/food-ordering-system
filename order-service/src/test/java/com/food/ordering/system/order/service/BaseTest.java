@@ -8,8 +8,10 @@ import com.food.ordering.system.order.service.domain.core.entity.OrderItem;
 import com.food.ordering.system.order.service.domain.core.entity.Product;
 import com.food.ordering.system.order.service.domain.core.valueobject.OrderItemId;
 import com.food.ordering.system.order.service.domain.core.valueobject.StreetAddress;
+import com.food.ordering.system.shared.avro.model.OrderApprovalStatus;
 import com.food.ordering.system.shared.avro.model.PaymentResponseAvroModel;
 import com.food.ordering.system.shared.avro.model.PaymentStatus;
+import com.food.ordering.system.shared.avro.model.RestaurantApprovalResponseAvroModel;
 import com.food.ordering.system.shared.domain.valueobject.CustomerId;
 import com.food.ordering.system.shared.domain.valueobject.Money;
 import com.food.ordering.system.shared.domain.valueobject.ProductId;
@@ -17,6 +19,7 @@ import com.food.ordering.system.shared.domain.valueobject.RestaurantId;
 
 import java.math.BigDecimal;
 import java.time.Instant;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -178,7 +181,8 @@ public interface BaseTest {
   default PaymentResponseAvroModel createPaymentResponseCancelledMock() {
     //
     return PaymentResponseAvroModel.newBuilder()
-            .setId("01938e95-9e40-4d18-b550-c00ebfd41238")
+            .setId(UUID.randomUUID().toString())
+            .setPaymentId("14a736f8-e381-4d9a-b617-5a8706a25c9b")
             .setSagaId(UUID.randomUUID().toString())
             .setOrderId("ec78b161-3899-4866-8753-886b84a8fbce")
             .setPaymentId("097cb4f0-49c1-4162-b480-1af478d40f22")
@@ -187,6 +191,30 @@ public interface BaseTest {
             .setCreatedAt(Instant.now())
             .setPaymentStatus(PaymentStatus.CANCELLED)
             .setFailureMessages(List.of(""))
+            .build();
+  }
+
+  default RestaurantApprovalResponseAvroModel createRestaurantApprovalResponseApprovedMock() {
+    return RestaurantApprovalResponseAvroModel.newBuilder()
+            .setId("d215b5f8-0249-4dc5-89a3-51fd148cfb45")
+            .setSagaId(UUID.randomUUID().toString())
+            .setOrderId("ec78b161-3899-4866-8753-886b84a8fbce")
+            .setRestaurantId("d215b5f8-0249-4dc5-89a3-51fd148cfb45")
+            .setCreatedAt(Instant.now())
+            .setOrderApprovalStatus(OrderApprovalStatus.APPROVED)
+            .setFailureMessages(List.of(""))
+            .build();
+  }
+
+  default RestaurantApprovalResponseAvroModel createRestaurantApprovalResponseRejectedMock() {
+    return RestaurantApprovalResponseAvroModel.newBuilder()
+            .setId("d215b5f8-0249-4dc5-89a3-51fd148cfb45")
+            .setSagaId(UUID.randomUUID().toString())
+            .setOrderId("ec78b161-3899-4866-8753-886b84a8fbce")
+            .setRestaurantId("d215b5f8-0249-4dc5-89a3-51fd148cfb45")
+            .setCreatedAt(Instant.now())
+            .setOrderApprovalStatus(OrderApprovalStatus.REJECTED)
+            .setFailureMessages(List.of())
             .build();
   }
 }

@@ -53,7 +53,7 @@ public class PaymentResponseKafkaListener extends RouteBuilder {
             .setVariable("sagaId", simple("${body.sagaId}"))
             .setVariable("paymentStatus", simple("${body.paymentStatus}"))
             // -----------------------------------------------------------------------------
-            .saga() // Apache Camel Abstract the OrderPayments
+            .saga() // Apache Camel Abstract All the *Saga* classes implementation
               .to("direct:findOrderAddressAndItemsById")
               .bean(OrderDataAccessMapper::new)
               .to("direct:processPayment")
@@ -76,6 +76,7 @@ public class PaymentResponseKafkaListener extends RouteBuilder {
               .otherwise()
                 .log(LoggingLevel.INFO, "Completing payment for order with id: ${body.id.value}")
                 .bean(OrderDomainServiceImpl.class, "payOrder") // changes to PAID and returns OrderPaidEvent
+                //.wireTap("kafka")
             .end();
 
     from("direct:paymentCompleted").routeId("PaymentCompletedRouteId") // Represents PaymentResponseMessageListenerImpl.paymentCompleted method
@@ -83,7 +84,7 @@ public class PaymentResponseKafkaListener extends RouteBuilder {
             .to("direct:saveOrderSaga") // saves WiTH PAID/SUCCESS Status
             .log(LoggingLevel.INFO, "Order with id: ${header.order.id.value} is paid")
             .log("Publishing OrderPaidEvent for order id. ${header.order.id.value}")
-            //.wireTap("kafka")
+
             .end();
 
     from("direct:paymentCancelled").routeId("PaymentCancelledRouteId") // Represents PaymentResponseMessageListenerImpl.paymentCancelled method
