@@ -22,7 +22,7 @@ public class OrderKafkaMessagePublisher extends RouteBuilder {
             .log("Received OrderCreatedEvent for order id: ${body.order.id.value}")
             // -----------------------------------------------------------------
             .bean(OrderMessagingDataMapper.class)
-            .log(LoggingLevel.INFO,"${body}")
+            .log(LoggingLevel.INFO,"Payment Status: ${body.paymentOrderStatus}")
             // ----------------------------------------------------------------------------------------
             .choice().when(simple("${body.paymentOrderStatus} == 'PENDING'"))
               .log(LoggingLevel.INFO, "Received OrderCreatedEvent for order id ${body.id}")
@@ -31,7 +31,7 @@ public class OrderKafkaMessagePublisher extends RouteBuilder {
             .end() // endChoice
             // ----------------------------------------------------------------------------------------------
             .setHeader(KafkaConstants.KEY, exchangeProperty("topic-key"))
-            .to("kafka:{{payment-request-topic}}")
+            .to("kafka://{{payment.topic.request}}")
             .log(LoggingLevel.INFO, "PaymentRequestAvroModel sent to kafka for order id: ${body.id}")
             .end();
 

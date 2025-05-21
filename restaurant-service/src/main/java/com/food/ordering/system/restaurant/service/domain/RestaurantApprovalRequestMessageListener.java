@@ -3,6 +3,7 @@ package com.food.ordering.system.restaurant.service.domain;
 import com.food.ordering.system.restaurant.service.domain.application.mapper.RestaurantMessagingRequestDataMapper;
 import jakarta.enterprise.context.ApplicationScoped;
 import lombok.NoArgsConstructor;
+import org.apache.camel.LoggingLevel;
 import org.apache.camel.builder.RouteBuilder;
 
 
@@ -20,7 +21,7 @@ public class RestaurantApprovalRequestMessageListener extends RouteBuilder {
     from("direct:approveOrder").routeId("RestaurantApprovalRequestMessageListenerRouteId")
             .bean(RestaurantMessagingRequestDataMapper::new) // return RestaurantApprovalRequest
             .to("direct:persistOrderApproval") // returns OrderApprovalEvent
-            .log("persistOrderApproval Route returns ${body}")
+            .log(LoggingLevel.INFO,"persistOrderApproval Route returns ${body}")
             //.wireTap("seda:orderApprovalEventMessage")
             .wireTap("direct:orderApprovalEventMessage")
             .end();

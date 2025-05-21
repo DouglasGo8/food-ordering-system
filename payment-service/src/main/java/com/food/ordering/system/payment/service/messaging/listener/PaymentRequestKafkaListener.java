@@ -14,7 +14,7 @@ public class PaymentRequestKafkaListener extends RouteBuilder {
   public void configure() throws Exception {
 
 
-    from("kafka:payment-request-topic")
+    from("kafka://{{payment.topic.response}}").routeId("PaymentRequestKafkaListenerRouteId")
             .log("Message received from Kafka : ${body}-${threadName}")
             .log("    on the topic ${headers[kafka.TOPIC]}")
             .log("    on the partition ${headers[kafka.PARTITION]}")

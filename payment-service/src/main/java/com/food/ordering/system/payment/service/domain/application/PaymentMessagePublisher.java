@@ -16,12 +16,12 @@ public class PaymentMessagePublisher extends RouteBuilder {
 
     // Receives PaymentEvent
     // represents completePayment method
-    from("direct:completedPayment").routeId("PublishPaymentEvent")
+    from("direct:completedPayment").routeId("PublishPaymentEventRouteId")
             .to("direct:persistPayment") // paymentEvent
             //.wireTap("seda:paymentMessagePublisher")
             .end();
 
-    from("direct:cancelPayment").routeId("CancelPaymentEvent")
+    from("direct:cancelPayment").routeId("CancelPaymentEventRouteId")
             .to("direct:persistCancelPayment") // paymentEvent
             //.wireTap("seda:paymentMessagePublisher")
             .end();

@@ -12,10 +12,10 @@ public class OrderRepository extends RouteBuilder {
   @Override
   public void configure() {
 
-    from("direct:saveOrder").routeId("saveOrder")
+    from("direct:saveOrder").routeId("saveOrderRouteId")
             .setProperty("fail_msg", constant("")) // success saveOrder scenario
-            .log("${body}")
-            //.to("sql-stored:classpath:templates/insertOrder.sql") // saveOrder
+            //.log(LoggingLevel.INFO, "Creating Order saveOrder: ${body.restaurantId}")
+            .to("sql-stored:classpath:templates/insertOrder.sql") // saveOrder
             .end();
 
     from("direct:saveOrderSaga").routeId("saveOrderSagaRouteId")
@@ -24,7 +24,7 @@ public class OrderRepository extends RouteBuilder {
             .end();
 
     // Removes code boilerplate from orderItemsToOrderItemEntities method
-    from("direct:saveOrderItems").routeId("saveOrderItems")
+    from("direct:saveOrderItems").routeId("saveOrderItemsRouteId")
             .split(simple("${body.items}")).streaming(true)
             //.parallelProcessing()
             .to("sql-stored:classpath:templates/insertOrderItem.sql")

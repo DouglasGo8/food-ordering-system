@@ -37,10 +37,10 @@ public interface BaseTest {
 
 
   default List<OrderItemDTO> createMultipleOrderItemsMock() {
-    var price_ONE = BigDecimal.valueOf(22.76);
-    var price_TWO = BigDecimal.valueOf(77.14);
+    var price_ONE = BigDecimal.valueOf(50.00);
+    var price_TWO = BigDecimal.valueOf(50.00);
     var quantity_ONE = 1;
-    var quantity_TWO = 2;
+    var quantity_TWO = 3;
     //
     var orderItem_ONE = OrderItemDTO.builder()
             .productId(UUID.fromString("d215b5f8-0249-4dc5-89a3-51fd148cfb47"))

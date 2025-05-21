@@ -15,8 +15,7 @@ public class OrderTrackCommandHandler extends RouteBuilder {
     // ExceptionHandler Concept
     //onException();
 
-    from("direct:orderTrackCommandHandler")
-      .routeId("orderTrackRoute")
+    from("direct:orderTrackCommandHandler").routeId("OrderTrackCommandHandlerRouteId")
       .log("Message from ${body}")
       .transform(simple("trackingId - ${header.uuid}"))
             //.to("sql-stored:classpath:templates/getTrackingByIdFunction.sql") // returns Order

@@ -1,12 +1,12 @@
 package com.food.ordering.system.order.service.domain.application.dto.create;
 
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.math.BigDecimal;
 
-@Data
-@NoArgsConstructor
+@Getter
+@Setter
 public class RestaurantProductsInfoDTO {
   private String restaurant_id;
   private String restaurant_name;

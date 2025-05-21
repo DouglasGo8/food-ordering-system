@@ -14,7 +14,7 @@ public class RestaurantRepository extends RouteBuilder {
   @Override
   public void configure() {
 
-    from("direct:checkRestaurantCommandHandler").routeId("checkRestaurantCMDH")
+    from("direct:checkRestaurantCommandHandler").routeId("checkRestaurantCommandHandlerRouteId")
       .log(LoggingLevel.INFO,"finRestaurantByIdFunction invoked")
       // com.food.**.Restaurant@11053528
       .to("sql-stored:classpath:templates/finRestaurantByIdFunction.sql?function=true")

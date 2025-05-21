@@ -14,7 +14,7 @@ public class OrderApprovalRepository extends RouteBuilder {
   public void configure() {
 
     // returns/receives OrderApproval
-    from("direct:saveOrderApproval").routeId("OrderApprovalRepositoryRoute")
+    from("direct:saveOrderApproval").routeId("OrderApprovalRepositoryRouteId")
             // before save should save on tbl_approval/ cast from OrderApproval to Table
             .transform(simple("${variable.restaurant.orderApproval}"))
             .setHeader("id", simple(UUID.randomUUID().toString()))

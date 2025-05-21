@@ -21,7 +21,7 @@ public class OrderApprovalMessagePublisher extends RouteBuilder {
 
     // receives OrderApprovalEvent (Approved|Rejected)
     // from("seda:orderApprovalEventMessage").routeId("OrderApprovalMessagePublisher")
-    from("direct:orderApprovalEventMessage").routeId("OrderApprovalMessagePublisher")
+    from("direct:orderApprovalEventMessage").routeId("OrderApprovalMessagePublisherRouteId")
             .log(LoggingLevel.INFO, LOG_MESSAGE)
             .bean(RestaurantMessagingResponseDataMapper::new)
             // to:kafka // topic restaurant-approval-request

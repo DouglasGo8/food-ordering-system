@@ -249,13 +249,13 @@ INSERT INTO tbl_restaurants(id, name, active)
 VALUES ('d215b5f8-0249-4dc5-89a3-51fd148cfb46', 'restaurant_2', FALSE);
 --
 INSERT INTO tbl_products(id, name, price, available)
-VALUES ('d215b5f8-0249-4dc5-89a3-51fd148cfb47', 'product_1', 22.76, TRUE);
+VALUES ('d215b5f8-0249-4dc5-89a3-51fd148cfb47', 'product_1', 50.00, TRUE);
 INSERT INTO tbl_products(id, name, price, available)
-VALUES ('d215b5f8-0249-4dc5-89a3-51fd148cfb48', 'product_2', 77.14, TRUE);
+VALUES ('d215b5f8-0249-4dc5-89a3-51fd148cfb48', 'product_2', 50.00, TRUE);
 INSERT INTO tbl_products(id, name, price, available)
-VALUES ('d215b5f8-0249-4dc5-89a3-51fd148cfb49', 'product_3', 20.00, FALSE);
+VALUES ('d215b5f8-0249-4dc5-89a3-51fd148cfb49', 'product_3', 50.00, FALSE);
 INSERT INTO tbl_products(id, name, price, available)
-VALUES ('d215b5f8-0249-4dc5-89a3-51fd148cfb50', 'product_4', 40.00, TRUE);
+VALUES ('d215b5f8-0249-4dc5-89a3-51fd148cfb50', 'product_4', 50.00, TRUE);
 --
 INSERT INTO tbl_restaurant_products(id, restaurant_id, product_id)
 VALUES ('d215b5f8-0249-4dc5-89a3-51fd148cfb51', 'd215b5f8-0249-4dc5-89a3-51fd148cfb45',

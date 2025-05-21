@@ -6,6 +6,9 @@ import com.food.ordering.system.order.service.domain.core.entity.Restaurant;
 import com.food.ordering.system.order.service.domain.core.event.OrderCancelledEvent;
 import com.food.ordering.system.order.service.domain.core.event.OrderCreatedEvent;
 import com.food.ordering.system.order.service.domain.core.event.OrderPaidEvent;
+import jakarta.decorator.Decorator;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Named;
 
 import java.util.List;
 

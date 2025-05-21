@@ -7,20 +7,24 @@ import com.food.ordering.system.order.service.domain.core.event.OrderCreatedEven
 import com.food.ordering.system.order.service.domain.core.event.OrderPaidEvent;
 import com.food.ordering.system.order.service.domain.core.exception.OrderDomainException;
 import com.food.ordering.system.shared.domain.DomainConstants;
-
-import com.google.errorprone.annotations.Var;
+import io.quarkus.runtime.annotations.RegisterForReflection;
+import jakarta.decorator.Decorator;
 import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Named;
+import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.camel.Variable;
 
-
+import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.List;
 
 @Slf4j
+@NoArgsConstructor
 @ApplicationScoped
 public class OrderDomainServiceImpl implements OrderDomainService {
+
   @Override
   public void approveOrder(Order order) {
     order.approve();

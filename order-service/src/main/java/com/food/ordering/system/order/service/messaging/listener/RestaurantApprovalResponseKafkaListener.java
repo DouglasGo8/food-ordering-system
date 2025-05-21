@@ -31,7 +31,8 @@ public class RestaurantApprovalResponseKafkaListener extends RouteBuilder {
     // log("Processing rejected for order id: {}, with fail messages
 
     // Receives RestaurantApprovalResponseAvroModel
-    from("direct:mockRestaurantResponseKafkaListener")
+    //from("direct:mockRestaurantResponseKafkaListener")
+    from("kafka://{{restaurant.approval.topic.response}}").routeId("RestaurantApprovalResponseKafkaListenerRouteId")
             // from("kafka:")
             //.log("Message received from Kafka : ${body}-${threadName}")
             //.log("    on the topic ${headers[kafka.TOPIC]}")
@@ -49,7 +50,6 @@ public class RestaurantApprovalResponseKafkaListener extends RouteBuilder {
               //.log("${body}")
               .to("direct:processOrderApproval")
             .end();
-
 
     // Represents RestaurantApprovalResponseMessageListenerImpl.class
     from("direct:processOrderApproval").routeId("ProcessOrderApprovalRouteId")

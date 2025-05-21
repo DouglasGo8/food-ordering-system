@@ -6,8 +6,10 @@ import com.food.ordering.system.shared.domain.valueobject.Money;
 import com.food.ordering.system.shared.domain.valueobject.OrderId;
 
 import lombok.Getter;
+import lombok.extern.slf4j.Slf4j;
 
 @Getter
+@Slf4j
 public class OrderItem extends BaseEntity<OrderItemId> {
 
   private OrderId orderId;
@@ -23,6 +25,7 @@ public class OrderItem extends BaseEntity<OrderItemId> {
   }
 
   public boolean isPriceValid() {
+
     return this.price.isGreaterThanZero() &&
             this.price.equals(this.product.getPrice()) &&
             this.price.multiplyMoney(quantity).equals(subTotal);

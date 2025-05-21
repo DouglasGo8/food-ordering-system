@@ -13,7 +13,7 @@ public class PaymentKafkaMessagePublisher extends RouteBuilder {
 
     // avoid if (instanceof PaymentCompletedOrCancelEvent
     // Represents Payment*KafkaMessagePublisher
-    from("direct:paymentMessagePublisher" /*"seda:paymentMessagePublisher"*/).routeId("PaymentMessagePublisher")
+    from("direct:paymentMessagePublisher" /*"seda:paymentMessagePublisher"*/).routeId("PaymentMessagePublisherRouteId")
             .setVariable("topic-key", simple("${body.payment.orderId.value}"))
             .log("Publishing a Payment${body.payment.paymentStatus}Event with payment id: ${body.payment.id.value} and order id ${body.payment.orderId.value}")
             // sending one of PaymentCompletedEvent/PaymentCancelledEvent/PaymentFailedEvent

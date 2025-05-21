@@ -13,19 +13,19 @@
   <name>Food Ordering System</name>
   <description>Microservices :: Clean Architecture :: DDD :: Saga :: Outbox &amp; Kafka</description>
   <properties>
-    <!-- Quarkus -->
+    <!-- Quarkus LTS -->
     <!--<quarkus.platform.version>2.16.10.Final</quarkus.platform.version>-->
-    <quarkus.platform.version>3.8.5</quarkus.platform.version>
+    <quarkus.platform.version>3.20.0</quarkus.platform.version>
     <quarkus.platform.artifact-id>quarkus-bom</quarkus.platform.artifact-id>
     <quarkus.platform.group-id>io.quarkus.platform</quarkus.platform.group-id>
     <!-- Maven -->
     <skipITs>false</skipITs>
-    <jandex-maven-plugin>3.1.7</jandex-maven-plugin>
+    <jandex-maven-plugin>3.3.1</jandex-maven-plugin>
     <maven.compiler.release>21</maven.compiler.release>
-    <surefire-plugin.version>3.2.5</surefire-plugin.version>
-    <failsafe-plugin.version>3.2.5</failsafe-plugin.version>
-    <compiler-plugin.version>3.13.0</compiler-plugin.version>
-    <maven.io.confluent.version>7.6.1</maven.io.confluent.version>
+    <surefire-plugin.version>3.5.3</surefire-plugin.version>
+    <failsafe-plugin.version>3.5.3</failsafe-plugin.version>
+    <compiler-plugin.version>3.14.0</compiler-plugin.version>
+    <maven.io.confluent.version>7.9.1</maven.io.confluent.version>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
   </properties>
@@ -82,7 +82,12 @@
   </dependencyManagement>
   <!-- Common Dependencies -->
   <dependencies>
-    <!-- Kafka -->
+    <dependency>
+      <groupId>org.projectlombok</groupId>
+      <artifactId>lombok</artifactId>
+      <version>1.18.38</version>
+    </dependency>
+    <!-- Camel Common -->
     <dependency>
       <groupId>org.apache.camel.quarkus</groupId>
       <artifactId>camel-quarkus-kafka</artifactId>
@@ -92,23 +97,20 @@
       <artifactId>camel-quarkus-avro</artifactId>
     </dependency>
     <dependency>
-      <groupId>io.quarkus</groupId>
-      <artifactId>quarkus-confluent-registry-avro</artifactId>
+      <groupId>org.apache.camel.quarkus</groupId>
+      <artifactId>camel-quarkus-core</artifactId>
     </dependency>
-    <!-- Saga -->
     <dependency>
       <groupId>org.apache.camel.quarkus</groupId>
-      <artifactId>camel-quarkus-saga</artifactId>
-    </dependency>
-    <!-- Avro -->
-    <dependency>
-      <groupId>io.confluent</groupId>
-      <artifactId>kafka-avro-serializer</artifactId>
-      <version>${maven.io.confluent.version}</version>
+      <artifactId>camel-quarkus-direct</artifactId>
     </dependency>
     <dependency>
-      <groupId>org.apache.avro</groupId>
-      <artifactId>avro</artifactId>
+      <groupId>org.apache.camel.quarkus</groupId>
+      <artifactId>camel-quarkus-bean</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.camel.quarkus</groupId>
+      <artifactId>camel-quarkus-seda</artifactId>
     </dependency>
     <dependency>
       <groupId>org.apache.camel.quarkus</groupId>
@@ -120,12 +122,26 @@
     </dependency>
     <dependency>
       <groupId>io.quarkus</groupId>
-      <artifactId>quarkus-jdbc-postgresql</artifactId>
+      <artifactId>quarkus-jackson</artifactId>
+    </dependency>
+    <!-- Avro -->
+    <dependency>
+      <groupId>io.confluent</groupId>
+      <artifactId>kafka-avro-serializer</artifactId>
+      <version>${maven.io.confluent.version}</version>
     </dependency>
     <dependency>
-      <groupId>org.projectlombok</groupId>
-      <artifactId>lombok</artifactId>
-      <version>1.18.34</version>
+      <groupId>org.apache.avro</groupId>
+      <artifactId>avro</artifactId>
+    </dependency>
+    <!-- Quarkus Common -->
+    <dependency>
+      <groupId>io.quarkus</groupId>
+      <artifactId>quarkus-confluent-registry-avro</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>io.quarkus</groupId>
+      <artifactId>quarkus-jdbc-postgresql</artifactId>
     </dependency>
     <dependency>
       <groupId>io.quarkus</groupId>

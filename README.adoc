@@ -30,6 +30,7 @@
 * The main structure removes the sub-modules idea, why?
 To get rid of hell submodules management, here I try to keep the hexagonal concepts, but over the EIP and Camel perspectives; that means, the verbosity of frameworks will be reduced the main idea behind of Apache Camel is to eliminate tons of layers
 
+deprecated
 .Gemfile.lock
 ----
 |- order-service    (jar) => needs be entire reorganaized
@@ -106,12 +107,13 @@ mvn failsafe:integration-test
 .Install Maven Internal Dependencies libs
 [source,bash]
 ----
+# Shared Domain
 mvn clean -DskipTests compile package
 mvn install:install-file -Dfile=./target/shared-domain-1.0.jar \
   -DgroupId=com.food.ordering.system.shared.domain \
   -DartifactId=shared-domain -Dversion=1.0 -Dpackaging=jar \
   -DgeneratePom=true
-#
+# Shared Avro
 mvn clean -DskipTests compile package
 mvn install:install-file -Dfile=./target/shared-avro-1.0.jar \
   -DgroupId=com.food.ordering.system.shared.avro \
@@ -167,7 +169,7 @@ image::architecture/thumbs/images/concepts/event-source-kafka.png[]
 
 ... Domain Services: Business logic that cannot fit in the aggregate, is used when multiple aggregates required in business logic
 
-... Applications Services: allows the isolated domain to communicate with outside, such - orchestrate transactions, security, looking up proper aggregates and saving state changes of the domain to the database, doesn't contain any business logic, they are triggered by domain events, they should not know about how to fire event
+... Application Services allow the isolated domain to communicate with outside, such - orchestrate transactions, security, looking up proper aggregates and saving state changes of the domain to the database, doesn't contain any business logic, they are triggered by domain events, they should not know about how to fire event
 
 ... #_Where to fire the Event?
 In Application Service, domain layers shouldn't know about how to fire the event_#
@@ -183,16 +185,16 @@ image::architecture/thumbs/images/concepts/tactical-ddd-pattern-applied.png[]
 ----
 {
     "customerId": "af20558e-5e77-4a6e-bb2f-fef1f14c0ee9",
-    "restaurantId": "c8dfc68d-9269-45c2-b2d1-7e0d0aa3c57b",
+    "restaurantId": "d215b5f8-0249-4dc5-89a3-51fd148cfb45",
     "address": {
-        "street": "street_1",
-        "postalCode": "1000AB",
-        "city": "Amsterdam"
+        "street": "4 N. Talbot Lane New York",
+        "postalCode": "10040",
+        "city": "New York"
     },
     "price": 200.00,
     "items": [
         {
-            "productId": "d215b5f8-0249-4dc5-89a3-51fd148cfb48",
+            "productId": "d215b5f8-0249-4dc5-89a3-51fd148cfb47",
             "quantity": 1,
             "price": 50.00,
             "subTotal": 50.00
@@ -261,6 +263,12 @@ restaurant-approval-response partitions 3
 
 [source,properties]
 ----
+# Kafka Topics
+payment.topic.request=payment-request
+payment.topic.response=payment-response
+restaurant.approval.topic.request=restaurant-approval-request
+restaurant.approval.topic.response=restaurant-approval-response
+
 # Common Configuration
 # camel:endpoint?brokers = localhost:9092
 # camel:endpoint?schemaRegistryURL = http://localhost:8081/schema.registry.url
@@ -367,3 +375,9 @@ class EmptyEvent implements DomainEvent<Void> {
   void fire() {}
 }
 ----
+
+
+=== Test Steps
+
+1. Truncate tbl_orders cascade
+2. Start Order, Payment and Restaurant Services

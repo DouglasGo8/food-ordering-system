@@ -19,7 +19,7 @@ public class CreditEntryRepository extends RouteBuilder {
   @Override
   public void configure() {
 
-    from("direct:creditEntryFindByCustomerId").routeId("CreditEntryFindByCustomerIdRouter")
+    from("direct:creditEntryFindByCustomerId").routeId("CreditEntryFindByCustomerIdRouteId")
       .log(LoggingLevel.INFO,"CreditEntry to Current CustomerId: ${body.customerId}")
       .to("sql-stored:classpath:templates/findCustomerIdCreditEntry_fn.sql?function=true") // done
       //.transform(constant("CreditEntry"))
@@ -31,7 +31,7 @@ public class CreditEntryRepository extends RouteBuilder {
             //.log(LoggingLevel.INFO, "Found CustomerId")
       .end();
 
-    from("direct:saveCreditEntry").routeId("SaveCreditEntryRepositoryRouter")
+    from("direct:saveCreditEntry").routeId("SaveCreditEntryRepositoryRouteId")
             .transform(variable("creditEntry"))
             //.log("${body.id.value}")
             .to("sql-stored:classpath:templates/insertCreditEntry.sql") // done

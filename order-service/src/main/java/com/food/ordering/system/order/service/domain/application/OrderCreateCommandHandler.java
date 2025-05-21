@@ -6,6 +6,7 @@ import com.food.ordering.system.order.service.domain.core.exception.OrderDomainE
 import com.food.ordering.system.order.service.domain.core.exception.OrderNotFoundException;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.camel.LoggingLevel;
 import org.apache.camel.builder.RouteBuilder;
 
 import jakarta.enterprise.context.ApplicationScoped;
@@ -46,7 +47,7 @@ public class OrderCreateCommandHandler extends RouteBuilder {
     // OrderDataMapper
 
     // Same purpose OrderCreateCommandHandler/OrderCreateHelper class
-    from("direct:createOrderCommandHandler").routeId("CreateOrderCMDH")
+    from("direct:createOrderCommandHandler").routeId("CreateOrderCommandHandlerRouteId")
             .setProperty("payload", body()) // CreateOrderCommandDTO
             .setProperty("restaurant", method(OrderDataMapper.class, "createOrderCommandToRestaurant"))
             //.multicast(new FlexibleAggregationStrategy<>().accumulateInCollection(ArrayList.class).pick(body()))
@@ -54,11 +55,15 @@ public class OrderCreateCommandHandler extends RouteBuilder {
             .multicast().stopOnException()
               .to("direct:checkCustomerCommandHandler", "direct:checkRestaurantCommandHandler")
             .end() // end multicast
+            // --------------------------------------------------
+            // Section 08 Video 65 at 2m49s
+            // test all action bellows
+            // -------------------------------------------------------
             .bean(RestaurantProductsMapper.class, "restaurantProductsIdsSQLClause")
             //.log("${body}")
-            // ---------------------------------------------
+            // ---------------------------------- -----------
             .to("direct:createRestaurantInformationMapper") //createRestaurantInformationMapper
-            .log("${body}")
+            //.log("${body}")
             // ---------------------------------------------------
             .bean(RestaurantProductsMapper.class, "resultSetIteratorToRestaurant")
             .setProperty("restaurantInfo", body())
@@ -79,7 +84,7 @@ public class OrderCreateCommandHandler extends RouteBuilder {
             .wireTap("seda:publishOrderCreatedPayment?blockWhenFull=true")
             // -------------------------------------------------------------------------------
             .bean(OrderDataMapper.class, "orderToCreateOrderResponseDTO") // orderCreateResponseDTO
-            .to("log:stream")
+            .log(LoggingLevel.INFO, "${body}")
             .end();
 
   }

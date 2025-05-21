@@ -27,6 +27,8 @@ public class OrderController extends RouteBuilder {
             .contextPath("/orders")
             // ---------- CONTEXT PATH END -----------------------
             .dataFormatProperty("prettyPrint", "true")
+            // Avoids jackson-datatype-jsr310 error
+            .dataFormatProperty("autoDiscoverObjectMapper", "true")
             .host("0.0.0.0").port(12080).bindingMode(RestBindingMode.auto);
 
     //rest("/say").get("/hello").to("direct:hello");
@@ -44,15 +46,15 @@ public class OrderController extends RouteBuilder {
             .to("direct:trackingIdRouteInline");
 
 
-    from("direct:createOrderRouteInline").routeId("createOrderRouteInline")
+    from("direct:createOrderRouteInline").routeId("CreateOrderRouteInlineRouteId")
             .log(LoggingLevel.INFO, "Creating order for customer: ${body.customerId} at restaurant: ${body.restaurantId}")
-            //.to("direct:createOrderCommandHandler")
+            .to("direct:createOrderCommandHandler")
             .setHeader(Exchange.HTTP_RESPONSE_CODE, constant("201"))
             //.setHeader(Exchange.CONTENT_TYPE, constant("application/json"))
             .setHeader(Exchange.CONTENT_TYPE, constant("application/vnd.api.v1+json"))
             .end();
 
-    from("direct:trackingIdRouteInline").routeId("trackingIdRouteInline")
+    from("direct:trackingIdRouteInline").routeId("TrackingIdRouteInlineRouteId")
             .to("direct:orderTrackCommandHandler")
             .setHeader(Exchange.HTTP_RESPONSE_CODE, constant("200"))
             //.setHeader(Exchange.CONTENT_TYPE, constant("application/json"))

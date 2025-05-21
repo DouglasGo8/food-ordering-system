@@ -13,7 +13,7 @@ import jakarta.enterprise.context.ApplicationScoped;
 public class CustomerRepository extends RouteBuilder {
   @Override
   public void configure() {
-    from("direct:checkCustomerCommandHandler").routeId("checkCustomerCMDH")
+    from("direct:checkCustomerCommandHandler").routeId("CheckCustomerCommandHandlerRouteId")
       .setProperty("customerId", simple("${body.customerId}"))
       .log(LoggingLevel.INFO,"findCustomerByIdFunction invoked")
       .to("sql-stored:classpath:templates/findCustomerByIdFunction.sql?function=true") // done

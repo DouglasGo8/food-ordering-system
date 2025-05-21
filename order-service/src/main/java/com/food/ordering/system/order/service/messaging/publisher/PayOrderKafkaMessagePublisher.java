@@ -12,9 +12,9 @@ public class PayOrderKafkaMessagePublisher extends RouteBuilder {
   @Override
   public void configure() {
 
-    from("direct:restaurantMessagingProducerHandler").routeId("RestaurantMessagingProducerHandler")
-            .bean(RestaurantMessagingDataMapper.class, "orderPaidEventToRestaurantApprovalRequestAvroModel")
-            .log("${body}");
+    //from("direct:restaurantMessagingProducerHandler").routeId("RestaurantMessagingProducerHandler")
+    //        .bean(RestaurantMessagingDataMapper.class, "orderPaidEventToRestaurantApprovalRequestAvroModel")
+    //        .log("${body}");
 
   }
 }

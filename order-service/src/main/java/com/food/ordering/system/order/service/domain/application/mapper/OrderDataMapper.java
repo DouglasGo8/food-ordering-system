@@ -1,11 +1,12 @@
 package com.food.ordering.system.order.service.domain.application.mapper;
 
-import com.food.ordering.system.order.service.domain.application.dto.create.OrderItemDTO;
-import com.food.ordering.system.order.service.domain.application.dto.track.TrackOrderResponseDTO;
+import com.food.ordering.system.order.service.domain.application.OrderDomainService;
+import com.food.ordering.system.order.service.domain.application.OrderDomainServiceImpl;
 import com.food.ordering.system.order.service.domain.application.dto.create.CreateOrderCommandDTO;
 import com.food.ordering.system.order.service.domain.application.dto.create.CreateOrderResponseDTO;
 import com.food.ordering.system.order.service.domain.application.dto.create.OrderAddressDTO;
-import com.food.ordering.system.order.service.domain.application.OrderDomainService;
+import com.food.ordering.system.order.service.domain.application.dto.create.OrderItemDTO;
+import com.food.ordering.system.order.service.domain.application.dto.track.TrackOrderResponseDTO;
 import com.food.ordering.system.order.service.domain.core.entity.Order;
 import com.food.ordering.system.order.service.domain.core.entity.OrderItem;
 import com.food.ordering.system.order.service.domain.core.entity.Product;
@@ -17,15 +18,11 @@ import com.food.ordering.system.shared.domain.valueobject.CustomerId;
 import com.food.ordering.system.shared.domain.valueobject.Money;
 import com.food.ordering.system.shared.domain.valueobject.ProductId;
 import com.food.ordering.system.shared.domain.valueobject.RestaurantId;
-
-import jakarta.inject.Inject;
+import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.validation.Valid;
-import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.camel.Body;
 import org.apache.camel.ExchangeProperty;
-
-import jakarta.enterprise.context.ApplicationScoped;
 
 import java.util.List;
 import java.util.UUID;
@@ -33,12 +30,15 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @Slf4j
-@NoArgsConstructor
 @ApplicationScoped
 public class OrderDataMapper {
 
-  @Inject
+  //@Inject
   OrderDomainService orderDomainService;
+
+  public OrderDataMapper() {
+    this.orderDomainService = new OrderDomainServiceImpl();
+  }
 
   public Restaurant createOrderCommandToRestaurant(@Valid @Body CreateOrderCommandDTO createOrderCommand) {
     var restaurantId = new RestaurantId(createOrderCommand.getRestaurantId());
@@ -51,7 +51,7 @@ public class OrderDataMapper {
   }
 
   public OrderCreatedEvent validateAndInitializeOrder(@Body Order order, @ExchangeProperty("restaurantInfo") Restaurant restaurant) {
-    return orderDomainService.validateAndInitiateOrder(order, restaurant);
+    return this.orderDomainService.validateAndInitiateOrder(order, restaurant);
   }
 
   public Order createOrderCommandToOrder(@ExchangeProperty("payload") @Valid CreateOrderCommandDTO createOrderCommand) {
@@ -93,12 +93,12 @@ public class OrderDataMapper {
 
   private List<OrderItem> orderItemsToOrderItemEntities(List<OrderItemDTO> items) {
     return items.stream().map(item ->
-            OrderItem.builder()
-                    .product(new Product(new ProductId(item.getProductId())))
-                    .price(new Money(item.getPrice()))
-                    .subTotal(new Money(item.getSubTotal()))
-                    .quantity(item.getQuantity())
-                    .build())
+                    OrderItem.builder()
+                            .product(new Product(new ProductId(item.getProductId())))
+                            .price(new Money(item.getPrice()))
+                            .subTotal(new Money(item.getSubTotal()))
+                            .quantity(item.getQuantity())
+                            .build())
             .collect(Collectors.toList());
 
 

@@ -18,7 +18,7 @@ public class CreditHistoryRepository extends RouteBuilder {
   @Override
   public void configure() {
 
-    from("direct:creditHistoryFindByCustomerId").routeId("CreditHistoryFindByRepositoryRouter")
+    from("direct:creditHistoryFindByCustomerId").routeId("CreditHistoryFindByRepositoryRouteId")
       .log(LoggingLevel.INFO,"Find Credit History to CustomerId: ${body.customerId}")
       .to("sql-stored:classpath:templates/findCustomerIdCreditHistory_fn.sql?function=true") // done
       .choice()
@@ -29,7 +29,7 @@ public class CreditHistoryRepository extends RouteBuilder {
           //.log(LoggingLevel.INFO, "Found CustomerId")
     .end();
 
-    from("direct:saveCreditHistories").routeId("SaveCreditHistoriesRouter")
+    from("direct:saveCreditHistories").routeId("SaveCreditHistoriesRouteId")
             // must be the last item of the List
             .transform(simple("${exchangeProperty.creditHistories[last]}"))
             //.log("${body.transactionType}")

@@ -41,7 +41,8 @@ public class PaymentResponseKafkaListener extends RouteBuilder {
     // log("Processing unsuccessful payment for order id{}, ${body.id}
     // paymentResponseMessageListener.paymentCancelled(PaymentResponseDataMapper.class)
 
-    from("direct:mockPaymentResponseKafkaListener")
+    //from("direct:mockPaymentResponseKafkaListener")
+    from("kafka://{{payment.topic.response}}").routeId("PaymentResponseKafkaListenerRouteId")
             // from("kafka:")
             //.log("Message received from Kafka : ${body}-${threadName}")
             //.log("    on the topic ${headers[kafka.TOPIC]}")

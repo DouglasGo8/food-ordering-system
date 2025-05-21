@@ -31,7 +31,7 @@ public class PaymentRequestHelper extends RouteBuilder {
   public void configure() {
 
     // lesson 48, done
-    from("direct:persistPayment").routeId("PersistPaymentRouter")
+    from("direct:persistPayment").routeId("PersistPaymentRouteId")
       .log(LoggingLevel.INFO, DomainConstants.PAYMENT_REQUEST_RECEIVED)
       .setVariable("payment", method(PaymentRequestDataMapper.class))
       // String.class only test purpose
@@ -66,7 +66,7 @@ public class PaymentRequestHelper extends RouteBuilder {
 
     //Section 06 lesson 48 time 8:30
     //// persistCancelCamel @Transactional /PaymentRequest/
-    from("direct:persistCancelPayment").routeId("PersistCancelPaymentRouter")
+    from("direct:persistCancelPayment").routeId("PersistCancelPaymentRouteId")
       .log(LoggingLevel.INFO, DomainConstants.PAYMENT_ROLLBACK_RECEIVED)
       //.setVariable("payload", body())
       //.to("direct:paymentFindOrderId") // paymentByOrderId

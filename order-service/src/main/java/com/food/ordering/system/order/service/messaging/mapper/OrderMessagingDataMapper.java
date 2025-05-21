@@ -1,5 +1,6 @@
 package com.food.ordering.system.order.service.messaging.mapper;
 
+import com.food.ordering.system.order.service.domain.core.event.OrderCreatedEvent;
 import com.food.ordering.system.order.service.domain.core.event.OrderEvent;
 import com.food.ordering.system.order.service.domain.core.event.OrderPaidEvent;
 import com.food.ordering.system.shared.avro.model.PaymentOrderStatus;
@@ -23,7 +24,7 @@ public class OrderMessagingDataMapper {
     var order = orderEvent.getOrder();
     //
     //var status = (orderEvent instanceof OrderCreatedEvent) ? PaymentOrderStatus.PENDING
-     //       : PaymentOrderStatus.CANCELLED;
+    //        : PaymentOrderStatus.CANCELLED;
     //
     return PaymentRequestAvroModel.newBuilder()
             .setId(UUID.randomUUID().toString())
@@ -32,8 +33,8 @@ public class OrderMessagingDataMapper {
             .setOrderId(order.getId().getValue().toString())
             .setPrice(order.getPrice().getAmount())
             .setCreatedAt(orderEvent.getCreatedAt().toInstant())
-            .setPaymentOrderStatus(switch (orderEvent) {
-              case OrderPaidEvent ignored -> PaymentOrderStatus.PENDING;
+            .setPaymentOrderStatus(switch (orderEvent){
+              case OrderCreatedEvent ignored -> PaymentOrderStatus.PENDING;
               default -> PaymentOrderStatus.CANCELLED;
             })
             .build();
