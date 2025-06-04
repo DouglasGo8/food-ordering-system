@@ -55,6 +55,7 @@ public class PaymentDomainServiceImpl implements PaymentDomainService {
     this.subtractCreditEntry(payment, creditEntry);
     // fixed java.lang.UnsupportedOperationException
     this.updateCreditHistory(payment, creditHistories, TransactionType.DEBIT);
+
     this.validateCreditHistory(creditEntry, creditHistories, failureMessages);
     //
     if (failureMessages.isEmpty()) {
@@ -123,7 +124,7 @@ public class PaymentDomainServiceImpl implements PaymentDomainService {
             .paymentId(new PaymentId(UUID.fromString(payments.getFirst().get("id").toString())))
             .customerId(new CustomerId(UUID.fromString(payments.getFirst().get("customer_id").toString())))
             .orderId(new OrderId(UUID.fromString(payments.getFirst().get("order_id").toString())))
-            .price(new Money((BigDecimal)payments.getFirst().get("price")))
+            .price(new Money((BigDecimal) payments.getFirst().get("price")))
             .createdAt(ZonedDateTime.parse(payments.getFirst().get("created_at").toString()))
             .paymentStatus(PaymentStatus.valueOf(payments.getFirst().get("status").toString()))
             .build();
@@ -164,6 +165,10 @@ public class PaymentDomainServiceImpl implements PaymentDomainService {
 
     var totalCreditHistory = this.getTotalHistoryAmount(creditHistories, TransactionType.CREDIT);
     var totalDebitHistory = this.getTotalHistoryAmount(creditHistories, TransactionType.DEBIT);
+
+    System.out.println("total credit amount"  + creditEntry.getTotalCreditAmount().getAmount());
+    System.out.println("total credit history"+ totalCreditHistory.getAmount());
+    System.out.println("total debit history"+ totalDebitHistory.getAmount());
 
     //
     if (totalDebitHistory.isGreaterThan(totalCreditHistory)) {

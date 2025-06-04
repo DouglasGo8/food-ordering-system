@@ -21,7 +21,7 @@ import java.util.UUID;
 
 public interface BaseTest {
   default Payment createPaymentWithoutPaymentIdMock() {
-    var price = new Money(BigDecimal.valueOf(12.76d));
+    var price = new Money(BigDecimal.valueOf(200.00d));
     var orderId = new OrderId(UUID.randomUUID());
     //var paymentId = new PaymentId(UUID.randomUUID());
     var customerId = new CustomerId(UUID.randomUUID());

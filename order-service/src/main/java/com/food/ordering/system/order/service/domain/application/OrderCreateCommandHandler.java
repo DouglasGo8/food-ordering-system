@@ -21,13 +21,14 @@ public class OrderCreateCommandHandler extends RouteBuilder {
   public void configure() {
 
     // ExceptionHandler Advice Concept
-
+    // will be improved
     onException(OrderDomainException.class)
             .log("Exception occurs")
             .setHeader("codeAndReason", constant(500))
             .transform(exceptionMessage());
     //.bean(ExceptionMapper.class); // ErrorDTO.class
 
+    // will be improved
     onException(OrderNotFoundException.class)
             .log("${body}");
     //.bean(ExceptionMapper.class); // ErrorDTO.class

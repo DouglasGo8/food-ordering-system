@@ -141,7 +141,7 @@ CREATE TABLE tbl_credit_history
     type        TEXT           NOT NULL,
     CONSTRAINT credit_history_pkey PRIMARY KEY (id)
 );
---
+-- VIEWS doesn't work
 DROP MATERIALIZED VIEW IF EXISTS order_restaurant_m_view;
 --
 CREATE MATERIALIZED VIEW order_restaurant_m_view
@@ -182,38 +182,36 @@ CREATE trigger refresh_order_restaurant_m_view
     ON tbl_restaurant_products
     FOR each statement
 EXECUTE PROCEDURE refresh_order_restaurant_m_view();
---
+-- VIEW doesn't work
 DROP MATERIALIZED VIEW IF EXISTS order_address_orderItems_m_view;
 --
 CREATE MATERIALIZED VIEW order_address_orderItems_m_view
     TABLESPACE pg_default
 AS
-SELECT
-    od.id as order_id,
-    od.customer_id,
-    od.restaurant_id,
-    od.tracking_id,
-    od.price as order_total_price,
-    od.order_status,
-    od.failure_messages,
-    oi.id as order_item_id,
-    oi.product_id,
-    oi.price as order_item_price,
-    oi.quantity,
-    oi.sub_total,
-    oa.id as order_address_id,
-    oa.city,
-    oa.street,
-    oa.postal_code
-FROM
-    tbl_orders od
-        JOIN
-    tbl_order_address oa
-    ON od.id = oa.order_id
-        JOIN
-    tbl_order_items oi
-    ON
-        oi.order_id = od.id
+SELECT od.id    as order_id,
+       od.customer_id,
+       od.restaurant_id,
+       od.tracking_id,
+       od.price as order_total_price,
+       od.order_status,
+       od.failure_messages,
+       oi.id    as order_item_id,
+       oi.product_id,
+       oi.price as order_item_price,
+       oi.quantity,
+       oi.sub_total,
+       oa.id    as order_address_id,
+       oa.city,
+       oa.street,
+       oa.postal_code
+FROM tbl_orders od
+         JOIN
+     tbl_order_address oa
+     ON od.id = oa.order_id
+         JOIN
+     tbl_order_items oi
+     ON
+         oi.order_id = od.id
 WITH DATA;
 --
 REFRESH MATERIALIZED VIEW order_address_orderItems_m_view;
@@ -271,13 +269,14 @@ VALUES ('d215b5f8-0249-4dc5-89a3-51fd148cfb54', 'd215b5f8-0249-4dc5-89a3-51fd148
         'd215b5f8-0249-4dc5-89a3-51fd148cfb50');
 --
 INSERT INTO tbl_credit_entry(id, customer_id, total_credit_amount)
-VALUES ('d215b5f8-0249-4dc5-89a3-51fd148cfb21', 'af20558e-5e77-4a6e-bb2f-fef1f14c0ee9', 650.12);
+VALUES ('d215b5f8-0249-4dc5-89a3-51fd148cfb21', 'af20558e-5e77-4a6e-bb2f-fef1f14c0ee9', 700.12);
 -- History for Each Credit Entry
 INSERT INTO tbl_credit_history(id, customer_id, amount, type)
 VALUES ('d215b5f8-0249-4dc5-89a3-51fd148cfb23', 'af20558e-5e77-4a6e-bb2f-fef1f14c0ee9', 100.00, 'CREDIT');
 INSERT INTO tbl_credit_history(id, customer_id, amount, type)
 VALUES ('d215b5f8-0249-4dc5-89a3-51fd148cfb24', 'af20558e-5e77-4a6e-bb2f-fef1f14c0ee9', 600.12, 'CREDIT');
 INSERT INTO tbl_credit_history(id, customer_id, amount, type)
+-- Must Update Credit Entry Table when Debit is created
 VALUES ('d215b5f8-0249-4dc5-89a3-51fd148cfb25', 'af20558e-5e77-4a6e-bb2f-fef1f14c0ee9', 50.00, 'DEBIT');
 
 INSERT INTO tbl_credit_entry(id, customer_id, total_credit_amount)
@@ -290,13 +289,13 @@ DROP function if EXISTS find_order_byId(p_id TEXT);
 CREATE OR REPLACE FUNCTION find_order_byId(p_id TEXT)
     RETURNS TABLE
             (
-                id                  TEXT,
-                customer_id         TEXT,
-                restaurant_id       TEXT,
-                tracking_id         TEXT,
-                price               NUMERIC(10, 2),
-                order_status        TEXT,
-                failure_messages    TEXT
+                id               TEXT,
+                customer_id      TEXT,
+                restaurant_id    TEXT,
+                tracking_id      TEXT,
+                price            NUMERIC(10, 2),
+                order_status     TEXT,
+                failure_messages TEXT
             )
 AS
 $$
@@ -340,7 +339,7 @@ BEGIN
     --
     INSERT INTO tbl_order_address (id, order_id, street, city, postal_code)
     VALUES (p_address_id, p_order_id, p_street, p_city, p_postal_code)
-    ON CONFLICT ON CONSTRAINT tbl_order_address_pkey DO NOTHING ;
+    ON CONFLICT ON CONSTRAINT tbl_order_address_pkey DO NOTHING;
     -- RETURNING p_order_id INTO pout_order_id
 
     pout_order_id := p_order_id;
@@ -662,5 +661,27 @@ BEGIN
                p.status
         FROM tbl_payments p
         WHERE p.order_id = findPaymentByOrderId_fn.p_orderId;
+END;
+$$ LANGUAGE plpgsql;
+---
+DROP function if exists findTrackingById_fn;
+---
+CREATE OR REPLACE FUNCTION findTrackingById_fn(p_trackingId TEXT)
+    RETURNS TABLE
+            (
+                tracking_id         TEXT,
+                order_status        TEXT,
+                failure_messages    TEXT
+            )
+AS
+$$
+BEGIN
+    RETURN QUERY
+        SELECT
+               o.tracking_id,
+               o.order_status,
+               o.failure_messages
+        FROM tbl_orders o
+        WHERE o.tracking_id = findTrackingById_fn.p_trackingId;
 END;
 $$ LANGUAGE plpgsql;

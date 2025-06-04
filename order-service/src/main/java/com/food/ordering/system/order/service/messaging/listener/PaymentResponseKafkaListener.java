@@ -3,6 +3,7 @@ package com.food.ordering.system.order.service.messaging.listener;
 import com.food.ordering.system.order.service.dataaccess.mapper.OrderDataAccessMapper;
 import com.food.ordering.system.order.service.domain.application.OrderDomainServiceImpl;
 import com.food.ordering.system.order.service.domain.application.mapper.PaymentResponseDataMapper;
+import com.food.ordering.system.order.service.domain.application.mapper.RestaurantMessagingDataMapper;
 import com.food.ordering.system.order.service.domain.core.exception.OrderDomainException;
 import lombok.NoArgsConstructor;
 import org.apache.camel.LoggingLevel;
@@ -47,8 +48,8 @@ public class PaymentResponseKafkaListener extends RouteBuilder {
             //.log("Message received from Kafka : ${body}-${threadName}")
             //.log("    on the topic ${headers[kafka.TOPIC]}")
             //.log("    on the partition ${headers[kafka.PARTITION]}")
-            // .log("    with the offset ${headers[kafka.OFFSET]}")
-            //.log("    with the key ${headers[kafka.KEY]}");
+            //.log("    with the offset ${headers[kafka.OFFSET]}")
+            //.log("    with the key ${headers[kafka.KEY]}")
             // ------------------------------------------------------------------------
             .bean(PaymentResponseDataMapper::new) // from Avro Status
             .setVariable("sagaId", simple("${body.sagaId}"))
@@ -56,6 +57,7 @@ public class PaymentResponseKafkaListener extends RouteBuilder {
             // -----------------------------------------------------------------------------
             .saga() // Apache Camel Abstract All the *Saga* classes implementation
               .to("direct:findOrderAddressAndItemsById")
+              //.log("${body}")
               .bean(OrderDataAccessMapper::new)
               .to("direct:processPayment")
             .end();
@@ -77,7 +79,9 @@ public class PaymentResponseKafkaListener extends RouteBuilder {
               .otherwise()
                 .log(LoggingLevel.INFO, "Completing payment for order with id: ${body.id.value}")
                 .bean(OrderDomainServiceImpl.class, "payOrder") // changes to PAID and returns OrderPaidEvent
-                //.wireTap("kafka")
+                .bean(RestaurantMessagingDataMapper.class, "orderPaidEventToRestaurantApprovalRequestAvroModel")
+                //.log("RestaurantAvroRequest - ${body}")
+                .to("kafka://{{restaurant.approval.topic.request}}")
             .end();
 
     from("direct:paymentCompleted").routeId("PaymentCompletedRouteId") // Represents PaymentResponseMessageListenerImpl.paymentCompleted method

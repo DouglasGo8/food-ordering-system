@@ -1,6 +1,5 @@
-package com.food.ordering.system.restaurant.service.messaging;
+package com.food.ordering.system.restaurant.service.messaging.publisher;
 
-import com.food.ordering.system.restaurant.service.domain.application.mapper.RestaurantMessagingRequestDataMapper;
 import com.food.ordering.system.restaurant.service.domain.application.mapper.RestaurantMessagingResponseDataMapper;
 import jakarta.enterprise.context.ApplicationScoped;
 import lombok.NoArgsConstructor;
@@ -15,16 +14,18 @@ public class OrderApprovalMessagePublisher extends RouteBuilder {
   public void configure() {
 
     final String LOG_MESSAGE = """
-            Receiving OrderApprovalEvent for order id: ${body.orderApproval.orderId.value} 
+            Receiving OrderApprovalEvent for order id: ${body.orderApproval.orderId.value}\s
             with status ${body.orderApproval.approvalStatus.name}
-            """;
+           \s""";
 
     // receives OrderApprovalEvent (Approved|Rejected)
     // from("seda:orderApprovalEventMessage").routeId("OrderApprovalMessagePublisher")
-    from("direct:orderApprovalEventMessage").routeId("OrderApprovalMessagePublisherRouteId")
+    from("seda:orderApprovalEventMessage"/*"direct:orderApprovalEventMessage"*/).routeId("OrderApprovalMessagePublisherRouteId")
             .log(LoggingLevel.INFO, LOG_MESSAGE)
             .bean(RestaurantMessagingResponseDataMapper::new)
-            // to:kafka // topic restaurant-approval-request
+            // will be implemented at 10/06/2025 section08:05min
+            // will be consumed by RestaurantApprovalResponseKafkaListener in order service
+            .to("kafka://{{restaurant.approval.topic.response}}")
             .end();
   }
 }

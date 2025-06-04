@@ -1,10 +1,14 @@
-SELECT re1_0.product_id,
-       re1_0.restaurant_id,
-       re1_0.product_available,
-       re1_0.product_name,
-       re1_0.product_price,
-       re1_0.restaurant_active,
-       re1_0.restaurant_name
-FROM order_restaurant_m_view re1_0
-WHERE re1_0.restaurant_id = :#${body.id.value.toString}
-  AND re1_0.product_id IN (:#in:ids)
+SELECT r.id        AS restaurant_id,
+       r.name      AS restaurant_name,
+       r.active    AS restaurant_active,
+       p.id        AS product_id,
+       p.name      AS product_name,
+       p.price     AS product_price,
+       p.available AS product_available
+FROM tbl_restaurants r,
+     tbl_products p,
+     tbl_restaurant_products rp
+WHERE r.id = rp.restaurant_id
+  AND p.id = rp.product_id
+  AND r.id = :#${body.id.value.toString}
+  AND p.id IN (:#in:ids)

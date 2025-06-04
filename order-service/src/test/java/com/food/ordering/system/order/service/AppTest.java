@@ -3,7 +3,6 @@ package com.food.ordering.system.order.service;
 import com.food.ordering.system.order.service.domain.application.dto.create.CreateOrderCommandDTO;
 import com.food.ordering.system.order.service.domain.application.dto.create.CreateOrderResponseDTO;
 import com.food.ordering.system.order.service.domain.application.dto.create.OrderItemDTO;
-import com.food.ordering.system.order.service.domain.application.dto.message.PaymentResponse;
 import com.food.ordering.system.order.service.domain.application.dto.message.RestaurantApprovalResponse;
 import com.food.ordering.system.order.service.domain.application.dto.track.TrackOrderQueryDTO;
 import com.food.ordering.system.order.service.domain.application.dto.track.TrackOrderResponseDTO;
@@ -76,7 +75,7 @@ public class AppTest implements BaseTest {
     //
     var createOrderResponse = CreateOrderResponseDTO.builder()
             .message("Response from Space")
-            .orderTrackingID(UUID.randomUUID())
+            .orderTrackingId(UUID.randomUUID())
             .orderStatus(OrderStatus.APPROVED)
             .build();
     //
@@ -154,7 +153,7 @@ public class AppTest implements BaseTest {
     var restaurant = mapper.createOrderCommandToRestaurant(body);
     var orderCreatedEvent = mapper.validateAndInitializeOrder(order, restaurant);
     var createOrderResponseDTO = mapper.orderToCreateOrderResponseDTO(orderCreatedEvent);
-    assertNotNull(createOrderResponseDTO.getOrderTrackingID());
+    assertNotNull(createOrderResponseDTO.getOrderTrackingId());
   }
 
   @Test

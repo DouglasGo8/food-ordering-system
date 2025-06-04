@@ -7,6 +7,7 @@ import com.food.ordering.system.shared.domain.valueobject.ProductId;
 import com.food.ordering.system.shared.domain.valueobject.RestaurantOrderStatus;
 import jakarta.enterprise.context.ApplicationScoped;
 import lombok.NoArgsConstructor;
+import org.apache.camel.Body;
 import org.apache.camel.Handler;
 
 import java.util.UUID;
@@ -18,7 +19,7 @@ public class RestaurantMessagingRequestDataMapper {
   
   @Handler
   public RestaurantApprovalRequest
-  restaurantApprovalRequestAvroModelToRestaurantApproval(RestaurantApprovalRequestAvroModel
+  restaurantApprovalRequestAvroModelToRestaurantApproval(@Body RestaurantApprovalRequestAvroModel
                                                                  restaurantApprovalRequestAvroModel) {
     return RestaurantApprovalRequest.builder()
             .id(restaurantApprovalRequestAvroModel.getId())

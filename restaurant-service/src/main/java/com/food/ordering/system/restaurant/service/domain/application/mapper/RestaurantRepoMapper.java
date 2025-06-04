@@ -6,6 +6,7 @@ import com.food.ordering.system.shared.domain.valueobject.Money;
 import com.food.ordering.system.shared.domain.valueobject.OrderId;
 import jakarta.enterprise.context.ApplicationScoped;
 import lombok.NoArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.camel.Body;
 import org.apache.camel.Handler;
 import org.apache.camel.Variable;
@@ -15,6 +16,7 @@ import java.util.ArrayList;
 import java.util.Map;
 import java.util.UUID;
 
+@Slf4j
 @ApplicationScoped
 @NoArgsConstructor
 public class RestaurantRepoMapper {
@@ -24,7 +26,9 @@ public class RestaurantRepoMapper {
                                          @Variable("restaurant") Restaurant restaurant,
                                          @Body ArrayList<Map<String, Object>> restaurantAndProducts) {
     //
-    restaurant.setActive(Boolean.parseBoolean(restaurantAndProducts.getFirst().get("restaurant_active").toString()));
+    restaurant.setActive(Boolean.parseBoolean(restaurantAndProducts.getFirst()
+            .get("restaurant_active").toString()));
+    //
     restaurant.getOrderDetail().getProducts()
             .forEach(p -> restaurantAndProducts.forEach(repo -> {
               if (p.getId().getValue().toString().equals(repo.get("product_id").toString())) {
@@ -36,6 +40,11 @@ public class RestaurantRepoMapper {
               }
             }));
     restaurant.getOrderDetail().setId(new OrderId(UUID.fromString(orderId)));
+
+    /*restaurant.getOrderDetail().getProducts()
+            .forEach(p -> log.info("{} - {}",
+                    p.getPrice().getAmount(),
+                    p.getQuantity()));*/
     //
     return restaurant;
   }

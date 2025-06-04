@@ -27,10 +27,8 @@ public class RestaurantDomainService {
   OrderApprovalEvent validateOrder(@Variable("restaurant") Restaurant restaurant,
                                    @Variable("fail") List<String> failureMessages) {
 
-
-
+    //
     restaurant.validateOrder(failureMessages);
-
 
     log.info("Validating order with id: {}", restaurant.getOrderDetail().getId().getValue());
     //

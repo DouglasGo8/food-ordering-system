@@ -35,13 +35,14 @@ public class RestaurantApprovalRequestHelper extends RouteBuilder {
             .to("direct:findRestaurantInformation") // done
             .bean(RestaurantRepoMapper::new)
             .setVariable("restaurant", body())
+            //.log("${body}")
             .bean(RestaurantDomainService::new) // returns OrderApprovalEvent
-            //.setProperty("orderApprovalEvent", body())
+            .setProperty("orderApprovalEvent", body())
             //.log("${body}")
             .wireTap("direct:saveOrderApproval")
-            //.recipientList(constant("{{sendOrderApprovalEventCopy.spEL}}")).delimiter(";")
-            //  .parallelProcessing()
-            //.transform(exchangeProperty("orderApprovalEvent"))
+            .recipientList(constant("{{sendOrderApprovalEventCopy.spEL}}")).delimiter(";")
+              .parallelProcessing()
+              .transform(exchangeProperty("orderApprovalEvent"))
             .end();
   }
 

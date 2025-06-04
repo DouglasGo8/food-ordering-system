@@ -15,8 +15,8 @@ import java.util.UUID;
 public class TrackOrderResponseDTO {
   @NotNull
   private final UUID orderTrackingId;
-  @NotNull
 
+  @NotNull
   private final OrderStatus orderStatus;
   private final List<String> failureMessages;
 }

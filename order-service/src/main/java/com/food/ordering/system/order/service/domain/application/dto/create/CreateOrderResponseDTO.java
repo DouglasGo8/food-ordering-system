@@ -19,7 +19,7 @@ public class CreateOrderResponseDTO {
   @NotNull
   private String message;
   @NotNull
-  private UUID orderTrackingID;
+  private UUID orderTrackingId;
   @NotNull
   private OrderStatus orderStatus;
 

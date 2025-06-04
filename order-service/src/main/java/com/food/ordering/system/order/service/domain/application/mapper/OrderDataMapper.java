@@ -14,17 +14,16 @@ import com.food.ordering.system.order.service.domain.core.entity.Restaurant;
 import com.food.ordering.system.order.service.domain.core.event.OrderCreatedEvent;
 import com.food.ordering.system.order.service.domain.core.valueobject.StreetAddress;
 import com.food.ordering.system.shared.domain.DomainConstants;
-import com.food.ordering.system.shared.domain.valueobject.CustomerId;
-import com.food.ordering.system.shared.domain.valueobject.Money;
-import com.food.ordering.system.shared.domain.valueobject.ProductId;
-import com.food.ordering.system.shared.domain.valueobject.RestaurantId;
+import com.food.ordering.system.shared.domain.valueobject.*;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.camel.Body;
 import org.apache.camel.ExchangeProperty;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -72,7 +71,7 @@ public class OrderDataMapper {
   public CreateOrderResponseDTO orderToCreateOrderResponseDTO(@Body OrderCreatedEvent orderCreatedEvent) {
     final var order = orderCreatedEvent.getOrder();
     return CreateOrderResponseDTO.builder()
-            .orderTrackingID(order.getTrackingId().getValue())
+            .orderTrackingId(order.getTrackingId().getValue())
             .orderStatus(order.getOrderStatus())
             .message(DomainConstants.CREATE_ORDER_SUCCESS)
             .build();
@@ -83,6 +82,16 @@ public class OrderDataMapper {
             .orderTrackingId(order.getTrackingId().getValue())
             .orderStatus(order.getOrderStatus())
             .failureMessages(order.getFailureMessages())
+            .build();
+  }
+
+  public TrackOrderResponseDTO convertTrackingOrderJdbcToTrackOrderResponseDTO(String trackingId,
+                                                                               String orderStatus,
+                                                                               String failureMessages) {
+      return TrackOrderResponseDTO.builder()
+            .orderTrackingId(UUID.fromString(trackingId))
+            .orderStatus(OrderStatus.valueOf(orderStatus))
+            .failureMessages(List.of(failureMessages))
             .build();
   }
 

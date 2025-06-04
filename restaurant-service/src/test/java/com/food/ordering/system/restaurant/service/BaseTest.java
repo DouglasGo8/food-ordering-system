@@ -38,7 +38,7 @@ public interface BaseTest {
                     .productId(new ProductId(UUID.fromString("d215b5f8-0249-4dc5-89a3-51fd148cfb47")))
                     .available(true)
                     .name("Product 1")
-                    .price(new Money(BigDecimal.valueOf(22.76)))
+                    .price(new Money(BigDecimal.valueOf(50.00)))
                     .quantity(1)
                     .build(),
             // --------------------------------------------- ITEM 2
@@ -46,7 +46,7 @@ public interface BaseTest {
                     .productId(new ProductId(UUID.fromString("d215b5f8-0249-4dc5-89a3-51fd148cfb48")))
                     .available(true)
                     .name("Product 2")
-                    .price(new Money(BigDecimal.valueOf(77.14)))
+                    .price(new Money(BigDecimal.valueOf(50.00)))
                     .quantity(2)
                     .build()
     );
@@ -129,7 +129,7 @@ public interface BaseTest {
             .orderId("ec78b161-3899-4866-8753-886b84a8fbce")
             .sagaId("")
             .restaurantOrderStatus(RestaurantOrderStatus.PAID)
-            .price(BigDecimal.valueOf(177.04))
+            .price(BigDecimal.valueOf(200.00))
             .createdAt(Instant.now())
             .products(this.productMockList())
             .build();

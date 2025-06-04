@@ -19,7 +19,6 @@ import com.food.ordering.system.shared.domain.valueobject.RestaurantId;
 
 import java.math.BigDecimal;
 import java.time.Instant;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -60,8 +59,8 @@ public interface BaseTest {
   }
 
   default List<OrderItemDTO> createMultipleOrderItemsWithWrongPriceMock() {
-    var price_ONE = BigDecimal.valueOf(22.76);
-    var price_TWO = BigDecimal.valueOf(77.14);
+    var price_ONE = BigDecimal.valueOf(50.00);
+    var price_TWO = BigDecimal.valueOf(50.00);
     var quantity_ONE = 1;
     var quantity_TWO = 2;
     //

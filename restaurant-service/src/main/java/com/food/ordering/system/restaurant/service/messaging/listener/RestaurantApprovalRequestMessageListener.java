@@ -1,4 +1,4 @@
-package com.food.ordering.system.restaurant.service.domain;
+package com.food.ordering.system.restaurant.service.messaging.listener;
 
 import com.food.ordering.system.restaurant.service.domain.application.mapper.RestaurantMessagingRequestDataMapper;
 import jakarta.enterprise.context.ApplicationScoped;
@@ -16,14 +16,18 @@ public class RestaurantApprovalRequestMessageListener extends RouteBuilder {
     // stops module 07:60 Section -> implements and test RestaurantMessagingDataMapper
 
     // RestaurantApprovalRequestKafkaListener Implementation Sct::07::58
-    // receives RestaurantApprovalRequestAvroModel / topic restaurant-approval-response
-    // possible kafka:Consumer @KafkaListener receiving a RestaurantApprovalRequestAvroModel
-    from("direct:approveOrder").routeId("RestaurantApprovalRequestMessageListenerRouteId")
+    // receives RestaurantApprovalRequestAvroModel / topic restaurant-approval-request
+    // kafka:Consumer @KafkaListener receiving a RestaurantApprovalRequestAvroModel
+    // from("direct:approveOrder")
+    from("kafka://{{restaurant.approval.topic.request}}").routeId("RestaurantApprovalRequestMessageListenerRouteId")
+            /*.log("Message received from Kafka : ${body}-${threadName}")
+            .log("    on the topic ${headers[kafka.TOPIC]}")
+            .log("    on the partition ${headers[kafka.PARTITION]}")
+            .log("    with the offset ${headers[kafka.OFFSET]}")
+            .log("    with the key ${headers[kafka.KEY]}")
+             */
             .bean(RestaurantMessagingRequestDataMapper::new) // return RestaurantApprovalRequest
             .to("direct:persistOrderApproval") // returns OrderApprovalEvent
-            .log(LoggingLevel.INFO,"persistOrderApproval Route returns ${body}")
-            //.wireTap("seda:orderApprovalEventMessage")
-            .wireTap("direct:orderApprovalEventMessage")
             .end();
   }
 }

@@ -34,9 +34,9 @@ public class OrderRepository extends RouteBuilder {
             //.setVariable("orderId", simple("${body.orderId}"))
             .to("{{orderAddressItems.camel.sql.spEL}}")
             //.log("${body}")
-            .choice().when(simple("${body} == null"))
-              .log(LoggingLevel.ERROR, "Order with id: ${body.orderId} not be found")
-              .throwException(new OrderNotFoundException("Order could not be found"))
+            //.choice().when(simple("${body} == null"))
+            //  .log(LoggingLevel.ERROR, "Order with id: ${body.orderId} not be found")
+            //  .throwException(new OrderNotFoundException("Order could not be found"))
             .end();
   }
 }

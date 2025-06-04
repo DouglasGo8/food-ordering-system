@@ -22,6 +22,5 @@ public class OrderApprovalRepository extends RouteBuilder {
             .to("sql-stored:classpath:templates/insertOrderApproval.sql")
             .log(LoggingLevel.INFO, "OrderApproval for id: ${header.id} Saved")
             .end();
-
   }
 }

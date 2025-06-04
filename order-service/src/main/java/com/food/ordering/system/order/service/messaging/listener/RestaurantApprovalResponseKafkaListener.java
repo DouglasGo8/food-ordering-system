@@ -30,25 +30,24 @@ public class RestaurantApprovalResponseKafkaListener extends RouteBuilder {
     // when (OrderApprovalStatus == REJECTED)
     // log("Processing rejected for order id: {}, with fail messages
 
-    // Receives RestaurantApprovalResponseAvroModel
+    // Receives RestaurantApprovalResponseAvroModel from RestaurantService
     //from("direct:mockRestaurantResponseKafkaListener")
     from("kafka://{{restaurant.approval.topic.response}}").routeId("RestaurantApprovalResponseKafkaListenerRouteId")
-            // from("kafka:")
-            //.log("Message received from Kafka : ${body}-${threadName}")
-            //.log("    on the topic ${headers[kafka.TOPIC]}")
-            //.log("    on the partition ${headers[kafka.PARTITION]}")
-            // .log("    with the offset ${headers[kafka.OFFSET]}")
-            //.log("    with the key ${headers[kafka.KEY]}");
+            .log("Message received from Kafka : ${body}-${threadName}")
+            .log("    on the topic ${headers[kafka.TOPIC]}")
+            .log("    on the partition ${headers[kafka.PARTITION]}")
+             .log("    with the offset ${headers[kafka.OFFSET]}")
+            .log("    with the key ${headers[kafka.KEY]}")
             // ------------------------------------------------------------------------
-            .bean(RestaurantMessagingDataMapper.class, "approvalResponseAvroModelToApprovalResponse") // from Avro Status
-            .setVariable("sagaId", simple("${body.sagaId}"))
-            .setVariable("orderApprovalStatus", simple("${body.orderApprovalStatus}"))
+            //.bean(RestaurantMessagingDataMapper.class, "approvalResponseAvroModelToApprovalResponse") // from Avro Status
+            //.setVariable("sagaId", simple("${body.sagaId}"))
+            //.setVariable("orderApprovalStatus", simple("${body.orderApprovalStatus}"))
             // -----------------------------------------------------------------------------
-            .saga() // Apache Camel Abstract All the *Saga* classes implementation
-              .to("direct:findOrderAddressAndItemsById") // avoid call same method twice
-              .bean(OrderDataAccessMapper::new)
+            //.saga() // Apache Camel Abstract All the *Saga* classes implementation
+            //  .to("direct:findOrderAddressAndItemsById") // avoid call same method twice
+            //  .bean(OrderDataAccessMapper::new)
               //.log("${body}")
-              .to("direct:processOrderApproval")
+            //  .to("direct:processOrderApproval")
             .end();
 
     // Represents RestaurantApprovalResponseMessageListenerImpl.class

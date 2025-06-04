@@ -58,7 +58,7 @@ public class CamelAppIT extends CamelQuarkusTestSupport implements BaseTest {
   @SneakyThrows
   public void persistPaymentRouteRepresentation() {
 
-    AdviceWith.adviceWith(super.context, "PersistPaymentRouter", r -> r.weaveAddLast().to("mock:result"));
+    //AdviceWith.adviceWith(super.context, "PersistPaymentRouter", r -> r.weaveAddLast().to("mock:result"));
     //
     var body = this.createPaymentRequest();
     var mock = super.getMockEndpoint("mock:result");

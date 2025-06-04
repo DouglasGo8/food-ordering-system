@@ -4,6 +4,7 @@ import com.food.ordering.system.payment.service.domain.application.mapper.Paymen
 import jakarta.enterprise.context.ApplicationScoped;
 import lombok.NoArgsConstructor;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.kafka.KafkaConstants;
 
 @ApplicationScoped
 @NoArgsConstructor
@@ -13,14 +14,14 @@ public class PaymentKafkaMessagePublisher extends RouteBuilder {
 
     // avoid if (instanceof PaymentCompletedOrCancelEvent
     // Represents Payment*KafkaMessagePublisher
-    from("direct:paymentMessagePublisher" /*"seda:paymentMessagePublisher"*/).routeId("PaymentMessagePublisherRouteId")
+    from("seda:paymentMessagePublisher"/*"direct:paymentMessagePublisher"*/).routeId("PaymentMessagePublisherRouteId")
             .setVariable("topic-key", simple("${body.payment.orderId.value}"))
             .log("Publishing a Payment${body.payment.paymentStatus}Event with payment id: ${body.payment.id.value} and order id ${body.payment.orderId.value}")
             // sending one of PaymentCompletedEvent/PaymentCancelledEvent/PaymentFailedEvent
             .bean(PaymentMessagingAvroDataMapper::new)
             .log("${body}")
-            //.setHeader(KafkaConstants.KEY, variable("topic-key"))
-            /* Camel can abstract the below declarations
+            .setHeader(KafkaConstants.KEY, variable("topic-key"))
+            /* Camel can abstract the bellow declarations
 
             <T> ListenableFutureCallback<SendResult<String, T>>getKafkaCallback() {
               return new ListenableFutureCallback() {
@@ -45,9 +46,8 @@ public class PaymentKafkaMessagePublisher extends RouteBuilder {
 
 
              */
-
-
-            //.to("kafka://topic")
+            //paymentResponse topic needs be consumed by Order service
+            .to("kafka://{{payment.response.topic}}")
             .end();
   }
 }

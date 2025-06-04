@@ -2,15 +2,12 @@ package com.food.ordering.system.order.service.messaging.mapper;
 
 import com.food.ordering.system.order.service.domain.core.event.OrderCreatedEvent;
 import com.food.ordering.system.order.service.domain.core.event.OrderEvent;
-import com.food.ordering.system.order.service.domain.core.event.OrderPaidEvent;
 import com.food.ordering.system.shared.avro.model.PaymentOrderStatus;
 import com.food.ordering.system.shared.avro.model.PaymentRequestAvroModel;
-
+import jakarta.enterprise.context.ApplicationScoped;
 import lombok.NoArgsConstructor;
 import org.apache.camel.Body;
 import org.apache.camel.Handler;
-
-import jakarta.enterprise.context.ApplicationScoped;
 
 import java.util.UUID;
 

@@ -35,6 +35,11 @@ public class Restaurant extends AggregateRoot<RestaurantId> {
       failureMessages.add("Payment isn't completed for order " + orderDetail.getId());
     }
 
+     /*orderDetail.getProducts()
+             .forEach(p -> log.info("{} - {}",
+                     p.getPrice().getAmount(),
+                     p.getQuantity()));*/
+
     var totalAmount = orderDetail.getProducts().stream()
             .map(p -> {
               if (!p.isAvailable()) {
@@ -44,7 +49,7 @@ public class Restaurant extends AggregateRoot<RestaurantId> {
             })
             .reduce(Money.ZERO, Money::addMoney);
 
-    //log.info("{}->{}", totalAmount.getAmount(), orderDetail.getTotalAmount().getAmount());
+    //log.info("{} -> {}", totalAmount.getAmount(), orderDetail.getTotalAmount().getAmount());
 
     if (!totalAmount.equals(orderDetail.getTotalAmount())) {
       log.info("Price total in not correct from order!!!!");

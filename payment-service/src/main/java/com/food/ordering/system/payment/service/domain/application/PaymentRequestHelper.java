@@ -47,7 +47,7 @@ public class PaymentRequestHelper extends RouteBuilder {
       //.setProperty("creditEntry", simple("${body[0]['#result-set-1']}"))
       //.log("${exchangeProperty.creditEntry.customerId.value}")
       //.setProperty("creditHistories", simple("${body[1]['#result-set-1']}"))
-      .bean(PaymentDomainService.class, "validateAndInitializePayment") // paymentEvent
+      .bean(PaymentDomainServiceImpl.class, "validateAndInitializePayment") // paymentEvent
       //.log("${body}")
       .setVariable("paymentEvent", body())
       //.log("${body}")
