@@ -4,12 +4,11 @@ import com.food.ordering.system.order.service.domain.application.mapper.OrderDat
 import com.food.ordering.system.order.service.domain.application.mapper.RestaurantProductsMapper;
 import com.food.ordering.system.order.service.domain.core.exception.OrderDomainException;
 import com.food.ordering.system.order.service.domain.core.exception.OrderNotFoundException;
+import jakarta.enterprise.context.ApplicationScoped;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.camel.LoggingLevel;
 import org.apache.camel.builder.RouteBuilder;
-
-import jakarta.enterprise.context.ApplicationScoped;
 
 @Slf4j
 @NoArgsConstructor

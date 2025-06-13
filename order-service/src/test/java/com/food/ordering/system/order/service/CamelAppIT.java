@@ -13,7 +13,6 @@ import org.apache.camel.quarkus.test.CamelQuarkusTestSupport;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
-import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 

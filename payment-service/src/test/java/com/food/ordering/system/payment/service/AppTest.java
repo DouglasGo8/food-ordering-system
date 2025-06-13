@@ -14,11 +14,11 @@ import com.food.ordering.system.shared.domain.valueobject.Money;
 import com.food.ordering.system.shared.domain.valueobject.PaymentOrderStatus;
 import com.food.ordering.system.shared.domain.valueobject.PaymentStatus;
 import io.quarkus.test.junit.QuarkusTest;
+import jakarta.inject.Inject;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
-import jakarta.inject.Inject;
 import java.math.BigDecimal;
 import java.time.Instant;
 import java.time.ZoneId;

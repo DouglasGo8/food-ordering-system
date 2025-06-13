@@ -1,13 +1,10 @@
 package com.food.ordering.system.order.service.domain.application;
 
-import com.food.ordering.system.order.service.domain.application.dto.track.TrackOrderResponseDTO;
 import com.food.ordering.system.order.service.domain.application.mapper.OrderDataMapper;
+import jakarta.enterprise.context.ApplicationScoped;
 import lombok.NoArgsConstructor;
 import org.apache.camel.LoggingLevel;
 import org.apache.camel.builder.RouteBuilder;
-
-import jakarta.enterprise.context.ApplicationScoped;
-import org.apache.camel.model.dataformat.JsonLibrary;
 
 @NoArgsConstructor
 @ApplicationScoped
@@ -32,9 +29,4 @@ public class OrderTrackCommandHandler extends RouteBuilder {
 
   }
 
-  // will be a bean in the future
-  //@Handler
-  //public TrackOrderResponse trackOrder(@Body @Valid TrackOrderQuery trackOrderQuery) {
-  //  return null;
-  //}
 }

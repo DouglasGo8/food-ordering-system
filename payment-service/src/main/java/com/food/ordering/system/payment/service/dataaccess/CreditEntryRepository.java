@@ -2,12 +2,10 @@ package com.food.ordering.system.payment.service.dataaccess;
 
 import com.food.ordering.system.payment.service.domain.application.exception.PaymentApplicationServiceException;
 import com.food.ordering.system.shared.domain.DomainConstants;
-
+import jakarta.enterprise.context.ApplicationScoped;
 import lombok.AllArgsConstructor;
 import org.apache.camel.LoggingLevel;
 import org.apache.camel.builder.RouteBuilder;
-
-import jakarta.enterprise.context.ApplicationScoped;
 
 
 @ApplicationScoped

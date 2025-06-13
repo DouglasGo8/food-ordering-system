@@ -2,6 +2,7 @@ package com.food.ordering.system.payment.service.domain.application;
 
 import jakarta.enterprise.context.ApplicationScoped;
 import lombok.NoArgsConstructor;
+import org.apache.camel.LoggingLevel;
 import org.apache.camel.builder.RouteBuilder;
 
 
@@ -17,16 +18,15 @@ public class PaymentMessagePublisher extends RouteBuilder {
     // Receives PaymentEvent
     // represents completePayment method
     from("direct:completedPayment").routeId("PublishPaymentEventRouteId")
+            .log(LoggingLevel.INFO, "Completing Payment")
             .to("direct:persistPayment") // paymentEvent
             .wireTap("seda:paymentMessagePublisher")
             .end();
 
     from("direct:cancelPayment").routeId("CancelPaymentEventRouteId")
+            .log(LoggingLevel.INFO, "Cancelling Payment")
             .to("direct:persistCancelPayment") // paymentEvent
-            //.wireTap("seda:paymentMessagePublisher")
+            .wireTap("seda:paymentMessagePublisher")
             .end();
-
-
-
   }
 }

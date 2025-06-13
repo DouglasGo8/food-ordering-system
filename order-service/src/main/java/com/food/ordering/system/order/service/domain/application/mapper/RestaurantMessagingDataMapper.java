@@ -8,11 +8,9 @@ import com.food.ordering.system.shared.avro.model.RestaurantApprovalRequestAvroM
 import com.food.ordering.system.shared.avro.model.RestaurantApprovalResponseAvroModel;
 import com.food.ordering.system.shared.avro.model.RestaurantOrderStatus;
 import com.food.ordering.system.shared.domain.valueobject.OrderApprovalStatus;
-
+import jakarta.enterprise.context.ApplicationScoped;
 import lombok.NoArgsConstructor;
 import org.apache.camel.Body;
-
-import jakarta.enterprise.context.ApplicationScoped;
 
 import java.util.List;
 import java.util.UUID;

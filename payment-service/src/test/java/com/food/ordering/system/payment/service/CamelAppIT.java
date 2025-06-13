@@ -1,14 +1,8 @@
 package com.food.ordering.system.payment.service;
 
 import com.food.ordering.system.payment.service.domain.core.PaymentDomainService;
-import com.food.ordering.system.payment.service.domain.core.entity.CreditHistory;
-import com.food.ordering.system.payment.service.domain.core.entity.Payment;
-import com.food.ordering.system.payment.service.domain.core.valueobject.CreditHistoryId;
-import com.food.ordering.system.shared.domain.valueobject.CustomerId;
-import com.food.ordering.system.shared.domain.valueobject.Money;
-import com.food.ordering.system.shared.domain.valueobject.OrderId;
-import com.food.ordering.system.shared.domain.valueobject.PaymentStatus;
 import io.quarkus.test.junit.QuarkusTest;
+import jakarta.inject.Inject;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.camel.ProducerTemplate;
@@ -17,15 +11,8 @@ import org.apache.camel.quarkus.test.CamelQuarkusTestSupport;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
-import jakarta.inject.Inject;
-
-import java.math.BigDecimal;
-import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
-import java.time.format.DateTimeFormatter;
-import java.util.List;
-import java.util.UUID;
 
 @Slf4j
 @QuarkusTest

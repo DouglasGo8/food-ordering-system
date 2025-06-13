@@ -23,26 +23,26 @@ public class RestaurantApprovalRequestHelper extends RouteBuilder {
   @Override
   public void configure() {
 
-    // receives
+    // receives from OrderService Kafka topic and
+    // send to same OrderService in restaurant-approval-response topic
     from("direct:persistOrderApproval").routeId("RestaurantApprovalRequestHelperRouteId") // RestaurantApprovalRequest
             .log(LoggingLevel.INFO, "Processing restaurant approval for Order Id. ${body.orderId}")
             .setVariable("orderId", simple("${body.orderId}"))
             .setVariable("payload", body())
-            .setVariable("fail", simple("${empty(list)}")) // needs a test
+            .setVariable("fail", simple("${empty(list)}"))
+            // ---- Step 1: Bean RestaurantDataMapper Instance --------
             .bean(RestaurantDataMapper::new) //returns Restaurant from RestaurantDataMapper
             .setVariable("restaurant", body())
-            //.log("${body}")
-            .to("direct:findRestaurantInformation") // done
-            .bean(RestaurantRepoMapper::new)
-            .setVariable("restaurant", body())
-            //.log("${body}")
+            .to("direct:findRestaurantInformation")
+            // ---- Step 2: Bean RestaurantRepoMapper Instance ------
+            .bean(RestaurantRepoMapper::new) // returns Restaurant validated
+            // ----- Step 3: RestaurantDomainService Instance -------
             .bean(RestaurantDomainService::new) // returns OrderApprovalEvent
             .setProperty("orderApprovalEvent", body())
-            //.log("${body}")
-            .wireTap("direct:saveOrderApproval")
-            .recipientList(constant("{{sendOrderApprovalEventCopy.spEL}}")).delimiter(";")
+            // ------------------------------------------------------
+            .recipientList(constant("{{sendOrderApprovalEvent.spEL}}"))
               .parallelProcessing()
-              .transform(exchangeProperty("orderApprovalEvent"))
+              .stopOnException()
             .end();
   }
 

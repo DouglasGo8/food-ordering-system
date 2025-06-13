@@ -1,11 +1,10 @@
 package com.food.ordering.system.order.service.dataaccess.restaurant;
 
 import com.food.ordering.system.order.service.domain.core.exception.OrderDomainException;
+import jakarta.enterprise.context.ApplicationScoped;
 import lombok.NoArgsConstructor;
 import org.apache.camel.LoggingLevel;
 import org.apache.camel.builder.RouteBuilder;
-
-import jakarta.enterprise.context.ApplicationScoped;
 
 @NoArgsConstructor
 @ApplicationScoped

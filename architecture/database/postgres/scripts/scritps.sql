@@ -141,7 +141,7 @@ CREATE TABLE tbl_credit_history
     type        TEXT           NOT NULL,
     CONSTRAINT credit_history_pkey PRIMARY KEY (id)
 );
--- VIEWS doesn't work
+-- VIEW order_restaurant_m_view
 DROP MATERIALIZED VIEW IF EXISTS order_restaurant_m_view;
 --
 CREATE MATERIALIZED VIEW order_restaurant_m_view
@@ -161,11 +161,12 @@ WHERE r.id = rp.restaurant_id
   AND p.id = rp.product_id
 WITH DATA;
 
-REFRESH MATERIALIZED VIEW order_restaurant_m_view;
+REFRESH MATERIALIZED VIEW CONCURRENTLY order_restaurant_m_view;
 
 DROP function IF EXISTS refresh_order_restaurant_m_view;
 
-CREATE OR replace function refresh_order_restaurant_m_view()
+-- Commented due CONCURRENTLY option up above
+/*CREATE OR replace function refresh_order_restaurant_m_view()
     returns trigger
 AS
 '
@@ -182,8 +183,10 @@ CREATE trigger refresh_order_restaurant_m_view
     ON tbl_restaurant_products
     FOR each statement
 EXECUTE PROCEDURE refresh_order_restaurant_m_view();
--- VIEW doesn't work
-DROP MATERIALIZED VIEW IF EXISTS order_address_orderItems_m_view;
+ */
+
+-- VIEW order_address_orderItems_m_view
+DROP MATERIALIZED VIEW IF EXISTS order_address_orderItems_m_view cascade;
 --
 CREATE MATERIALIZED VIEW order_address_orderItems_m_view
     TABLESPACE pg_default
@@ -214,8 +217,11 @@ FROM tbl_orders od
          oi.order_id = od.id
 WITH DATA;
 --
-REFRESH MATERIALIZED VIEW order_address_orderItems_m_view;
+CREATE UNIQUE INDEX order_address_orderItems_m_view_index ON order_address_orderItems_m_view(order_id, order_item_id);
 --
+REFRESH MATERIALIZED VIEW CONCURRENTLY order_address_orderItems_m_view;
+-- Commented due CONCURRENTLY option up above
+/*
 DROP function IF EXISTS refresh_order_address_orderItems_m_view;
 --
 CREATE OR replace function refresh_order_address_orderItems_m_view()
@@ -235,6 +241,8 @@ CREATE trigger refresh_order_address_orderItems_m_view
     ON tbl_orders
     FOR each statement
 EXECUTE PROCEDURE refresh_order_address_orderItems_m_view();
+--
+*/
 --
 insert into tbl_customer (id, user_name, first_name, last_name)
 values ('af20558e-5e77-4a6e-bb2f-fef1f14c0ee9', 'Joe', 'Joe', 'Doe');

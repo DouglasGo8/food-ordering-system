@@ -7,7 +7,6 @@ import com.food.ordering.system.order.service.domain.core.valueobject.TrackingId
 import com.food.ordering.system.shared.domain.DomainConstants;
 import com.food.ordering.system.shared.domain.entity.AggregateRoot;
 import com.food.ordering.system.shared.domain.valueobject.*;
-
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 

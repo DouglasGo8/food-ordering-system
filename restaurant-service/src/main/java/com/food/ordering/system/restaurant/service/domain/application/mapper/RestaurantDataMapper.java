@@ -1,8 +1,6 @@
 package com.food.ordering.system.restaurant.service.domain.application.mapper;
 
 import com.food.ordering.system.restaurant.service.domain.application.dto.RestaurantApprovalRequest;
-
-
 import com.food.ordering.system.restaurant.service.domain.core.entity.OrderDetail;
 import com.food.ordering.system.restaurant.service.domain.core.entity.Product;
 import com.food.ordering.system.restaurant.service.domain.core.entity.Restaurant;

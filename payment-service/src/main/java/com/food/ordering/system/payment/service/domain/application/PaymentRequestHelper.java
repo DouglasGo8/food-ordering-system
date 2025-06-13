@@ -1,15 +1,14 @@
 package com.food.ordering.system.payment.service.domain.application;
 
 import com.food.ordering.system.payment.service.domain.application.mapper.PaymentRequestDataMapper;
-import com.food.ordering.system.payment.service.domain.core.PaymentDomainService;
 import com.food.ordering.system.payment.service.domain.core.PaymentDomainServiceImpl;
 import com.food.ordering.system.shared.domain.DomainConstants;
+import jakarta.enterprise.context.ApplicationScoped;
 import lombok.NoArgsConstructor;
 import org.apache.camel.LoggingLevel;
 import org.apache.camel.builder.AggregationStrategies;
 import org.apache.camel.builder.RouteBuilder;
 
-import jakarta.enterprise.context.ApplicationScoped;
 import java.util.ArrayList;
 import java.util.concurrent.Executors;
 

@@ -7,15 +7,11 @@ import com.food.ordering.system.order.service.domain.core.event.OrderCreatedEven
 import com.food.ordering.system.order.service.domain.core.event.OrderPaidEvent;
 import com.food.ordering.system.order.service.domain.core.exception.OrderDomainException;
 import com.food.ordering.system.shared.domain.DomainConstants;
-import io.quarkus.runtime.annotations.RegisterForReflection;
-import jakarta.decorator.Decorator;
 import jakarta.enterprise.context.ApplicationScoped;
-import jakarta.inject.Named;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.camel.Variable;
 
-import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.List;
@@ -60,7 +56,7 @@ public class OrderDomainServiceImpl implements OrderDomainService {
   @Override
   public OrderCancelledEvent cancelOrderPayment(Order order, @Variable("failure_msg") List<String> failureMessages) {
     order.initCancel(failureMessages);
-    log.info("Order payment is cancelling for order: {}", order.getId().getValue());
+    log.info("OrderCancelledEvent::method is cancelling order: {}-{}", order.getId().getValue(), order.getOrderStatus());
     return new OrderCancelledEvent(order, ZonedDateTime.now(ZoneId.of(DomainConstants.UTC)));
   }
 

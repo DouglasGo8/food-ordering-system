@@ -14,16 +14,15 @@ public class OrderApprovalMessagePublisher extends RouteBuilder {
   public void configure() {
 
     final String LOG_MESSAGE = """
-            Receiving OrderApprovalEvent for order id: ${body.orderApproval.orderId.value}\s
-            with status ${body.orderApproval.approvalStatus.name}
-           \s""";
+             Receiving OrderApprovalEvent for order id: ${body.orderApproval.orderId.value}\s
+             with status ${body.orderApproval.approvalStatus.name}
+            \s""";
 
     // receives OrderApprovalEvent (Approved|Rejected)
     // from("seda:orderApprovalEventMessage").routeId("OrderApprovalMessagePublisher")
     from("seda:orderApprovalEventMessage"/*"direct:orderApprovalEventMessage"*/).routeId("OrderApprovalMessagePublisherRouteId")
             .log(LoggingLevel.INFO, LOG_MESSAGE)
             .bean(RestaurantMessagingResponseDataMapper::new)
-            // will be implemented at 10/06/2025 section08:05min
             // will be consumed by RestaurantApprovalResponseKafkaListener in order service
             .to("kafka://{{restaurant.approval.topic.response}}")
             .end();

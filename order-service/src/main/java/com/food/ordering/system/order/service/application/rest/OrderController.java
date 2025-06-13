@@ -3,13 +3,12 @@ package com.food.ordering.system.order.service.application.rest;
 import com.food.ordering.system.order.service.domain.application.dto.create.CreateOrderCommandDTO;
 import com.food.ordering.system.order.service.domain.application.dto.create.CreateOrderResponseDTO;
 import com.food.ordering.system.order.service.domain.application.dto.track.TrackOrderResponseDTO;
+import jakarta.enterprise.context.ApplicationScoped;
 import lombok.NoArgsConstructor;
 import org.apache.camel.Exchange;
 import org.apache.camel.LoggingLevel;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.model.rest.RestBindingMode;
-
-import jakarta.enterprise.context.ApplicationScoped;
 
 @NoArgsConstructor
 @ApplicationScoped

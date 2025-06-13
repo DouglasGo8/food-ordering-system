@@ -9,14 +9,12 @@ import com.food.ordering.system.shared.domain.DomainConstants;
 import com.food.ordering.system.shared.domain.valueobject.Money;
 import com.food.ordering.system.shared.domain.valueobject.ProductId;
 import com.food.ordering.system.shared.domain.valueobject.RestaurantId;
-
+import jakarta.enterprise.context.ApplicationScoped;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.camel.Body;
 import org.apache.camel.ExchangeProperty;
 import org.apache.camel.component.sql.ResultSetIterator;
-
-import jakarta.enterprise.context.ApplicationScoped;
 
 import java.util.ArrayList;
 import java.util.UUID;

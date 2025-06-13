@@ -1,12 +1,11 @@
 package com.food.ordering.system.order.service.messaging.publisher;
 
 import com.food.ordering.system.order.service.messaging.mapper.OrderMessagingDataMapper;
+import jakarta.enterprise.context.ApplicationScoped;
 import lombok.NoArgsConstructor;
 import org.apache.camel.LoggingLevel;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.kafka.KafkaConstants;
-
-import jakarta.enterprise.context.ApplicationScoped;
 
 @NoArgsConstructor
 @ApplicationScoped

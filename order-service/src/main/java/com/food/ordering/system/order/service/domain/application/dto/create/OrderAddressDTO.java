@@ -1,13 +1,12 @@
 package com.food.ordering.system.order.service.domain.application.dto.create;
 
 
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-
-import jakarta.validation.constraints.Max;
-import jakarta.validation.constraints.NotNull;
 
 @Getter
 @Builder

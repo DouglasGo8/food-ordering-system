@@ -4,7 +4,6 @@ import com.food.ordering.system.order.service.domain.core.valueobject.OrderItemI
 import com.food.ordering.system.shared.domain.entity.BaseEntity;
 import com.food.ordering.system.shared.domain.valueobject.Money;
 import com.food.ordering.system.shared.domain.valueobject.OrderId;
-
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 

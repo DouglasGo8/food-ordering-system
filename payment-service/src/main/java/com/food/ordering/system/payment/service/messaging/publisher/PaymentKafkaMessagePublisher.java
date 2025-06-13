@@ -46,7 +46,7 @@ public class PaymentKafkaMessagePublisher extends RouteBuilder {
 
 
              */
-            //paymentResponse topic needs be consumed by Order service
+            //paymentResponse topic will be consumed by order-service
             .to("kafka://{{payment.response.topic}}")
             .end();
   }

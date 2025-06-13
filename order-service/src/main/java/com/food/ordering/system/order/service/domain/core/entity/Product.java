@@ -3,7 +3,6 @@ package com.food.ordering.system.order.service.domain.core.entity;
 import com.food.ordering.system.shared.domain.entity.BaseEntity;
 import com.food.ordering.system.shared.domain.valueobject.Money;
 import com.food.ordering.system.shared.domain.valueobject.ProductId;
-import lombok.EqualsAndHashCode;
 import lombok.Getter;
 
 @Getter

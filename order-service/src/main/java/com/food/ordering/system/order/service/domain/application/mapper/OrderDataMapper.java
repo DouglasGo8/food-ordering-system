@@ -21,9 +21,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.camel.Body;
 import org.apache.camel.ExchangeProperty;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.UUID;
 import java.util.function.Function;
 import java.util.stream.Collectors;

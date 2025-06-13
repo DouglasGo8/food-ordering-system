@@ -4,6 +4,7 @@ import com.food.ordering.system.order.service.dataaccess.mapper.OrderDataAccessM
 import com.food.ordering.system.order.service.domain.application.OrderDomainServiceImpl;
 import com.food.ordering.system.order.service.domain.application.mapper.RestaurantMessagingDataMapper;
 import com.food.ordering.system.order.service.domain.core.exception.OrderDomainException;
+import com.food.ordering.system.order.service.messaging.mapper.OrderMessagingDataMapper;
 import jakarta.enterprise.context.ApplicationScoped;
 import lombok.NoArgsConstructor;
 import org.apache.camel.LoggingLevel;
@@ -31,61 +32,65 @@ public class RestaurantApprovalResponseKafkaListener extends RouteBuilder {
     // log("Processing rejected for order id: {}, with fail messages
 
     // Receives RestaurantApprovalResponseAvroModel from RestaurantService
-    //from("direct:mockRestaurantResponseKafkaListener")
-    from("kafka://{{restaurant.approval.topic.response}}").routeId("RestaurantApprovalResponseKafkaListenerRouteId")
-            .log("Message received from Kafka : ${body}-${threadName}")
+
+    from("kafka://{{restaurant.approval.topic.response}}"/*"direct:mockRestaurantResponseKafkaListener"*/).routeId("RestaurantApprovalResponseKafkaListenerRouteId")
+            /*.log("Message received from Kafka (RestaurantApprovalResponseKafkaListener_endpoint) : ${body}-${threadName}")
             .log("    on the topic ${headers[kafka.TOPIC]}")
             .log("    on the partition ${headers[kafka.PARTITION]}")
-             .log("    with the offset ${headers[kafka.OFFSET]}")
+            .log("    with the offset ${headers[kafka.OFFSET]}")
             .log("    with the key ${headers[kafka.KEY]}")
-            // ------------------------------------------------------------------------
-            //.bean(RestaurantMessagingDataMapper.class, "approvalResponseAvroModelToApprovalResponse") // from Avro Status
-            //.setVariable("sagaId", simple("${body.sagaId}"))
-            //.setVariable("orderApprovalStatus", simple("${body.orderApprovalStatus}"))
-            // -----------------------------------------------------------------------------
-            //.saga() // Apache Camel Abstract All the *Saga* classes implementation
-            //  .to("direct:findOrderAddressAndItemsById") // avoid call same method twice
-            //  .bean(OrderDataAccessMapper::new)
-              //.log("${body}")
-            //  .to("direct:processOrderApproval")
+             */
+            .bean(RestaurantMessagingDataMapper.class, "approvalResponseAvroModelToApprovalResponse") // from Avro Status
+            .setVariable("sagaId", simple("${body.sagaId}"))
+            .setVariable("orderApprovalStatus", simple("${body.orderApprovalStatus}"))
+            // ------- CRITICAL --------------------------
+            .to("direct:findOrderAddressAndItemsById")
+            .bean(OrderDataAccessMapper::new)
+            .to("direct:processOrderApproval")
+            // --------------------------------------------------
+            //.log(LoggingLevel.INFO, "OrderDataAccessMapper with: ${body}")
             .end();
 
     // Represents RestaurantApprovalResponseMessageListenerImpl.class
     from("direct:processOrderApproval").routeId("ProcessOrderApprovalRouteId")
+            // All sagas will start from scratch a new completion and compensation
+            // Apache Camel will abstract all the *Saga* SPRING Boilerplate implementation
             .saga()
-            // -------------------SAGA CREATION START ---------------------------------------
-              .propagation(SagaPropagation.MANDATORY)
-              .option("order",  body())
+              // ------------------- SAGA CREATION START --------------------------------------------
+              .propagation(SagaPropagation.REQUIRES_NEW)
+              .option("order", body())
               .option("sagaId", variable("sagaId"))
               .completion("direct:orderApproved") // represents process method from OrderApprovalSaga.class
               .compensation("direct:orderRejected") // represents rollback method from OrderApprovalSaga.class
-            // -------------------SAGA CREATION END ------------------------------------------------------------
-            // Represents RestaurantApprovalResponseMessageListenerImpl.orderRejected method
+              // ------------------- SAGA CREATION END ------------------------------------------------------------
+              // Represents RestaurantApprovalResponseMessageListenerImpl.orderRejected method
             .choice().when(simple("${variable.orderApprovalStatus} == 'REJECTED'"))
               .setVariable("failure_msg", simple("${body.failureMessages}"))
               .bean(OrderDomainServiceImpl.class, "cancelOrderPayment") // changes OrderStatus to CANCELLING and returns OrderCancelledEvent
-              .log(LoggingLevel.ERROR, "!!!BOOM!!! Publishing order cancelled for order id: ${body.order.id.value} with failure messages {under_construction}")
-              //.wireTap("kafka") //
-              .throwException(new OrderDomainException("Order is roll backed due to CANCELLING Status"))
-            // Represents RestaurantApprovalResponseMessageListenerImpl.orderApproved method
+              .log(LoggingLevel.ERROR, "!!!BOOM!!! Publishing order cancelled for order id: ${body.order.id.value} and status ${body.order.orderStatus}")
+              //  ------ ::CRITICAL:: NEVER EVER AFTER THROW Command --------------------
+              .bean(OrderMessagingDataMapper::new) // returns PaymentRequestAvroModel
+              .to("kafka://{{payment.topic.request}}")
+              // -----------------------------------------------------------------------------
+              .throwException(new OrderDomainException("Order is roll-backed due CANCELLING Status"))
+              // Represents RestaurantApprovalResponseMessageListenerImpl.orderApproved method
             .otherwise()
               .log(LoggingLevel.INFO, "Order is approved for order id: ${body.id.value}")
-              .bean(OrderDomainServiceImpl.class, "approveOrder") // changes OrderStatus to APPROVED and returns Void
+              .bean(OrderDomainServiceImpl::new, "approveOrder") // changes OrderStatus to APPROVED and returns Void
             .end();
-
 
     from("direct:orderApproved").routeId("OrderApprovedRouteId")
             .log(LoggingLevel.INFO, "Approving order with id: ${header.order.id.value}")
             .transform(header("order"))
             .to("direct:saveOrderSaga") // saves WiTH PAID/SUCCESS Status
-            .log("Order with id: ${header.order.id.value} is approved")
+            .log(LoggingLevel.INFO,"direct:orderApproved: Order with id: ${header.order.id.value} is approved")
             .end();
 
     from("direct:orderRejected").routeId("OrderRejectedRouteId")
             .transform(header("order"))
-            .log(LoggingLevel.ERROR, "Cancelling order with id: ${header.order.id.value}")
+            .log(LoggingLevel.ERROR, "direct:orderReject is Cancelling order with id: ${header.order.id.value}")
             .to("direct:saveOrderSaga") // saves WiTH CANCELLED/FAILED Status
-            .log(LoggingLevel.ERROR, "Order with id: ${header.order.id.value} is cancelling")
+            .log(LoggingLevel.ERROR, "direct:orderReject Order with id: ${header.order.id.value} is cancelling")
             .end();
 
   }

@@ -8,11 +8,11 @@ import com.food.ordering.system.shared.domain.valueobject.CustomerId;
 import com.food.ordering.system.shared.domain.valueobject.Money;
 import com.food.ordering.system.shared.domain.valueobject.OrderId;
 import com.food.ordering.system.shared.domain.valueobject.PaymentStatus;
+import jakarta.enterprise.context.ApplicationScoped;
 import lombok.NoArgsConstructor;
 import org.apache.camel.Body;
 import org.apache.camel.Handler;
 
-import jakarta.enterprise.context.ApplicationScoped;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.UUID;

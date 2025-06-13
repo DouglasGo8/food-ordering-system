@@ -32,11 +32,12 @@ public class OrderRepository extends RouteBuilder {
 
     from("direct:findOrderAddressAndItemsById").routeId("findOrderAndAddressByIdRouteId")
             //.setVariable("orderId", simple("${body.orderId}"))
+            .log("findOrderAddressAndItemsById with order with id: ${body.orderId}")
             .to("{{orderAddressItems.camel.sql.spEL}}")
-            //.log("${body}")
-            //.choice().when(simple("${body} == null"))
-            //  .log(LoggingLevel.ERROR, "Order with id: ${body.orderId} not be found")
-            //  .throwException(new OrderNotFoundException("Order could not be found"))
+            //.log("Resultset from findOrderAddressAndItemsById: ${body}")
+            .choice().when(simple("${body} == null"))
+              .log(LoggingLevel.ERROR, "Order with id: ${body.orderId} not be found")
+              .throwException(new OrderNotFoundException("Order could not be found"))
             .end();
   }
 }
