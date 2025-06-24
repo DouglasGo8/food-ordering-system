@@ -30,8 +30,8 @@
 * The main structure removes the sub-modules idea, why?
 To get rid of hell submodules management, here I try to keep the hexagonal concepts, but over the EIP and Camel perspectives; that means, the verbosity of frameworks will be reduced the main idea behind of Apache Camel is to eliminate tons of layers
 
-deprecated
-.Gemfile.lock
+deprecated .Gemfile.lock
+
 ----
 |- order-service    (jar) => needs be entire reorganaized
 
@@ -356,15 +356,13 @@ public void camelExchangeJdbcFunctions(
   }
 ----
 
-
 === Restaurant Service
 
 image::architecture/thumbs/images/concepts/restaurant-actions-overview.png[]
 
-
 === Saga Pattern
 
-[source, java]
+[source,java]
 ----
 interface SagaStep<T, S extends DomainEvent, U extends DomainEvent> {
   S process(T data);
@@ -376,8 +374,37 @@ class EmptyEvent implements DomainEvent<Void> {
 }
 ----
 
-
 === Test Steps
 
 1. Truncate tbl_orders cascade
 2. Start Order, Payment and Restaurant Services
+
+[source, sql]
+----
+truncate table tbl_credit_entry;
+truncate table tbl_credit_history;
+truncate table tbl_orders cascade;
+truncate table tbl_payments;
+truncate table tbl_order_approval;
+--
+commit;
+--select * from tbl_orders
+--select * from tbl_products
+--select * from tbl_restaurant_products
+--
+INSERT INTO tbl_credit_entry(id, customer_id, total_credit_amount)
+VALUES ('d215b5f8-0249-4dc5-89a3-51fd148cfb21', 'af20558e-5e77-4a6e-bb2f-fef1f14c0ee9', 100000.00);
+--
+INSERT INTO tbl_credit_history(id, customer_id, amount, type)
+VALUES ('d215b5f8-0249-4dc5-89a3-51fd148cfb23', 'af20558e-5e77-4a6e-bb2f-fef1f14c0ee9', 100000.00, 'CREDIT');
+--
+commit;
+
+----
+
+=== Outbox Pattern
+
+image::./architecture/thumbs/images/concepts/outbox-pattern.png[]
+
+We can face problems when we're trying to publish our events, and with this keep the system consistent with wrong status, to solve this, we need combine SAGA with Outbox Pattern on schedule, to keep SAGA state under the outbox table with Outbox Pattern, we don't publish event directly on broker, but instead of, we keep our events in the local database/table called **Outbox Table**, this table belongs to the same database that we're using to persist the operations/status based on ACID transactions with additional event inserted on _Outbox Table_ using same ACID transaction, after that we can read data/event from _Outbox table_ and finally publish the event, using pulling data or CDC, CDC will listen each transaction log under the _Outbox Table_. In both cases we should do the implementation to be sure that you don't miss the events in the Outbox table. Using this approaches we'll keep track of SAGA and Order Status for each operation using _outbox table_ ensuring idempotency to prevent data corruption, with optimistic op and constraints on table
+
